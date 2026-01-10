@@ -658,7 +658,7 @@
             </p>
             <div class="inp-group">
                 <label class="inp-label">Full Name</label>
-                <input type="text" id="login-name" class="inp-field" placeholder="e.g. Rahul Kumar">
+                <input type="text" id="login-name" class="inp-field" placeholder="e.g. Karl Marx">
             </div>
             <div class="inp-group">
                 <label class="inp-label">4-Digit ID (Last 4 of Phone)</label>
@@ -707,9 +707,16 @@
 
             <div style="height:1px; background:rgba(255,255,255,0.1); margin:10px 0;"></div>
 
-            <div class="nav-item" onclick="showView('view-free', this)"><span>🎁</span> Free Tests</div>
-            <div class="nav-item" onclick="showView('view-full', this)"><span>🔒</span> Full Papers</div>
-            <div class="nav-item" onclick="showView('view-topic', this)"><span>🔒</span> Topic Wise</div>
+            <div class="nav-item" onclick="showView('view-free', this)"><span>🎁</span> Free PYQs</div>
+
+            <div class="nav-item" onclick="showView('view-full', this)"><span>🔒</span> Full Length Previous Year Papers
+            </div>
+
+            <div class="nav-item" onclick="showView('view-topic', this)"><span>🔒</span> Topic Wise PYQs</div>
+
+            <div class="nav-item" onclick="showView('view-thinker', this)"><span>🔒</span> Thinker Specific</div>
+
+            <div class="nav-item" onclick="showView('view-unit', this)"><span>🔒</span> Unit Wise</div>
 
             <div style="margin-top:auto;">
                 <a href="https://t.me/SocioLogicPYQs" target="_blank" class="nav-item" style="color:#38bdf8;">
@@ -823,9 +830,13 @@
             </div>
         </div>
 
+
+
         <div id="view-free" class="content-section">
             <h2 style="color:#0f172a; margin-bottom: 25px;">🎁 Free Demo Zone</h2>
             <div class="grid">
+
+                /* Add Your FREE PYQs Here */
                 <div class="card">
                     <div class="card-body">
                         <span class="c-badge bg-free">Free Access</span>
@@ -840,14 +851,16 @@
         <div id="view-full" class="content-section">
             <h2 style="color:#0f172a; margin-bottom: 25px;">📅 Full Length Papers</h2>
             <div class="grid">
+
+                /* Add Your Full Length Papers Here */
                 <div class="card">
                     <div class="card-body">
                         <span class="c-badge bg-prem">Premium</span>
-                        <h3 class="c-title">CUET PG 2024 Paper</h3>
-                        <p class="c-desc">Complete 75 Questions. The absolute gold standard.</p>
+                        <h3 class="c-title">CUET PG 2025 Full Paper</h3>
+                        <p class="c-desc">Complete 75 Questions with timer.</p>
                     </div>
                     <div class="btn-lock">🔒 Login to Unlock</div>
-                    <a href="paper_2024.html" class="btn-unlock">🔓 Start Test</a>
+                    <a href="Paper_2025_Full.html" class="btn-unlock">🔓 Start Test</a>
                 </div>
             </div>
         </div>
@@ -855,6 +868,9 @@
         <div id="view-topic" class="content-section">
             <h2 style="color:#0f172a; margin-bottom: 25px;">🧠 Topic Wise</h2>
             <div class="grid">
+
+                /* Add Your Topic wise Here */
+
                 <div class="card">
                     <div class="card-body">
                         <span class="c-badge bg-prem">Premium</span>
@@ -863,6 +879,41 @@
                     </div>
                     <div class="btn-lock">🔒 Login to Unlock</div>
                     <a href="unit_indian.html" class="btn-unlock">🔓 Start Test</a>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-thinker" class="content-section">
+            <h2 style="color:#0f172a; margin-bottom: 25px;">🧠 Thinker Specific PYQs</h2>
+            <div class="grid">
+
+                /* Add Your Thinker specific Here */
+                <div class="card">
+                    <div class="card-body">
+                        <span class="c-badge bg-prem">Premium</span>
+                        <h3 class="c-title">Karl Marx</h3>
+                        <p class="c-desc">Alienation, Historical Materialism & Class Conflict.</p>
+                    </div>
+                    <div class="btn-lock">🔒 Login to Unlock</div>
+                    <a href="Thinker_Marx.html" class="btn-unlock">🔓 Start Test</a>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-unit" class="content-section">
+            <h2 style="color:#0f172a; margin-bottom: 25px;">📚 Unit Wise PYQs</h2>
+            <div class="grid">
+
+                /* Add Your Unit Wise PYQs Here */
+
+                <div class="card">
+                    <div class="card-body">
+                        <span class="c-badge bg-prem">Premium</span>
+                        <h3 class="c-title">Unit 1: Sociological Theory</h3>
+                        <p class="c-desc">Classical, Modern, and Post-Modern theories.</p>
+                    </div>
+                    <div class="btn-lock">🔒 Login to Unlock</div>
+                    <a href="Unit_1_Theory.html" class="btn-unlock">🔓 Start Test</a>
                 </div>
             </div>
         </div>
