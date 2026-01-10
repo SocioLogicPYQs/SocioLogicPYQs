@@ -1508,7 +1508,7 @@
                     trick: "Triangle = 3 points = Multiple methods."
                 }
             },
-{
+            {
                 topic: "Research",
                 text: "Who developed the tradition of fieldwork in social anthropology?",
                 options: ["Robert Redfield", "A.R. Radcliffe-Brown", "Bronislaw Malinowski", "Margaret Mead"],
@@ -1783,7 +1783,7 @@
                     trick: "Punishment = Payback, Prevent, Reform."
                 }
             },
-{
+            {
                 topic: "Globalisation",
                 text: "A foreign brand serving chicken tikka bowl in its outlets in India is an example of:",
                 options: ["globalisation", "glocalisation", "assimilation", "cultural integration"],
@@ -2245,11 +2245,8 @@
             const badgeText = document.getElementById('attempt-badge').innerText;
             const btn = document.getElementById('start-btn');
 
-            // Allow if badge says "Remaining" OR "Unlimited"
-            // This fixes the bug where the button stayed locked
-            const isBadgeValid = !badgeText.includes("Exhausted") &&
-                (badgeText.includes("Remaining") || badgeText.includes("Unlimited") || badgeText.includes("Attempt"));
-
+            // Replace the old "const isBadgeValid = ..." line with this:
+            const isBadgeValid = (badgeText.includes("Remaining") || badgeText.includes("Unlimited") || badgeText.includes("Attempt")) && !badgeText.includes("Remaining: 0");
             if (name.length > 0 && id.length >= 4 && isBadgeValid) {
                 btn.disabled = false;
                 btn.style.backgroundColor = "#2563eb";
