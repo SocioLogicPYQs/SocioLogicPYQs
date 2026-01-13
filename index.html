@@ -653,37 +653,67 @@
 
     <div class="modal-overlay" id="login-modal">
         <div class="login-card">
-            <h2 style="margin:0 0 10px 0; color:#0f172a;">Premium Login</h2>
-            <p style="margin:0 0 25px 0; color:#64748b; font-size:0.9rem;">Enter your details to verify subscription.
+            <h2 style="margin:0 0 10px 0; color:#0f172a;">Student Login</h2>
+            <p style="margin:0 0 25px 0; color:#64748b; font-size:0.9rem;">Enter your Registered Mobile & PIN.</p>
+
+            <div class="inp-group">
+                <label class="inp-label">Mobile Number (User ID)</label>
+                <input type="number" id="login-mobile" class="inp-field" placeholder="e.g. 9876543210">
+            </div>
+            <div class="inp-group">
+                <label class="inp-label">Password (PIN)</label>
+                <input type="password" id="login-pass" class="inp-field" placeholder="Enter your 6-digit PIN">
+            </div>
+
+            <button class="btn-verify" id="btn-verify-click" onclick="verifyLogin()">Login & Verify</button>
+
+            <div style="margin-top:20px; display:flex; justify-content:space-between; align-items:center;">
+                <button class="btn-close-modal" onclick="closeLogin()" style="margin:0;">Cancel</button>
+                <span onclick="forgotPassTrigger()"
+                    style="color:#2563eb; font-size:0.9rem; cursor:pointer; font-weight:600;">Forgot Password?</span>
+            </div>
+        </div>
+    </div>
+    <div class="modal-overlay" id="change-pass-modal">
+        <div class="login-card">
+            <h2 style="margin:0 0 10px 0; color:#0f172a;">Change PIN</h2>
+            <p style="margin:0 0 20px 0; color:#64748b; font-size:0.9rem;">For security, please enter your current PIN.
             </p>
+
             <div class="inp-group">
-                <label class="inp-label">Full Name</label>
-                <input type="text" id="login-name" class="inp-field" placeholder="e.g. Karl Marx">
+                <label class="inp-label">Current PIN</label>
+                <input type="password" id="cp-old" class="inp-field" placeholder="Enter Old PIN">
             </div>
+
             <div class="inp-group">
-                <label class="inp-label">4-Digit ID (Last 4 of Phone)</label>
-                <input type="number" id="login-id" class="inp-field" placeholder="e.g. 1234">
+                <label class="inp-label">New 6-Digit PIN</label>
+                <input type="number" id="cp-new" class="inp-field" placeholder="Enter New PIN">
             </div>
-            <button class="btn-verify" id="btn-verify-click" onclick="verifyLogin()">Verify Access</button>
-            <button class="btn-close-modal" onclick="closeLogin()">Cancel</button>
+
+            <button class="btn-verify" id="btn-cp-submit" onclick="submitChangePass()">Update Password</button>
+            <button class="btn-close-modal"
+                onclick="document.getElementById('change-pass-modal').style.display='none'">Cancel</button>
         </div>
     </div>
 
     <div id="sidebar-overlay" onclick="toggleSidebar()"></div>
 
     <header class="top-header">
-        <button id="desktop-menu-btn" onclick="toggleDesktopSidebar()"
-            style="background:none; border:none; font-size:1.8rem; cursor:pointer; color:#0f172a; margin-right:auto; display:none; padding-left: 20px;">
-            ☰
-        </button>
         <div class="header-brand-trigger">
-            <span onclick="toggleSidebar()" style="font-size:1.8rem; color:#2563eb; cursor:pointer;">☰</span>
+            <span onclick="toggleSidebar()"
+                style="font-size:1.8rem; color:#2563eb; cursor:pointer; padding: 5px;">☰</span>
 
-            <div style="display:flex; align-items:center; gap:10px;" onclick="showView('view-home', null)">
+            <div style="display:flex; align-items:center; gap:10px; cursor:pointer;"
+                onclick="showView('view-home', null)">
                 <img src="https://i.ibb.co/fYNNzJYS/Gemini-Generated-Image-fb7rm1fb7rm1fb7r.png" alt="Logo">
                 <span>SocioLogic</span>
             </div>
         </div>
+
+        <button id="desktop-menu-btn" onclick="toggleDesktopSidebar()"
+            style="background:none; border:none; font-size:1.8rem; cursor:pointer; color:#0f172a; margin-right:auto; display:none; padding-left: 20px;">
+            ☰
+        </button>
 
         <div class="control-panel">
             <div id="panel-free" style="display:flex; align-items:center; gap:5px;">
@@ -691,15 +721,34 @@
                 <button class="btn-header btn-login" onclick="openLogin()">Login</button>
                 <a href="https://rzp.io/rzp/xddl5LdV" target="_blank" class="btn-header btn-buy">Buy Access</a>
             </div>
-            <div id="panel-prem" style="display:none; align-items:center; gap:5px;">
-                <span class="status-display sd-prem">♛ Premium</span>
-                <button class="btn-header btn-logout" onclick="logoutUser()">Log Out</button>
+            <div id="panel-prem" style="display:none; align-items:center; position:relative;">
+
+                <div class="profile-trigger" onclick="toggleProfileMenu()">
+                    <div style="text-align:right; margin-right:5px; display:none;" id="desk-profile-text">
+                        <div id="disp-name" style="font-weight:700; font-size:0.9rem; color:#0f172a;">User</div>
+                        <div style="font-size:0.75rem; color:#15803d; font-weight:600;">Premium Access</div>
+                    </div>
+                    <div class="avatar-circle" id="disp-initial">U</div>
+                </div>
+
+                <div class="profile-menu" id="profile-dropdown">
+                    <div class="pm-header">
+                        <div class="pm-name" id="menu-name">Student Name</div>
+                        <div class="pm-mobile" id="menu-mobile">+91 98765XXXXX</div>
+                    </div>
+                    <div class="pm-item" onclick="openChangePass()">
+                        <span>🔑</span> Change Password
+                    </div>
+                    <div class="pm-item logout" onclick="triggerUserLogout()">
+                        <span>🚪</span> Log Out
+                    </div>
+                </div>
             </div>
         </div>
     </header>
 
     <nav class="sidebar" id="sidebar">
-        <div class="brand" onclick="toggleDesktopSidebar()" title="Click to Collapse Menu"
+        <div class="brand" onclick="showView('view-home', null)"
             style="cursor:pointer; display:flex; align-items:center; gap:15px;">
             <img src="https://i.ibb.co/fYNNzJYS/Gemini-Generated-Image-fb7rm1fb7rm1fb7r.png" alt="Logo">
             <div class="brand-text">SocioLogic</div>
@@ -1587,25 +1636,21 @@
     </main>
 
     <script>
-        // CONFIG
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbye1nUUxpxcbMLQrby3tvyCD043fz6twdCZhueU04ZRsaLdiuX7c-Q3jaivpJf-vuL2/exec";
+        // CONFIGURATION
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwUHQCJgKTEWw72qdMkFC9oftmTB7gpYzlrPHfm3Nx0zJ1EsQFB0fl9U2B_UOhcYsBimQ/exec";
 
-        // TOGGLE SIDEBAR (SMOOTH & CLEAN)
+        // --- 1. UI NAVIGATION ---
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebar-overlay');
-
             if (window.innerWidth > 900) {
-                // Laptop Toggle
                 document.body.classList.toggle('sb-hidden');
             } else {
-                // Mobile Toggle with Overlay
                 const isActive = sidebar.classList.toggle('active');
                 overlay.style.display = isActive ? 'block' : 'none';
             }
         }
 
-        // VIEW LOGIC
         function showView(viewId, btnElement) {
             document.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('active-view'));
             const target = document.getElementById(viewId);
@@ -1615,7 +1660,6 @@
             if (btnElement) {
                 btnElement.classList.add('active');
             } else {
-                // Highlight logic for non-click navigation
                 const links = document.querySelectorAll('.nav-item');
                 links.forEach(link => {
                     if (link.getAttribute('onclick') && link.getAttribute('onclick').includes(viewId)) {
@@ -1624,7 +1668,6 @@
                 });
             }
 
-            // Mobile: Close menu after click
             if (window.innerWidth <= 900) {
                 document.getElementById('sidebar').classList.remove('active');
                 document.getElementById('sidebar-overlay').style.display = 'none';
@@ -1632,192 +1675,178 @@
             }
         }
 
-        // LOGIN LOGIC
+        function toggleDesktopSidebar() { document.body.classList.toggle('desktop-closed'); }
+
+        // --- 2. AUTHENTICATION ---
         function openLogin() { document.getElementById('login-modal').style.display = 'flex'; }
         function closeLogin() { document.getElementById('login-modal').style.display = 'none'; }
 
-        // --- 1. UPDATED LOGIN FUNCTION (Saves State) ---
         function verifyLogin() {
-            const name = document.getElementById('login-name').value.trim();
-            const id = document.getElementById('login-id').value.trim();
+            const mobile = document.getElementById('login-mobile').value.trim();
+            const pass = document.getElementById('login-pass').value.trim();
             const btn = document.getElementById('btn-verify-click');
 
-            if (!name || id.length < 4) { alert("Please enter valid details."); return; }
+            if (!mobile || !pass) { alert("Please enter both Mobile and PIN."); return; }
 
             btn.innerText = "Verifying...";
             btn.disabled = true;
 
-            fetch(SCRIPT_URL + "?id=" + encodeURIComponent(id) + "&name=" + encodeURIComponent(name) + "&test=" + "LOGIN_CHECK")
-                .then(response => response.text())
+            fetch(SCRIPT_URL + "?type=login&id=" + encodeURIComponent(mobile) + "&pass=" + encodeURIComponent(pass))
+                .then(res => res.json())
                 .then(data => {
-                    if (data.includes("BLOCK_NOT_PAID")) {
-                        alert("⛔ Access Denied. Please Buy Access.");
-                        btn.innerText = "Verify Access";
-                        btn.disabled = false;
-                    } else {
-                        // SUCCESS: Save to LocalStorage
+                    if (data.status === "ALLOW") {
                         localStorage.setItem('socio_is_premium', 'true');
-                        localStorage.setItem('socio_user_name', name);
-                        localStorage.setItem('socio_user_id', id);
-
+                        localStorage.setItem('socio_user_id', mobile);
+                        localStorage.setItem('socio_user_name', data.name);
                         activatePremiumMode();
                         closeLogin();
-                        alert("✅ Welcome " + name + "!");
-
-                        btn.innerText = "Verify Access";
-                        btn.disabled = false;
+                        alert("✅ Welcome " + data.name);
+                    } else {
+                        alert("❌ Invalid Mobile Number or PIN.");
                     }
+                    btn.innerText = "Login & Verify";
+                    btn.disabled = false;
                 })
-                .catch(() => {
-                    alert("❌ Connection Error.");
-                    btn.innerText = "Verify Access";
+                .catch(err => {
+                    alert("❌ Network Error.");
+                    btn.innerText = "Login & Verify";
                     btn.disabled = false;
                 });
         }
 
-        // --- 2. UPDATED LOGOUT FUNCTION (Clears State) ---
-        function logoutUser() {
-            if (confirm("Log Out?")) {
-                // Clear LocalStorage
-                localStorage.removeItem('socio_is_premium');
-                localStorage.removeItem('socio_user_name');
-                localStorage.removeItem('socio_user_id');
-
-                // Reset UI
-                document.getElementById('panel-prem').style.display = 'none';
-                document.getElementById('panel-free').style.display = 'flex';
-                document.querySelectorAll('.btn-lock').forEach(el => el.style.display = 'flex');
-                document.querySelectorAll('.btn-unlock').forEach(el => el.style.display = 'none');
-
-                showView('view-home', null);
-            }
+        function forgotPassTrigger() {
+            const mobile = prompt("Enter your Registered Mobile Number:");
+            if (!mobile) return;
+            fetch(SCRIPT_URL + "?type=forgot_pass&id=" + encodeURIComponent(mobile))
+                .then(res => res.text())
+                .then(text => {
+                    if (text === "SENT") alert("✅ Success! Check your Email.");
+                    else if (text === "USER_NOT_FOUND") alert("❌ Mobile number not found.");
+                    else alert("❌ Error: " + text);
+                })
+                .catch(() => alert("❌ Network Error."));
         }
 
-        // --- 3. NEW: CHECK LOGIN ON PAGE LOAD ---
-        window.addEventListener('load', function () {
-            // Check if user was previously logged in
-            if (localStorage.getItem('socio_is_premium') === 'true') {
-                activatePremiumMode();
-                const savedName = localStorage.getItem('socio_user_name');
-                if (savedName) console.log("Welcome back, " + savedName);
-            }
-        });
+        // --- 3. PREMIUM DASHBOARD ---
         function activatePremiumMode() {
             document.getElementById('panel-free').style.display = 'none';
             document.getElementById('panel-prem').style.display = 'flex';
+
             document.querySelectorAll('.btn-lock').forEach(el => el.style.display = 'none');
             document.querySelectorAll('.btn-unlock').forEach(el => el.style.display = 'block');
-        }
 
+            const name = localStorage.getItem('socio_user_name') || "Student";
+            const mobile = localStorage.getItem('socio_user_id') || "";
+            const initial = name.charAt(0).toUpperCase();
 
-    </script>
-    <style>
-        /* 1. Global Select Protection (Stops Copying) */
-        body {
-            -webkit-user-select: none;
-            /* Safari/Chrome */
-            -moz-user-select: none;
-            /* Firefox */
-            -ms-user-select: none;
-            /* IE/Edge */
-            user-select: none;
-            /* Standard */
+            if (document.getElementById('disp-name')) document.getElementById('disp-name').innerText = name;
+            if (document.getElementById('disp-initial')) document.getElementById('disp-initial').innerText = initial;
+            if (document.getElementById('menu-name')) document.getElementById('menu-name').innerText = name;
+            if (document.getElementById('menu-mobile')) document.getElementById('menu-mobile').innerText = mobile;
 
-            /* MOBILE SPECIFIC: Stop Long-Press Menu */
-            -webkit-touch-callout: none;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        /* Allow typing in input boxes */
-        input,
-        textarea {
-            -webkit-user-select: text;
-            -moz-user-select: text;
-            -ms-user-select: text;
-            user-select: text;
-            -webkit-touch-callout: default;
-        }
-
-        /* 2. Print Protection (Hides content on Ctrl+P) */
-        @media print {
-            body {
-                display: none !important;
-            }
-
-            html::after {
-                content: "Taking Screenshots or making PDF of the page is prohibited.";
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: #fff;
-                color: #333;
-                font-size: 2rem;
-                font-weight: bold;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                z-index: 9999;
-                text-align: center;
-                border: 20px solid #d1d5db;
+            if (window.innerWidth > 900 && document.getElementById('desk-profile-text')) {
+                document.getElementById('desk-profile-text').style.display = 'block';
             }
         }
 
-        /* 3. Blur Filter Class (Used by JS) */
-        .blur-content {
-            filter: blur(15px);
-            pointer-events: none;
-            user-select: none;
+        function toggleProfileMenu() {
+            const menu = document.getElementById('profile-dropdown');
+            menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
         }
-    </style>
 
-    <script>
-        // 4. Block Right Click (Desktop) & Long Press (Mobile)
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('.profile-trigger') && !e.target.closest('.profile-menu')) {
+                const menu = document.getElementById('profile-dropdown');
+                if (menu) menu.style.display = 'none';
+            }
+        });
+
+        // --- 4. CHANGE PASSWORD ---
+        function openChangePass() {
+            document.getElementById('profile-dropdown').style.display = 'none';
+            document.getElementById('cp-old').value = "";
+            document.getElementById('cp-new').value = "";
+            document.getElementById('change-pass-modal').style.display = 'flex';
+        }
+
+        function submitChangePass() {
+            const oldPass = document.getElementById('cp-old').value.trim();
+            const newPass = document.getElementById('cp-new').value.trim();
+            const id = localStorage.getItem('socio_user_id');
+            const btn = document.getElementById('btn-cp-submit');
+
+            if (!oldPass || !newPass) { alert("Please fill all fields."); return; }
+            if (newPass.length < 4) { alert("New PIN must be at least 4 digits."); return; }
+
+            btn.innerText = "Updating...";
+            btn.disabled = true;
+
+            const url = SCRIPT_URL + "?type=change_pass" +
+                "&id=" + encodeURIComponent(id) +
+                "&old_pass=" + encodeURIComponent(oldPass) +
+                "&new_pass=" + encodeURIComponent(newPass);
+
+            fetch(url)
+                .then(res => res.text())
+                .then(text => {
+                    if (text === "SUCCESS") {
+                        alert("✅ Password Changed! Please login again.");
+                        triggerUserLogout();
+                    } else if (text === "ERROR_WRONG_OLD_PASS") {
+                        alert("❌ Incorrect Current PIN.");
+                    } else {
+                        alert("❌ Error: " + text);
+                    }
+                    btn.innerText = "Update Password";
+                    btn.disabled = false;
+                })
+                .catch(() => { alert("Network Error"); btn.disabled = false; });
+        }
+
+        // --- 5. LOGOUT (RENAMED & GLOBAL) ---
+        window.triggerUserLogout = function () {
+            // We use a simple confirm. If it fails, we force logout anyway.
+            try {
+                if (confirm("Are you sure you want to logout?")) {
+                    localStorage.clear();
+                    location.reload();
+                }
+            } catch (e) {
+                // Fallback if confirm is blocked
+                localStorage.clear();
+                location.reload();
+            }
+        }
+
+        // --- 6. AUTO-LOAD ---
+        window.addEventListener('load', function () {
+            if (localStorage.getItem('socio_is_premium') === 'true') {
+                activatePremiumMode();
+            }
+        });
+
+        // --- 7. SECURITY ---
         document.addEventListener('contextmenu', event => event.preventDefault());
-
-        // 5. Blur Screen on Tab Switch (Anti-Cheating)
-        // Professional warning when user minimizes or switches tabs
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'F12' || (e.ctrlKey && e.key === 'p') || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
+                e.preventDefault();
+            }
+        });
         document.addEventListener("visibilitychange", function () {
             if (document.hidden) {
                 document.body.classList.add("blur-content");
-                document.title = "Taking Screenshots or making PDF of the page is prohibited.";
+                document.title = "⚠️ Don't switch tabs!";
             } else {
-                // Add a 0.5s delay punishment before un-blurring
                 setTimeout(() => {
                     document.body.classList.remove("blur-content");
-                    document.title = "Exam Session Active";
+                    document.title = "SocioLogic | Dashboard";
                 }, 500);
             }
         });
-
-        // 6. Desktop Keyboard Blocks
-        document.addEventListener('keydown', function (e) {
-            // Block F12 (DevTools), Ctrl+Shift+I, Ctrl+P (Print), Ctrl+S (Save)
-            if (e.key === 'F12' ||
-                (e.ctrlKey && e.shiftKey && e.key === 'I') ||
-                (e.ctrlKey && e.key === 'p') ||
-                (e.ctrlKey && e.key === 's')) {
-                e.preventDefault();
-                return false;
-            }
-
-            // Detect PrintScreen Key
-            if (e.key === 'PrintScreen') {
-                alert("System Warning: Screen capture is disabled. ");
-                document.body.classList.add("blur-content");
-                setTimeout(() => document.body.classList.remove("blur-content"), 3000); // Punish with 3s blur
-            }
-        });
-    </script>
-    <script>
-        function toggleDesktopSidebar() {
-            document.body.classList.toggle('desktop-closed');
-        }
     </script>
 
     <style>
-        /* 1. HIDE Hamburger by default (Because Sidebar starts OPEN) */
+        /* 1. HIDE Hamburger by default */
         @media(min-width: 901px) {
             #desktop-menu-btn {
                 display: none !important;
@@ -1828,12 +1857,11 @@
             }
         }
 
-        /* 2. SHOW Hamburger ONLY when Sidebar is Closed */
+        /* 2. SHOW Hamburger when Sidebar Closed */
         body.desktop-closed #desktop-menu-btn {
             display: block !important;
         }
 
-        /* 3. The Slide-Away Animation */
         body.desktop-closed {
             --sidebar-width: 0px;
         }
@@ -1842,7 +1870,140 @@
             transform: translateX(-100%);
             opacity: 0;
             pointer-events: none;
-            /* Prevents accidental clicks when hidden */
+        }
+
+        /* 3. LAPTOP CLEANUP */
+        @media (min-width: 901px) {
+
+            #sidebar-overlay,
+            #mob-close-sb,
+            #mob-menu {
+                display: none !important;
+            }
+        }
+
+        /* 4. MOBILE CLEANUP */
+        @media (max-width: 900px) {
+            #desktop-menu-btn {
+                display: none !important;
+            }
+        }
+
+        /* --- PROFILE DROPDOWN STYLES --- */
+        .profile-trigger {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 50px;
+            transition: background 0.2s;
+        }
+
+        .profile-trigger:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .avatar-circle {
+            width: 40px;
+            height: 40px;
+            background: var(--brand-grad);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+        }
+
+        .profile-menu {
+            display: none;
+            position: absolute;
+            top: 60px;
+            right: 0;
+            background: white;
+            width: 200px;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px -5px rgba(0, 0, 0, 0.2);
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            z-index: 3000;
+            /* FORCE TOP LAYER */
+            animation: slideDown 0.2s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .pm-header {
+            padding: 20px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .pm-name {
+            font-weight: 800;
+            color: #0f172a;
+            font-size: 1rem;
+        }
+
+        .pm-mobile {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-top: 2px;
+            font-family: monospace;
+        }
+
+        .pm-item {
+            padding: 15px 20px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            color: #334155;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background 0.2s;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .pm-item:hover {
+            background: #f1f5f9;
+            color: #2563eb;
+        }
+
+        .pm-item.logout {
+            color: #dc2626;
+        }
+
+        .pm-item.logout:hover {
+            background: #fef2f2;
+        }
+
+        /* Security Styles */
+        body {
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        input {
+            -webkit-user-select: text;
+            user-select: text;
+        }
+
+        .blur-content {
+            filter: blur(15px);
+            pointer-events: none;
         }
     </style>
 </body>
