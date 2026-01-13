@@ -1019,7 +1019,7 @@
     </style>
 </head>
 
-<body onload="document.getElementById('instrOverlay').style.display='flex'">
+<body>
 
 <div id="instrOverlay" style="display:flex; position:fixed; inset:0; background:rgba(255,255,255,0.98); z-index:9999; align-items:center; justify-content:center; font-family:'Segoe UI', sans-serif;">
     <div style="width:100%; max-width:600px; background:white; padding:30px; border-radius:20px; box-shadow:0 25px 50px rgba(0,0,0,0.15); border:1px solid #e2e8f0; max-height:90vh; overflow-y:auto; margin:15px;">
@@ -1234,7 +1234,7 @@
 
             <p class="ty-msg">
                 Your performance on <b style="color:#1e40af;">SocioLogic</b> has been recorded.<br>
-                You are one step closer to your <b style="color:#d97706;">dream university</b>.
+                You are one step closer to your <b style="color:#d97706;">DREAM UNIVERSITY</b>.
             </p>
 
             <a href="https://t.me/SocioLogicPYQs" target="_blank"
@@ -1249,13 +1249,13 @@
 
                 <button class="btn btn-sec" onclick="location.reload()"
                     style="flex: 1; min-width: 200px; justify-content: center; padding: 16px; border-radius: 12px; font-weight: 700; border: 2px solid #e2e8f0; color: #475569;">
-                    🔄 Restart Test
+                    🔄 View Current Page
                 </button>
 
                 <a href="index.html" style="text-decoration: none; flex: 1; min-width: 200px;">
                     <button class="btn btn-pri"
                         style="width: 100%; justify-content: center; padding: 16px; border-radius: 12px; background: #0f172a; color: white; font-weight: 700; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);">
-                        Main Page
+                        View Main Page
                     </button>
                 </a>
 
@@ -1733,7 +1733,8 @@
 
             // Allow if badge says "Remaining" OR "Unlimited"
             // This fixes the bug where the button stayed locked
-            const isBadgeValid = !badgeText.includes("Exhausted") &&
+            // FIXED LOGIC: Only block if Remaining is explicitly 0
+const isBadgeValid = (badgeText.includes("Remaining") || badgeText.includes("Unlimited") || badgeText.includes("Attempt")) && !badgeText.includes("Remaining: 0");
                 (badgeText.includes("Remaining") || badgeText.includes("Unlimited") || badgeText.includes("Attempt"));
 
             if (name.length > 0 && id.length >= 4 && isBadgeValid) {

@@ -672,10 +672,14 @@
     <div id="sidebar-overlay" onclick="toggleSidebar()"></div>
 
     <header class="top-header">
+        <button id="desktop-menu-btn" onclick="toggleDesktopSidebar()"
+            style="background:none; border:none; font-size:1.8rem; cursor:pointer; color:#0f172a; margin-right:auto; display:none; padding-left: 20px;">
+            ☰
+        </button>
         <div class="header-brand-trigger">
             <span onclick="toggleSidebar()" style="font-size:1.8rem; color:#2563eb; cursor:pointer;">☰</span>
 
-            <div style="display:flex; align-items:center; gap:10px;" onclick="toggleSidebar()">
+            <div style="display:flex; align-items:center; gap:10px;" onclick="showView('view-home', null)">
                 <img src="https://i.ibb.co/fYNNzJYS/Gemini-Generated-Image-fb7rm1fb7rm1fb7r.png" alt="Logo">
                 <span>SocioLogic</span>
             </div>
@@ -684,21 +688,21 @@
         <div class="control-panel">
             <div id="panel-free" style="display:flex; align-items:center; gap:5px;">
                 <span class="status-display sd-free">👤 Free User</span>
-                <a href="https://rzp.io/rzp/xddl5LdV" target="_blank" class="btn-header btn-buy">Buy Access</a>
                 <button class="btn-header btn-login" onclick="openLogin()">Login</button>
+                <a href="https://rzp.io/rzp/xddl5LdV" target="_blank" class="btn-header btn-buy">Buy Access</a>
             </div>
             <div id="panel-prem" style="display:none; align-items:center; gap:5px;">
-                <span class="status-display sd-prem">♛ Premium Member</span>
+                <span class="status-display sd-prem">♛ Premium</span>
                 <button class="btn-header btn-logout" onclick="logoutUser()">Log Out</button>
             </div>
         </div>
     </header>
 
     <nav class="sidebar" id="sidebar">
-        <div class="brand" onclick="toggleSidebar()">
+        <div class="brand" onclick="toggleDesktopSidebar()" title="Click to Collapse Menu"
+            style="cursor:pointer; display:flex; align-items:center; gap:15px;">
             <img src="https://i.ibb.co/fYNNzJYS/Gemini-Generated-Image-fb7rm1fb7rm1fb7r.png" alt="Logo">
             <div class="brand-text">SocioLogic</div>
-            <div style="margin-left:auto; opacity:0.5; font-size:1.2rem;">«</div>
         </div>
 
         <div class="nav-menu">
@@ -741,13 +745,13 @@
                 <p style="font-size: 1.25rem; color: #64748b; line-height: 1.7; margin-bottom: 40px;">
                     <b>Welcome to SocioLogic.</b><br>
                     The only platform that bridges the gap between academic reading and the actual NTA exam pattern.
-                    Login to access Premium content or try the free demo.
+                    Login to access Premium content or try the FREE PYQs.
                 </p>
 
                 <div
                     style="padding: 25px; background: white; border-left: 5px solid #f59e0b; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
                     <b style="color:#b45309; font-size: 1.1rem;">🚀 New here?</b><br>
-                    <span style="color:#475569">Click on <b>"Free Tests"</b> in the sidebar to start your
+                    <span style="color:#475569">Click on <b>"Free PYQs"</b> in the sidebar to start your
                         journey.</span>
                 </div>
             </div>
@@ -767,7 +771,18 @@
                     <br><br>
                     <b>SocioLogic bridges that gap.</b> We bring you a real-time simulated exam environment that is not
                     just a PDF, but an interactive experience.
+                    <br><br>
+                    We not only provide you with a wide variety of PYQs ranging from the most common to the least
+                    talked-about topics,
+                    but also offer<b> well-structured explanations for all the options.
                 </p>
+                <p style="font-size:18px; line-height:1.6;">
+                    <strong>✨ Most Exciting Feature:</strong><br>
+                    <span style="color:#2c7be5; font-weight:600;">A Pro Hint with Every Question</span> -
+                    packed with <em>smart mnemonics</em>, <em>quick tricks</em>, <em>useful references</em>, and
+                    powerful <em>memory aids</em> that make learning effortless and unforgettable.
+                </p>
+
 
                 <div
                     style="background:#eff6ff; padding:30px; border-radius:20px; margin:30px 0; border:1px solid #dbeafe;">
@@ -796,44 +811,234 @@
         </div>
 
         <div id="view-guide" class="content-section">
-            <h2 style="color:#0f172a; border-bottom:2px solid #e2e8f0; padding-bottom:15px; margin-bottom: 30px;">🧭 How
-                to Navigate</h2>
-            <div style="background:white; padding:40px; border-radius:24px; box-shadow:var(--shadow-card);">
-                <div class="step-row">
-                    <div class="step-num">1</div>
-                    <div class="step-content">
-                        <h3>Login Credentials</h3>
-                        <p>Click "Login". Enter Name and Last 4 Digits of Phone.</p>
-                    </div>
+
+            <style>
+                /* Grid Layout for Cards */
+                .guide-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                    gap: 25px;
+                    margin-top: 30px;
+                }
+
+                /* Individual Card Style */
+                .guide-card {
+                    background: white;
+                    padding: 30px;
+                    border-radius: 20px;
+                    border: 1px solid #e2e8f0;
+                    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+                    transition: transform 0.3s ease, box-shadow 0.3s ease;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 20px;
+                    position: relative;
+                    overflow: hidden;
+                }
+
+                /* Hover Effect */
+                .guide-card:hover {
+                    transform: translateY(-8px);
+                    box-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.1);
+                    border-color: #cbd5e1;
+                }
+
+                /* Top Decorative Line */
+                .guide-card::before {
+                    content: "";
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 5px;
+                    background: linear-gradient(90deg, #2563eb, #3b82f6);
+                    opacity: 0;
+                    transition: opacity 0.3s;
+                }
+
+                .guide-card:hover::before {
+                    opacity: 1;
+                }
+
+                /* Icons */
+                .guide-icon-box {
+                    width: 55px;
+                    height: 55px;
+                    background: #eff6ff;
+                    color: #2563eb;
+                    border-radius: 14px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 1.6rem;
+                    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.15);
+                }
+
+                /* Text Styles */
+                .guide-step-tag {
+                    font-size: 0.75rem;
+                    text-transform: uppercase;
+                    letter-spacing: 1.5px;
+                    color: #94a3b8;
+                    font-weight: 800;
+                }
+
+                .guide-heading {
+                    font-size: 1.25rem;
+                    font-weight: 700;
+                    color: #0f172a;
+                    margin: 0;
+                    line-height: 1.3;
+                }
+
+                .guide-description {
+                    color: #475569;
+                    font-size: 0.95rem;
+                    line-height: 1.7;
+                    margin: 0;
+                }
+
+                /* Highlights */
+                .hl-red {
+                    color: #dc2626;
+                    font-weight: 700;
+                    background: #fef2f2;
+                    padding: 2px 8px;
+                    border-radius: 6px;
+                    border: 1px solid #fee2e2;
+                }
+
+                .hl-blue {
+                    color: #2563eb;
+                    font-weight: 700;
+                    background: #eff6ff;
+                    padding: 2px 8px;
+                    border-radius: 6px;
+                    border: 1px solid #dbeafe;
+                }
+            </style>
+
+            <div style="padding: 40px 20px; max-width: 1200px; margin: 0 auto;">
+
+                <div style="text-align: center; margin-bottom: 50px;">
+                    <span
+                        style="background: #e0e7ff; color: #3730a3; padding: 6px 16px; border-radius: 30px; font-size: 0.85rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;">User
+                        Manual</span>
+                    <h1 style="color: #0f172a; font-size: 2.5rem; margin: 15px 0 10px 0; font-weight: 800;">Master the
+                        Platform</h1>
+                    <p style="color: #64748b; font-size: 1.1rem; max-width: 600px; margin: 0 auto; line-height: 1.6;">
+                        A complete guide to our NTA-Style simulation, advanced security features, and performance
+                        analysis.
+                    </p>
                 </div>
-                <div class="step-row">
-                    <div class="step-num">2</div>
-                    <div class="step-content">
-                        <h3>Select Test</h3>
-                        <p>Choose Full Length or Topic Wise tests from the menu.</p>
+
+                <div class="guide-grid">
+
+                    <div class="guide-card">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <div class="guide-icon-box">🔐</div>
+                            <div class="guide-step-tag">Step 01</div>
+                        </div>
+                        <div>
+                            <h3 class="guide-heading">Smart Login & Access</h3>
+                            <p class="guide-description" style="margin-top: 10px;">
+                                <strong>Paid Users:</strong> Enter Name + Last 4 digits of phone.<br>
+                                <strong>Free Users:</strong> Enter Name + Use Code <span
+                                    class="hl-blue">SocioLogic</span>.<br>
+                                <span
+                                    style="font-size:0.85rem; color:#64748b; display:block; margin-top:10px; font-style:italic;">*Your
+                                    progress is automatically synced to the cloud.</span>
+                            </p>
+                        </div>
                     </div>
-                </div>
-                <div class="step-row">
-                    <div class="step-num">3</div>
-                    <div class="step-content">
-                        <h3>The Interface</h3>
-                        <p>Real NTA-style interface with Timer, Mark for Review, and Save.</p>
+
+                    <div class="guide-card">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <div class="guide-icon-box">📱</div>
+                            <div class="guide-step-tag">Step 02</div>
+                        </div>
+                        <div>
+                            <h3 class="guide-heading">Responsive Interface</h3>
+                            <p class="guide-description" style="margin-top: 10px;">
+                                We adapt to your device instantly:<br>
+                                <strong>Laptop:</strong> Full sidebar navigation & keyboard support.<br>
+                                <strong>Mobile:</strong> A sticky footer with a dedicated <span class="hl-red">Red
+                                    Submit Button</span> so you never have to scroll to finish.
+                            </p>
+                        </div>
                     </div>
-                </div>
-                <div class="step-row">
-                    <div class="step-num">4</div>
-                    <div class="step-content">
-                        <h3>Analysis</h3>
-                        <p>View Scorecard, Strong/Weak areas, and Explanations after submitting.</p>
+
+                    <div class="guide-card">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <div class="guide-icon-box">🛡️</div>
+                            <div class="guide-step-tag">Step 03</div>
+                        </div>
+                        <div>
+                            <h3 class="guide-heading">Anti-Cheat Shield</h3>
+                            <p class="guide-description" style="margin-top: 10px;">
+                                To maintain exam integrity, we block:<br>
+                                • <strong>Tab Switching:</strong> Instantly blurs the screen.<br>
+                                • <strong>Copying:</strong> Right-click and selection disabled.<br>
+                                • <strong>Screenshots:</strong> Triggers a security blackout.
+                            </p>
+                        </div>
                     </div>
+
+                    <div class="guide-card">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <div class="guide-icon-box">⚖️</div>
+                            <div class="guide-step-tag">Step 04</div>
+                        </div>
+                        <div>
+                            <h3 class="guide-heading">NTA Marking Scheme</h3>
+                            <p class="guide-description" style="margin-top: 10px;">
+                                <strong>Correct Answer:</strong> +4 Marks<br>
+                                <strong>Incorrect Answer:</strong> -1 Mark<br>
+                                Use the <strong>"Review"</strong> button (Purple Flag) to mark doubtful questions and
+                                revisit them before submitting.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="guide-card">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <div class="guide-icon-box">📊</div>
+                            <div class="guide-step-tag">Step 05</div>
+                        </div>
+                        <div>
+                            <h3 class="guide-heading">Deep Performance Analysis</h3>
+                            <p class="guide-description" style="margin-top: 10px;">
+                                Get an instant report card upon submission:<br>
+                                1. <strong>Score Breakdown:</strong> Accuracy & Attempts.<br>
+                                2. <strong>Weakness Detector:</strong> AI highlights your weakest topic.<br>
+                                3. <strong>Solutions:</strong> Detailed explanations for every Q.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="guide-card">
+                        <div style="display: flex; justify-content: space-between; align-items: start;">
+                            <div class="guide-icon-box">☁️</div>
+                            <div class="guide-step-tag">Step 06</div>
+                        </div>
+                        <div>
+                            <h3 class="guide-heading">Exit & Cloud Save</h3>
+                            <p class="guide-description" style="margin-top: 10px;">
+                                Done analyzing? Click <span class="hl-blue">Exit & Save Report</span>.<br>
+                                This securely uploads your result to our database. You can view it anytime later by
+                                clicking <strong>"View Past Attempts"</strong> on the home screen.
+                            </p>
+                        </div>
+                    </div>
+
                 </div>
             </div>
+
         </div>
 
 
-
         <div id="view-free" class="content-section">
-            <h2 style="color:#0f172a; margin-bottom: 25px;">🎁 Free Demo Zone</h2>
+            <h2 style="color:#0f172a; margin-bottom: 25px;">🎁 Free PYQs Zone</h2>
             <div class="grid">
 
                 <!-- Add Your FREE PYQs Here -->
@@ -961,6 +1166,24 @@
                     </div>
                     <div class="btn-lock">🔒 Login to Unlock</div>
                     <a href="Paper_2021_Full.html" class="btn-unlock">🔓 Start Test</a>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <span class="c-badge bg-prem">Premium</span>
+                        <h3 class="c-title">JNUEE PG 2020 Full Paper</h3>
+                        <p class="c-desc">Complete 100 Questions with Timer.</p>
+                    </div>
+                    <div class="btn-lock">🔒 Login to Unlock</div>
+                    <a href="JNUEE 2020 FULL.html" class="btn-unlock">🔓 Start Test</a>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <span class="c-badge bg-prem">Premium</span>
+                        <h3 class="c-title">JNUEE PG 2019 Full Paper</h3>
+                        <p class="c-desc">Complete 100 Questions with Timer.</p>
+                    </div>
+                    <div class="btn-lock">🔒 Login to Unlock</div>
+                    <a href="JNUEE 2019 FULL.html" class="btn-unlock">🔓 Start Test</a>
                 </div>
 
 
@@ -1587,6 +1810,41 @@
             }
         });
     </script>
+    <script>
+        function toggleDesktopSidebar() {
+            document.body.classList.toggle('desktop-closed');
+        }
+    </script>
+
+    <style>
+        /* 1. HIDE Hamburger by default (Because Sidebar starts OPEN) */
+        @media(min-width: 901px) {
+            #desktop-menu-btn {
+                display: none !important;
+            }
+
+            .header-brand-trigger {
+                display: none !important;
+            }
+        }
+
+        /* 2. SHOW Hamburger ONLY when Sidebar is Closed */
+        body.desktop-closed #desktop-menu-btn {
+            display: block !important;
+        }
+
+        /* 3. The Slide-Away Animation */
+        body.desktop-closed {
+            --sidebar-width: 0px;
+        }
+
+        body.desktop-closed .sidebar {
+            transform: translateX(-100%);
+            opacity: 0;
+            pointer-events: none;
+            /* Prevents accidental clicks when hidden */
+        }
+    </style>
 </body>
 
 </html>
