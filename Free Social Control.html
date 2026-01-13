@@ -1019,7 +1019,38 @@
     </style>
 </head>
 
-<body>
+<body onload="document.getElementById('instrOverlay').style.display='flex'">
+
+<div id="instrOverlay" style="display:flex; position:fixed; inset:0; background:rgba(255,255,255,0.98); z-index:9999; align-items:center; justify-content:center; font-family:'Segoe UI', sans-serif;">
+    <div style="width:100%; max-width:600px; background:white; padding:30px; border-radius:20px; box-shadow:0 25px 50px rgba(0,0,0,0.15); border:1px solid #e2e8f0; max-height:90vh; overflow-y:auto; margin:15px;">
+        <div style="text-align:center; border-bottom:2px solid #eff6ff; padding-bottom:15px; margin-bottom:20px;">
+            <h2 style="margin:0; color:#1e293b; font-size:22px;">📜 Instructions</h2>
+            <p style="margin:5px 0 0; color:#64748b; font-size:14px;">Please read the marking scheme carefully</p>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-bottom:25px;">
+            <div style="background:#f0fdf4; padding:15px; border-radius:12px; border:1px solid #bbf7d0; text-align:center;">
+                <div style="color:#166534; font-size:12px; font-weight:700; text-transform:uppercase;">Correct Answer</div>
+                <div style="font-size:24px; font-weight:800; color:#15803d;">+4</div>
+            </div>
+            <div style="background:#fef2f2; padding:15px; border-radius:12px; border:1px solid #fecaca; text-align:center;">
+                <div style="color:#991b1b; font-size:12px; font-weight:700; text-transform:uppercase;">Incorrect Answer</div>
+                <div style="font-size:24px; font-weight:800; color:#dc2626;">-1</div>
+            </div>
+        </div>
+
+        <div style="background:#f8fafc; padding:20px; border-radius:12px; margin-bottom:25px; border:1px solid #e2e8f0;">
+            <h3 style="margin:0 0 10px 0; font-size:16px; color:#334155;">🎮 How to Submit:</h3>
+            <ul style="margin:0; padding-left:20px; color:#475569; font-size:14px; line-height:1.6;">
+                <li><strong>Smartphone Users:</strong> Use the <span style="color:#dc2626; font-weight:bold;">Red Submit Button</span> in the bottom footer.</li>
+                <li><strong>Laptop Users:</strong> Click 'Submit Test' on the sidebar.</li>
+                <li>You can review and change answers anytime before submitting.</li>
+            </ul>
+        </div>
+
+        <button onclick="document.getElementById('instrOverlay').style.display='none'" style="width:100%; padding:16px; background:#2563eb; color:white; border:none; border-radius:12px; font-size:16px; font-weight:700; cursor:pointer; box-shadow:0 4px 12px rgba(37,99,235,0.2);">I am ready to begin ➜</button>
+    </div>
+</div>
 
     <div id="welcome-screen">
         <div class="welcome-card">
@@ -1118,16 +1149,17 @@
             </aside>
         </div>
 
-        <div class="footer-bar">
-            <div style="display:flex; gap:10px;">
-                <button class="btn btn-sec" onclick="clearResp()">Clear</button>
-                <button class="btn btn-rev" onclick="markReview()" id="btn-review">🚩 Review</button>
-            </div>
-            <div style="display:flex; gap:10px;">
-                <button class="btn btn-sec" onclick="nav(-1)">Prev</button>
-                <button class="btn btn-pri" onclick="nav(1)" id="btn-next">Save & Next ➜</button>
-            </div>
+        <div class="footer-bar" style="padding:0 10px; gap:5px; height:auto; min-height:72px;">
+        <div style="display:flex; gap:5px; flex:1;">
+            <button class="btn btn-sec" onclick="clearResp()" style="flex:1; justify-content:center; padding:10px; font-size:0.8rem;">Clear</button>
+            <button class="btn btn-rev" onclick="markReview()" id="btn-review" style="flex:1; justify-content:center; padding:10px; font-size:0.8rem;">🚩 Review</button>
         </div>
+        <div style="display:flex; gap:5px; flex:1.5;">
+            <button class="btn btn-sec" onclick="nav(-1)" style="padding:10px;">Prev</button>
+            <button class="btn btn-pri" onclick="nav(1)" id="btn-next" style="flex:1; justify-content:center; padding:10px; font-size:0.9rem;">Next ➜</button>
+            <button class="btn btn-danger" onclick="finishTest()" style="padding:10px; background:#dc2626; color:white;">Submit</button>
+        </div>
+    </div>
     </div>
 
     <div class="overlay" id="result-overlay">
@@ -1154,10 +1186,15 @@
                         <div class="sc-value" id="disp-score">0</div>
                     </div>
                 </div>
+
+                <button onclick="showThankYou()" style="margin-top:15px; width:100%; padding:10px; background:#ffffff; color:#1e40af; border:none; border-radius:8px; font-weight:800; cursor:pointer; font-size:0.9rem; box-shadow:0 4px 6px rgba(0,0,0,0.1); transition:transform 0.2s;">
+                    Exit & Save Report ➜
+                </button>
             </div>
 
             <div class="res-body">
-                <div class="analysis-row">
+
+            <div class="analysis-row">
                     <div class="analysis-box" style="border-left:4px solid #15803d;">
                         <div class="ab-title" style="color:#15803d">💪 Strongest</div>
                         <div class="ab-val" id="area-strong">--</div>
@@ -1218,7 +1255,7 @@
                 <a href="index.html" style="text-decoration: none; flex: 1; min-width: 200px;">
                     <button class="btn btn-pri"
                         style="width: 100%; justify-content: center; padding: 16px; border-radius: 12px; background: #0f172a; color: white; font-weight: 700; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);">
-                        🏠 Dashboard
+                        Main Page
                     </button>
                 </a>
 
