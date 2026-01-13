@@ -1,0 +1,2206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>YOUR PYQ BATTLE</title>
+    <style>
+        :root {
+            --brand-main: #2563eb;
+            --brand-grad: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+            --bg-grad: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-light: #64748b;
+            --success: #15803d;
+            --danger: #b91c1c;
+            --review: #7c3aed;
+            --selected: #eff6ff;
+            --radius: 16px;
+            --shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg-grad);
+            color: var(--text-main);
+            height: 100vh;
+            height: 100dvh;
+            /* Mobile Chrome Fix */
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* --- 1. WELCOME SCREEN --- */
+        #welcome-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            background: white;
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 24px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- UPDATED WELCOME SCREEN (Wider & Premium) --- */
+        .welcome-card {
+            background: white;
+            width: 90%;
+            /* Good for Mobile */
+            max-width: 700px;
+            /* Increased from 450px for Laptop (Wider look) */
+            padding: 50px;
+            /* More spacious "Grand" feel */
+            border-radius: 24px;
+            /* Softer corners */
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
+            /* Deeper shadow */
+            text-align: center;
+            border: 1px solid #e2e8f0;
+            max-height: 90vh;
+            overflow-y: auto;
+            display: flex;
+            /* Fixes layout alignment */
+            flex-direction: column;
+            align-items: center;
+            /* Centers everything perfectly */
+        }
+
+        /* Ensure input fields don't stretch too ugly on the wide screen */
+        .welcome-card .input-field {
+            max-width: 500px;
+            /* Keeps inputs looking neat */
+            width: 100%;
+        }
+
+        /* Mobile Adjustment */
+        @media(max-width: 600px) {
+            .welcome-card {
+                width: 95%;
+                /* Maximize space on phone */
+                padding: 30px 20px;
+                /* Slightly tighter padding for small screens */
+            }
+        }
+
+        .mode-selector {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .mode-btn {
+            flex: 1;
+            padding: 15px 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        .mode-btn.active {
+            border-color: #2563eb;
+            background: #eff6ff;
+            color: #2563eb;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+            transform: translateY(-2px);
+        }
+
+        /* --- SCORECARD GRID STYLES --- */
+        .score-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+
+        .score-card-item {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            text-align: center;
+        }
+
+        .sc-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.9;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .sc-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 15px;
+            margin: 15px 0;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            outline: none;
+            text-align: center;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .input-field:focus {
+            border-color: #2563eb;
+        }
+
+        #attempt-badge {
+            display: inline-block;
+            background: #fff7ed;
+            color: #c2410c;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            border: 1px solid #ffedd5;
+            margin-bottom: 20px;
+        }
+
+        /* --- 2. MAIN INTERFACE --- */
+        #app-wrapper {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+        }
+
+        /* Header */
+        nav {
+            background: var(--brand-grad);
+            color: white;
+            height: 64px;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow);
+            z-index: 50;
+            flex-shrink: 0;
+        }
+
+        .timer-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-weight: 700;
+            font-size: 1.1rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(4px);
+        }
+
+        /* Main Area */
+        .container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .main-area {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            display: flex;
+            justify-content: center;
+        }
+
+        .q-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 40px;
+            max-width: 900px;
+            width: 100%;
+            height: fit-content;
+            border-top: 5px solid #2563eb;
+            animation: slideUp 0.3s ease-out;
+            margin-bottom: 40px;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .q-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 15px;
+        }
+
+        .topic-tag {
+            background: #eff6ff;
+            color: #1e40af;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        .q-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            line-height: 1.6;
+            color: var(--text-main);
+            margin-bottom: 25px;
+        }
+
+        /* Options */
+        .option {
+            display: flex;
+            align-items: flex-start;
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+            line-height: 1.5;
+        }
+
+        .option:hover {
+            border-color: #93c5fd;
+            background: #f8fafc;
+        }
+
+        .option.selected {
+            border-color: #2563eb;
+            background: var(--selected);
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.1);
+        }
+
+        .option.selected .opt-key {
+            background: #2563eb;
+            color: white;
+            border-color: #2563eb;
+        }
+
+        .option.review-marked {
+            border-color: var(--review);
+            background: #f5f3ff;
+        }
+
+        .option.review-marked .opt-key {
+            background: var(--review);
+            color: white;
+            border-color: var(--review);
+        }
+
+        .opt-key {
+            min-width: 32px;
+            height: 32px;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #64748b;
+            margin-right: 15px;
+            font-size: 0.9rem;
+        }
+
+        /* Sidebar (Desktop Default) */
+        .sidebar {
+            width: 340px;
+            background: white;
+            border-left: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            z-index: 40;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .sb-grid {
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            overflow-y: auto;
+            align-content: start;
+        }
+
+        .grid-btn {
+            aspect-ratio: 1;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #64748b;
+            background: white;
+        }
+
+        /* States */
+        .st-curr {
+            border-color: #2563eb;
+            color: #2563eb;
+            box-shadow: inset 0 0 0 2px #2563eb;
+        }
+
+        .st-ans {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        .st-rev {
+            background: #f59e0b;
+            border-color: #f59e0b;
+            color: white;
+        }
+
+        .st-ans-rev {
+            background: var(--review);
+            border-color: var(--review);
+            color: white;
+        }
+
+        /* Footer */
+        .footer-bar {
+            height: 72px;
+            background: white;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            z-index: 30;
+            flex-shrink: 0;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-pri {
+            background: #1e40af;
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(30, 64, 175, 0.2);
+        }
+
+        .btn-sec {
+            background: white;
+            border: 2px solid #e2e8f0;
+            color: #475569;
+        }
+
+        .btn-rev {
+            background: #fffbeb;
+            color: #b45309;
+            border: 1px solid #fcd34d;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        /* --- PREMIUM MOBILE/TABLET ADAPTATION --- */
+        /* Only activates when 'mobile-mode' class is on body */
+        body.mobile-mode .sidebar {
+            position: fixed;
+            right: 0;
+            top: 64px;
+            bottom: 0;
+            width: 85%;
+            max-width: 320px;
+            transform: translateX(100%);
+            /* Hidden by default */
+            box-shadow: -10px 0 30px rgba(0, 0, 0, 0.2);
+        }
+
+        body.mobile-mode .sidebar.active {
+            transform: translateX(0);
+        }
+
+        /* Slide in */
+
+        body.mobile-mode .main-area {
+            padding: 15px;
+        }
+
+        body.mobile-mode .q-card {
+            padding: 25px;
+            border-radius: 12px;
+        }
+
+        /* Bigger Touch Targets for Mobile */
+        body.mobile-mode .option {
+            padding: 18px 15px;
+            margin-bottom: 12px;
+        }
+
+        body.mobile-mode .btn {
+            padding: 14px 18px;
+            font-size: 1rem;
+        }
+
+        body.mobile-mode .footer-bar {
+            height: 80px;
+            padding: 0 15px;
+        }
+
+        /* Hide Text Labels on Mobile Footer if needed to fit */
+        body.mobile-mode .btn-sec span {
+            display: none;
+        }
+
+        body.mobile-mode .btn svg {
+            display: block;
+        }
+
+        /* --- COMPACT RESULT CARD STYLES --- */
+        /* --- UPDATED WIDTH FOR RESULT CARD --- */
+        .res-card {
+            background: #ffffff;
+            width: 95%;
+            /* Uses 95% screen width on Mobile */
+            max-width: 900px;
+            /* Increased from 500px to 900px for Laptop */
+            max-height: 90vh;
+            /* Keeps it fitting vertically */
+            border-radius: 20px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+            animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .res-header {
+            background: var(--brand-grad);
+            padding: 20px;
+            /* Reduced padding */
+            text-align: center;
+            color: white;
+            flex-shrink: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .res-header h2 {
+            font-size: 1.1rem;
+            margin: 0 0 15px 0;
+            opacity: 0.95;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        /* Compact Score Grid */
+        .score-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            /* 4 items in one row */
+            gap: 8px;
+            margin: 0;
+        }
+
+        .score-card-item {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 8px 4px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(4px);
+            text-align: center;
+        }
+
+        .sc-label {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            opacity: 0.85;
+            margin-bottom: 3px;
+            font-weight: 600;
+        }
+
+        .sc-value {
+            font-size: 1.15rem;
+            font-weight: 700;
+            line-height: 1.1;
+        }
+
+        /* Result Body */
+        .res-body {
+            padding: 20px;
+            overflow-y: auto;
+            flex: 1;
+            background: #f8fafc;
+        }
+
+        /* Analysis Boxes */
+        .analysis-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .analysis-box {
+            background: white;
+            padding: 12px 15px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+        }
+
+        .ab-title {
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .ab-val {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #334155;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* --- MISSING OVERLAY & EXPLANATION STYLES --- */
+        .overlay {
+            display: none;
+            /* Hidden by default */
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            background: rgba(15, 23, 42, 0.8);
+            /* Dark background */
+            backdrop-filter: blur(5px);
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        /* Explanation Feed Styling */
+        .exp-row {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
+        }
+
+        .exp-row.correct {
+            border-left: 5px solid #16a34a;
+        }
+
+        .exp-row.wrong {
+            border-left: 5px solid #dc2626;
+        }
+
+        .exp-detail {
+            background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+            margin-top: 15px;
+            padding-top: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .why-box {
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: #334155;
+        }
+
+        .txt-green {
+            color: #16a34a;
+            font-weight: 700;
+        }
+
+        .txt-red {
+            color: #dc2626;
+            font-weight: 700;
+        }
+
+        /* Mobile Tweak: Stack scores if screen is too small */
+        @media(max-width: 400px) {
+            .score-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* --- PREMIUM HISTORY MODAL --- */
+        #history-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 250;
+            background: rgba(15, 23, 42, 0.7);
+            /* Darker blur */
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(8px);
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        .history-card {
+            background: white;
+            width: 90%;
+            max-width: 550px;
+            max-height: 80vh;
+            border-radius: 24px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .hist-header {
+            padding: 25px;
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .hist-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #1e293b;
+            letter-spacing: -0.5px;
+        }
+
+        .hist-close {
+            background: #fee2e2;
+            color: #ef4444;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 99px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+
+        .hist-close:hover {
+            background: #fecaca;
+            transform: scale(1.05);
+        }
+
+        .hist-list {
+            padding: 20px;
+            overflow-y: auto;
+            background: #f8fafc;
+            flex: 1;
+        }
+
+        /* The Individual Attempt Card */
+        .hist-item {
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 12px;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
+        }
+
+        .hist-item:hover {
+            transform: translateY(-3px);
+            border-color: #3b82f6;
+            box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.1);
+        }
+
+        .h-left {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .h-title {
+            font-weight: 700;
+            color: #334155;
+            font-size: 1rem;
+        }
+
+        .h-date {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            font-weight: 500;
+        }
+
+        .h-score-badge {
+            background: #eff6ff;
+            color: #2563eb;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 1.1rem;
+            border: 1px solid #dbeafe;
+        }
+
+        /* Empty State */
+        .hist-empty {
+            text-align: center;
+            padding: 40px;
+            color: #94a3b8;
+            font-style: italic;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @media(max-width: 768px) {
+            .analysis-row {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            /* Default hide on small screens until toggled */
+            .sidebar.active {
+                display: flex;
+                position: fixed;
+                right: 0;
+                top: 64px;
+                bottom: 0;
+                width: 85%;
+                transform: none;
+                box-shadow: -10px 0 20px rgba(0, 0, 0, 0.2);
+            }
+        }
+
+
+        /* --- NEW HEADER STYLES --- */
+        .header-left-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-box {
+            background: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo-box img {
+            max-width: 80%;
+            max-height: 80%;
+            object-fit: contain;
+        }
+
+        .candidate-details {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            line-height: 1.2;
+        }
+
+        .candidate-name {
+            color: #ffffff;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 20px;
+            /* Bigger Font */
+            font-weight: 700;
+            /* Bold */
+            margin: 0;
+            letter-spacing: 0.5px;
+            text-transform: capitalize;
+        }
+
+        .test-badge {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 2px;
+        }
+
+        /* --- GLOBAL WATERMARK --- */
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background-image: url('https://i.ibb.co/fYNNzJYS/Gemini-Generated-Image-fb7rm1fb7rm1fb7r.png');
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 50vmin;
+            opacity: 0.1;
+            z-index: 9999;
+            pointer-events: none;
+            filter: grayscale(100%);
+            mix-blend-mode: multiply;
+        }
+
+        /* --- IMPROVED THANK YOU SCREEN --- */
+        .ty-card {
+            background: white;
+            width: 90%;
+            max-width: 750px;
+            /* Wider on Laptop for grandeur */
+            padding: 60px 40px;
+            /* Generous spacing for symmetry */
+            text-align: center;
+            border-radius: 30px;
+            box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: slideUp 0.4s ease-out;
+        }
+
+        .ty-header {
+            font-size: 3.5rem;
+            /* Very large, clear text */
+            font-weight: 800;
+            color: #0f172a;
+            margin: 20px 0 15px 0;
+            line-height: 1.1;
+            letter-spacing: -1px;
+        }
+
+        .ty-msg {
+            font-size: 1.4rem;
+            /* Large, easy-to-read body text */
+            color: #475569;
+            line-height: 1.8;
+            /* High readability */
+            margin-bottom: 40px;
+            max-width: 90%;
+            /* Prevents text stretching too wide */
+        }
+
+        /* Mobile Adjustments */
+        @media(max-width: 600px) {
+            .ty-card {
+                padding: 40px 20px;
+            }
+
+            .ty-header {
+                font-size: 2.5rem;
+            }
+
+            /* Adjusted for phone screens */
+            .ty-msg {
+                font-size: 1.15rem;
+                line-height: 1.6;
+            }
+        }
+
+        /* --- RESUME NAVIGATION TOAST --- */
+        .resume-toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            /* Hidden initially */
+            background: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            z-index: 1000;
+            border: 1px solid #e2e8f0;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            min-width: 300px;
+        }
+
+        .resume-toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .rt-text {
+            font-size: 0.9rem;
+            color: #1e293b;
+            flex: 1;
+        }
+
+        .rt-btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .rt-close {
+            background: #f1f5f9;
+            color: #64748b;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+
+<body onload="document.getElementById('instrOverlay').style.display='flex'">
+
+    <div id="instrOverlay"
+        style="display:flex; position:fixed; inset:0; background:rgba(255,255,255,0.98); z-index:9999; align-items:center; justify-content:center; font-family:'Segoe UI', sans-serif;">
+        <div
+            style="width:100%; max-width:600px; background:white; padding:30px; border-radius:20px; box-shadow:0 25px 50px rgba(0,0,0,0.15); border:1px solid #e2e8f0; max-height:90vh; overflow-y:auto; margin:15px;">
+            <div style="text-align:center; border-bottom:2px solid #eff6ff; padding-bottom:15px; margin-bottom:20px;">
+                <h2 style="margin:0; color:#1e293b; font-size:22px;">📜 Instructions</h2>
+                <p style="margin:5px 0 0; color:#64748b; font-size:14px;">Please read the marking scheme carefully</p>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-bottom:25px;">
+                <div
+                    style="background:#f0fdf4; padding:15px; border-radius:12px; border:1px solid #bbf7d0; text-align:center;">
+                    <div style="color:#166534; font-size:12px; font-weight:700; text-transform:uppercase;">Correct
+                        Answer</div>
+                    <div style="font-size:24px; font-weight:800; color:#15803d;">+4</div>
+                </div>
+                <div
+                    style="background:#fef2f2; padding:15px; border-radius:12px; border:1px solid #fecaca; text-align:center;">
+                    <div style="color:#991b1b; font-size:12px; font-weight:700; text-transform:uppercase;">Incorrect
+                        Answer</div>
+                    <div style="font-size:24px; font-weight:800; color:#dc2626;">-1</div>
+                </div>
+            </div>
+
+            <div
+                style="background:#f8fafc; padding:20px; border-radius:12px; margin-bottom:25px; border:1px solid #e2e8f0;">
+                <h3 style="margin:0 0 10px 0; font-size:16px; color:#334155;">🎮 How to Submit:</h3>
+                <ul style="margin:0; padding-left:20px; color:#475569; font-size:14px; line-height:1.6;">
+                    <li><strong>Smartphone Users:</strong> Use the <span style="color:#dc2626; font-weight:bold;">Red
+                            Submit Button</span> in the bottom footer.</li>
+                    <li><strong>Laptop Users:</strong> Click 'Submit Test' on the sidebar.</li>
+                    <li>You can review and change answers anytime before submitting.</li>
+                </ul>
+            </div>
+
+            <button onclick="document.getElementById('instrOverlay').style.display='none'"
+                style="width:100%; padding:16px; background:#2563eb; color:white; border:none; border-radius:12px; font-size:16px; font-weight:700; cursor:pointer; box-shadow:0 4px 12px rgba(37,99,235,0.2);">I
+                am ready to begin ➜</button>
+        </div>
+    </div>
+
+    <div id="welcome-screen">
+        <div class="welcome-card">
+            <img src="https://i.ibb.co/fYNNzJYS/Gemini-Generated-Image-fb7rm1fb7rm1fb7r.png" alt="SocioLogic"
+                style="height: 120px; width: auto; display: inline-block;">
+
+            <h1 style="color:#1e293b; margin:0; font-size:1.8rem; letter-spacing:-0.5px;">YOUR PYQ BATTLE</h1>
+            <p style="color:#64748b; margin-top:5px; margin-bottom:20px;">Caste Dynamics</p>
+
+            <div class="mode-selector">
+                <div class="mode-btn active" onclick="setMode('desktop')" id="btn-desktop">
+                    <span style="font-size:1.5rem">💻</span>
+                    <span style="font-size:0.9rem">Laptop/Tablet</span>
+                </div>
+                <div class="mode-btn" onclick="setMode('mobile')" id="btn-mobile">
+                    <span style="font-size:1.5rem">📱</span>
+                    <span style="font-size:0.9rem">Mobile</span>
+                </div>
+            </div>
+
+            <input type="text" id="candidateName" class="input-field" placeholder="Enter Your Name" autocomplete="off"
+                style="margin-bottom:10px;">
+
+            <input type="text" id="username" class="input-field" placeholder="Enter 4-Digit ID" autocomplete="off">
+
+            <div id="attempt-badge"
+                style="margin-bottom:15px; font-size:0.85rem; color:#64748b; font-weight:600; padding:10px; border-radius:8px; background:#f1f5f9; border:1px solid #e2e8f0;">
+                Waiting for Candidate ID...
+            </div>
+            <button id="start-btn" class="btn btn-pri"
+                style="width:100%; justify-content:center; padding:15px; font-size:1.1rem;" onclick="startTest()">
+                Start Examination ➜
+            </button>
+
+            <button class="btn btn-sec" style="width:100%; justify-content:center; margin-top:10px;"
+                onclick="openHistory()">
+                📜 View Past Attempts
+            </button>
+
+            <div style="margin-top: 25px; border-top: 1px dashed #cbd5e1; padding-top: 20px;">
+                <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 10px; font-weight:600;">New Student?</p>
+                <a href="https://rzp.io/rzp/xddl5LdV" target="_blank" style="text-decoration: none;">
+                    <button class="btn"
+                        style="background: #10b981; color: white; width: 100%; justify-content: center; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);">
+                        ⚡ Buy Full Access at just (₹149)
+                    </button>
+                </a>
+                <div style="font-size:0.75rem; color:#94a3b8; margin-top:5px;">Last 4 digits of your phone will be your
+                    ID</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="history-modal">
+        <div class="history-card">
+            <div class="hist-header">
+                <span class="hist-title">📜 Past Attempts</span>
+                <button class="hist-close" onclick="closeHistory()">Close</button>
+            </div>
+            <div id="history-list" class="hist-list"></div>
+        </div>
+    </div>
+
+    <div id="app-wrapper">
+        <nav>
+            <div class="header-left-section">
+                <div class="logo-box">
+                    <img src="https://i.ibb.co/fYNNzJYS/Gemini-Generated-Image-fb7rm1fb7rm1fb7r.png" alt="Logo" />
+                </div>
+                <div class="candidate-details">
+                    <h1 class="candidate-name" id="nav-user">Guest</h1>
+                    <div class="test-badge">Caste Dynamics</div>
+                </div>
+            </div>
+            <div class="timer-badge" id="timer">00:00:00</div>
+            <button class="btn btn-sec" style="padding:8px;" onclick="toggleSidebar()" id="mob-menu">☰</button>
+        </nav>
+
+        <div class="container">
+            <div class="main-area">
+                <div class="q-card" id="q-panel"></div>
+            </div>
+
+            <aside class="sidebar" id="sidebar">
+                <div
+                    style="padding:15px; border-bottom:1px solid #e2e8f0; font-weight:700; color:#334155; display:flex; justify-content:space-between; align-items:center;">
+                    <span>Question Map</span>
+                    <span onclick="toggleSidebar()" style="cursor:pointer; font-size:1.2rem; display:none;"
+                        id="mob-close-sb">✕</span>
+                </div>
+                <div class="sb-grid" id="palette"></div>
+                <div style="padding:20px; border-top:1px solid #e2e8f0; margin-top:auto;">
+                    <button class="btn btn-danger" style="width:100%; justify-content:center;"
+                        onclick="finishTest()">SUBMIT TEST</button>
+                </div>
+            </aside>
+        </div>
+
+        <div class="footer-bar" style="padding:0 10px; gap:5px; height:auto; min-height:72px;">
+            <div style="display:flex; gap:5px; flex:1;">
+                <button class="btn btn-sec" onclick="clearResp()"
+                    style="flex:1; justify-content:center; padding:10px; font-size:0.8rem;">Clear</button>
+                <button class="btn btn-rev" onclick="markReview()" id="btn-review"
+                    style="flex:1; justify-content:center; padding:10px; font-size:0.8rem;">🚩 Review</button>
+            </div>
+            <div style="display:flex; gap:5px; flex:1.5;">
+                <button class="btn btn-sec" onclick="nav(-1)" style="padding:10px;">Prev</button>
+                <button class="btn btn-pri" onclick="nav(1)" id="btn-next"
+                    style="flex:1; justify-content:center; padding:10px; font-size:0.9rem;">Next ➜</button>
+                <button class="btn btn-danger" onclick="finishTest()"
+                    style="padding:10px; background:#dc2626; color:white;">Submit</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="overlay" id="result-overlay">
+        <div class="res-card">
+            <div class="res-header">
+                <h2>Assessment Report</h2>
+                <div class="score-grid">
+                    <div class="score-card-item">
+                        <div class="sc-label">Attempted</div>
+                        <div class="sc-value" id="disp-att">0</div>
+                    </div>
+                    <div class="score-card-item"
+                        style="background: rgba(220, 252, 231, 0.25); border-color: rgba(220, 252, 231, 0.5);">
+                        <div class="sc-label" style="color:#dcfce7;">Correct</div>
+                        <div class="sc-value" style="color:#f0fdf4;" id="disp-cor">0</div>
+                    </div>
+                    <div class="score-card-item"
+                        style="background: rgba(254, 226, 226, 0.25); border-color: rgba(254, 226, 226, 0.5);">
+                        <div class="sc-label" style="color:#fee2e2;">Wrong</div>
+                        <div class="sc-value" style="color:#fef2f2;" id="disp-wro">0</div>
+                    </div>
+                    <div class="score-card-item">
+                        <div class="sc-label">Score</div>
+                        <div class="sc-value" id="disp-score">0</div>
+                    </div>
+                </div>
+
+                <button onclick="showThankYou()"
+                    style="margin-top:15px; width:100%; padding:10px; background:#ffffff; color:#1e40af; border:none; border-radius:8px; font-weight:800; cursor:pointer; font-size:0.9rem; box-shadow:0 4px 6px rgba(0,0,0,0.1); transition:transform 0.2s;">
+                    Exit & Save Report ➜
+                </button>
+            </div>
+
+            <div class="res-body">
+
+                <div class="analysis-row">
+                    <div class="analysis-box" style="border-left:4px solid #15803d;">
+                        <div class="ab-title" style="color:#15803d">💪 Strongest</div>
+                        <div class="ab-val" id="area-strong">--</div>
+                        <div style="font-size:0.75rem; color:#94a3b8; margin-top:3px;" id="area-strong-stat">Acc: 0%
+                        </div>
+                    </div>
+                    <div class="analysis-box" style="border-left:4px solid #b91c1c;">
+                        <div class="ab-title" style="color:#b91c1c">⚠️ Weakest</div>
+                        <div class="ab-val" id="area-weak">--</div>
+                        <div style="font-size:0.75rem; color:#94a3b8; margin-top:3px;" id="area-weak-stat">Acc: 0%</div>
+                    </div>
+                </div>
+
+                <h3
+                    style="font-size:0.95rem; font-weight:700; color:#0f172a; margin-bottom:15px; border-bottom:1px solid #e2e8f0; padding-bottom:8px;">
+                    Detailed Explanations
+                </h3>
+
+                <div id="solution-feed"></div>
+
+                <div style="text-align:center; margin-top:25px;">
+                    <button class="btn btn-pri" style="width:100%; justify-content:center; padding:12px;"
+                        onclick="showThankYou()">
+                        Exit & Save Report
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="overlay" id="ty-screen">
+        <div class="ty-card">
+
+            <img src="https://i.ibb.co/fYNNzJYS/Gemini-Generated-Image-fb7rm1fb7rm1fb7r.png" alt="SocioLogic"
+                style="height: 140px; width: auto; margin-bottom: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-radius: 50%;">
+
+            <h1 class="ty-header">Test Submitted!</h1>
+
+            <p class="ty-msg">
+                Your performance on <b style="color:#1e40af;">SocioLogic</b> has been recorded.<br>
+                You are one step closer to your <b style="color:#d97706;">dream university</b>.
+            </p>
+
+            <a href="https://t.me/SocioLogicPYQs" target="_blank"
+                style="text-decoration:none; width: 100%; max-width: 400px;">
+                <button class="btn btn-pri"
+                    style="width:100%; justify-content:center; padding: 16px; font-size: 1.1rem; border-radius: 12px; background: #0088cc;">
+                    ✈️ Join Telegram Channel
+                </button>
+            </a>
+
+            <div style="display: flex; gap: 15px; width: 100%; max-width: 500px; margin-top: 25px; flex-wrap: wrap;">
+
+                <button class="btn btn-sec" onclick="location.reload()"
+                    style="flex: 1; min-width: 200px; justify-content: center; padding: 16px; border-radius: 12px; font-weight: 700; border: 2px solid #e2e8f0; color: #475569;">
+                    🔄 Restart Test
+                </button>
+
+                <a href="index.html" style="text-decoration: none; flex: 1; min-width: 200px;">
+                    <button class="btn btn-pri"
+                        style="width: 100%; justify-content: center; padding: 16px; border-radius: 12px; background: #0f172a; color: white; font-weight: 700; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);">
+                        Main Page
+                    </button>
+                </a>
+
+            </div>
+        </div>
+    </div>
+    <script>
+        /* -------------------------------------------------------------
+           PASTE YOUR QUESTION DATA HERE
+           const questions = [ ... ];
+        ------------------------------------------------------------- */
+        const questions = [
+            {
+                topic: "📚 Caste System (CUET PG)",
+                text: "Who among the following defined caste as a 'closed class'?",
+                options: ["D.N. Majumdar", "M.N. Srinivas", "A.R. Desai", "G.S. Ghurye"],
+                correct: 0,
+                expl: {
+                    correct: "ACADEMIC EXPLANATION: D.N. Majumdar defined caste as a closed class, emphasizing that individual mobility between castes is restricted by birth, unlike in class systems where mobility is possible.",
+                    others: "Srinivas focused on Sanskritization; Ghurye on the six features of caste; Desai on Marxist approaches.",
+                    trick: "PRO TIP: Class is Open, Caste is Closed. Majumdar 'Closed' the door."
+                }
+            },
+            {
+                topic: "🇮🇳 Caste Theories (JNU MA)",
+                text: "Which scholar is associated with the 'Racial Theory' of the origin of the caste system?",
+                options: ["G.S. Ghurye", "Herbert Risley", "J.H. Hutton", "Nesfield"],
+                correct: 1,
+                expl: {
+                    correct: "ACADEMIC EXPLANATION: Sir Herbert Risley propounded the Racial Theory, suggesting that caste hierarchy developed due to racial differences between Aryan invaders and indigenous people, relying on nasal index measurements.",
+                    others: "Nesfield proposed the Occupational theory; Hutton proposed the Mana theory; Ghurye synthesized multiple views.",
+                    trick: "PRO TIP: R for Risley, R for Race."
+                }
+            },
+            {
+                topic: "🏛️ Concepts (UGC NET)",
+                text: "The concept of 'Dominant Caste' was introduced by M.N. Srinivas in his study of which village?",
+                options: ["Kishan Garhi", "Rampura", "Sripuram", "Sameerpet"],
+                correct: 1,
+                expl: {
+                    correct: "ACADEMIC EXPLANATION: M.N. Srinivas introduced the concept of Dominant Caste based on his fieldwork in Rampura village in Mysore. He identified features like numerical strength, economic power, and ritual status.",
+                    others: "Kishan Garhi was studied by McKim Marriott; Sripuram by Andre Beteille; Sameerpet by S.C. Dube.",
+                    trick: "PRO TIP: Srinivas ran to Rampura."
+                }
+            },
+            {
+                topic: "📖 Literature (BHU PET)",
+                text: "Who is the author of the classic text 'Caste and Race in India'?",
+                options: ["Louis Dumont", "G.S. Ghurye", "N.K. Bose", "B.R. Ambedkar"],
+                correct: 1,
+                expl: {
+                    correct: "ACADEMIC EXPLANATION: G.S. Ghurye authored 'Caste and Race in India' (1932), providing a comprehensive analysis of caste features, history, and its relation to race.",
+                    others: "Dumont wrote Homo Hierarchicus; Ambedkar wrote Annihilation of Caste.",
+                    trick: "PRO TIP: Ghurye is the Father of Indian Sociology, and this is his foundational book."
+                }
+            },
+            {
+                topic: "🧬 Features (CUET PG)",
+                text: "According to G.S. Ghurye, which of the following is NOT one of the six outstanding features of the caste system?",
+                options: ["Segmental division of society", "Lack of unrestricted choice of occupation", "Exogamy", "Civil and religious disabilities"],
+                correct: 2,
+                expl: {
+                    correct: "ACADEMIC EXPLANATION: Ghurye listed 'Endogamy' (marrying within the group) as a feature, not Exogamy. The other features include hierarchy, pollution/purity, and restrictions on feeding/social intercourse.",
+                    others: "Exogamy applies to Gotra (sub-units), but the Caste itself is Endogamous.",
+                    trick: "PRO TIP: Castes marry IN (Endo), not OUT (Exo)."
+                }
+            },
+            {
+                topic: "⚖️ Perspectives (JNU PYQ)",
+                text: "Louis Dumont's 'Homo Hierarchicus' analyzes the caste system primarily through the binary opposition of:",
+                options: ["Power and Authority", "Purity and Pollution", "Wealth and Poverty", "Tradition and Modernity"],
+                correct: 1,
+                expl: {
+                    correct: "ACADEMIC EXPLANATION: Dumont's structuralist approach posits that the ideology of caste is based on the fundamental opposition between Purity and Pollution, which necessitates hierarchy.",
+                    others: "Power and wealth are secondary to ritual status in Dumont's view.",
+                    trick: "PRO TIP: Dumont = Purity vs Pollution."
+                }
+            },
+            {
+                topic: "🚜 Rural Soc (UGC NET)",
+                text: "Which theory of caste origin states that 'Function and function alone is responsible for the origin of caste'?",
+                options: ["Traditional Theory", "Occupational Theory", "Racial Theory", "Political Theory"],
+                correct: 1,
+                expl: {
+                    correct: "ACADEMIC EXPLANATION: The Occupational Theory, associated with Nesfield, argues that the hierarchy of castes is determined by the nature of the occupation (clean vs. unclean).",
+                    others: "Traditional theory relies on divine origin (Purusha Sukta); Political theory (Abbe Dubois) blames Brahmins.",
+                    trick: "PRO TIP: Nesfield needed a field (occupation) to work in."
+                }
+            },
+            {
+                topic: "🔄 Mobility (CUET PG)",
+                text: "The process by which a 'low' Hindu caste changes its customs, ritual, ideology, and way of life in the direction of a high caste is known as:",
+                options: ["Westernization", "Modernization", "Sanskritization", "Secularization"],
+                correct: 2,
+                expl: {
+                    correct: "ACADEMIC EXPLANATION: Sanskritization is the term coined by M.N. Srinivas to describe the process of vertical mobility where lower castes emulate the practices of upper castes (often Brahmins or Kshatriyas).",
+                    others: "Westernization refers to adopting British/European culture; Modernization involves rationality and technology.",
+                    trick: "PRO TIP: Copying the Sanskritic rituals = Sanskritization."
+                }
+            },
+            {
+                topic: "🗳️ Politics (Delhi Univ)",
+                text: "Who coined the phrase 'Politicisation of Caste'?",
+                options: ["Rajni Kothari", "M.N. Srinivas", "Yogendra Singh", "Andre Beteille"],
+                correct: 0,
+                expl: {
+                    correct: "ACADEMIC EXPLANATION: Rajni Kothari analyzed how caste associations function in democratic politics, arguing that politics has provided a new lease of life to caste.",
+                    others: "Srinivas discussed Vote Banks but Kothari is the primary theorist of 'Caste in Indian Politics'.",
+                    trick: "PRO TIP: Kothari connects Caste and Politics."
+                }
+            },
+            {
+                topic: "📜 Constitution (CUET PG)",
+                text: "Which Article of the Indian Constitution abolishes 'Untouchability' and forbids its practice in any form?",
+                options: ["Article 14", "Article 15", "Article 16", "Article 17"],
+                correct: 3,
+                expl: {
+                    correct: "ACADEMIC EXPLANATION: Article 17 of the Indian Constitution explicitly abolishes Untouchability. The Protection of Civil Rights Act (1955) reinforces this.",
+                    others: "Art 14 is Equality before law; Art 15 is Non-discrimination; Art 16 is Opportunity in public employment.",
+                    trick: "PRO TIP: 17 = 1 + 7 = 8 (Hate). Abolish the hate/untouchability."
+                }
+            },
+            {
+                topic: "📚 Texts (UGC NET)",
+                text: "Match List I with List II:\n\nList I (Authors):\nA. M.N. Srinivas\nB. Andre Beteille\nC. Louis Dumont\nD. G.S. Ghurye\n\nList II (Books):\nI. Homo Hierarchicus\nII. Caste and Race in India\nIII. Caste, Class and Power\nIV. Religion and Society among the Coorgs",
+                options: ["A-IV, B-III, C-I, D-II", "A-IV, B-I, C-III, D-II", "A-II, B-III, C-I, D-IV", "A-I, B-II, C-III, D-IV"],
+                correct: 0,
+                expl: {
+                    correct: "ACADEMIC EXPLANATION: Srinivas wrote on Coorgs; Beteille studied Sripuram (Caste, Class, Power); Dumont wrote Homo Hierarchicus; Ghurye wrote Caste and Race.",
+                    others: "Incorrect pairings.",
+                    trick: "PRO TIP: Beteille deals with the trio: Caste, Class, Power."
+                }
+            },
+            {
+                topic: "👥 Stratification (JNU MA)",
+                text: "Andre Beteille's study 'Caste, Class and Power' is based on fieldwork in which village?",
+                options: ["Rampura", "Sripuram", "Kishan Garhi", "Mohana"],
+                correct: 1,
+                expl: {
+                    correct: "ACADEMIC EXPLANATION: Andre Beteille studied Sripuram village in Tanjore district, Tamil Nadu, analyzing how caste, class, and power structures were becoming dispersed (cumulative to dispersed inequalities).",
+                    others: "Rampura is Srinivas's field; Kishan Garhi is Marriott's.",
+                    trick: "PRO TIP: Beteille went to Sripuram."
+                }
+            },
+            {
+                topic: "🌍 Global View (H CU)",
+                text: "Who compared the Indian Caste system with the American race system in the book 'Caste, Class, and Race'?",
+                options: ["Max Weber", "Oliver Cox", "Gunnar Myrdal", "Lloyd Warner"],
+                correct: 1,
+                expl: {
+                    correct: "ACADEMIC EXPLANATION: Oliver Cox, a Marxist sociologist, argued that race relations in America were essentially class relations and criticized the caste school of race relations.",
+                    others: "Warner and Myrdal supported the caste-race analogy.",
+                    trick: "PRO TIP: Cox = Marxist critique of Caste/Race analogy."
+                }
+            },
+            {
+                topic: "🧩 Terminology (CUET PG)",
+                text: "The term 'Scheduled Caste' was first used in:",
+                options: ["Government of India Act, 1935", "Constitution of India, 1950", "Mandal Commission Report", "Poona Pact, 1932"],
+                correct: 0,
+                expl: {
+                    correct: "ACADEMIC EXPLANATION: The term 'Scheduled Caste' was technically first used in the Government of India Act, 1935, to list castes eligible for specific benefits/representation.",
+                    others: "The Simon Commission (1928) did preliminary work, but the 1935 Act formalized the term.",
+                    trick: "PRO TIP: 1935 Act Scheduled the list."
+                }
+            },
+            {
+                topic: "🏙️ Urban Soc (BHU PET)",
+                text: "Which sociologist distinguished between 'attributional' and 'interactional' approaches to the study of caste?",
+                options: ["McKim Marriott", "F.G. Bailey", "T.N. Madan", "M.N. Srinivas"],
+                correct: 0,
+                expl: {
+                    correct: "ACADEMIC EXPLANATION: McKim Marriott distinguished between the attributional approach (focusing on attributes like purity/pollution) and the interactional approach (focusing on actual social transactions like food giving/receiving).",
+                    others: "Bailey studied caste and politics in Odisha; Madan on kinship.",
+                    trick: "PRO TIP: Marriott looks at Interactions."
+                }
+            },
+            {
+                topic: "🕉️ Religion (UGC NET)",
+                text: "According to Max Weber, the caste system is a form of:",
+                options: ["Status Group", "Class Group", "Political Party", "Guild System"],
+                correct: 0,
+                expl: {
+                    correct: "ACADEMIC EXPLANATION: Weber viewed caste as a 'closed status group' where social honor and prestige are the determining factors, rather than economic class.",
+                    others: "Class is economic; Party is political power.",
+                    trick: "PRO TIP: Weber = Status and Honor."
+                }
+            },
+            {
+                topic: "🧬 Origins (Pondicherry)",
+                text: "The 'Mana' theory of the origin of caste was proposed by:",
+                options: ["J.H. Hutton", "Emile Senart", "A.M. Hocart", "Nesfield"],
+                correct: 0,
+                expl: {
+                    correct: "ACADEMIC EXPLANATION: J.H. Hutton proposed that the fear of 'Mana' (a supernatural power attached to objects/people) led to restrictions on contact and commensality, evolving into caste.",
+                    others: "Senart focused on commensality; Hocart on ritual purity/kingship.",
+                    trick: "PRO TIP: Hutton heard the 'Mana' (magic)."
+                }
+            },
+            {
+                topic: "🪜 Hierarchy (CUET PG)",
+                text: "Which of the following is NOT a determinant of Dominant Caste according to M.N. Srinivas?",
+                options: ["Numerical strength", "Economic power (land)", "Political power", "High ritual status (Brahminhood)"],
+                correct: 3,
+                expl: {
+                    correct: "ACADEMIC EXPLANATION: Srinivas explicitly stated that a Dominant Caste need not have the highest ritual status (Brahmin). It is usually a middle peasant caste with numbers, land, and political clout.",
+                    others: "Numerical strength, Land, and Political power are the core determinants.",
+                    trick: "PRO TIP: Dominant castes rule the village, Brahmins rule the temple."
+                }
+            },
+            {
+                topic: "📚 Concepts (JNU MA)",
+                text: "The concept of 'Avarna' refers to:",
+                options: ["The four Varnas", "Those outside the Varna scheme", "The priestly class", "Warrior groups"],
+                correct: 1,
+                expl: {
+                    correct: "ACADEMIC EXPLANATION: 'Avarna' literally means 'without varna' or 'colourless', referring to the untouchables or Dalits who fall outside the four-fold Varna hierarchy (Savarna).",
+                    others: "Savarna refers to the four varnas (Brahmin, Kshatriya, Vaishya, Shudra).",
+                    trick: "PRO TIP: A-Varna = No Varna."
+                }
+            },
+            {
+                topic: "🔄 Systems (UGC NET)",
+                text: "The 'Jajmani System' primarily represents:",
+                options: ["Political exchange", "Economic and ritual exchange", "Matrimonial alliances", "Educational system"],
+                correct: 1,
+                expl: {
+                    correct: "ACADEMIC EXPLANATION: The Jajmani system is a system of hereditary patronage involved in the exchange of goods and services between different castes (Jajmans and Kamins) in rural India.",
+                    others: "It is not primarily political or matrimonial.",
+                    trick: "PRO TIP: Jajmani = Service exchange (Barber cuts hair, Farmer gives grain)."
+                }
+            },
+            {
+                topic: "🇮🇳 Reformers (CUET PG)",
+                text: "Who founded the 'Satyashodhak Samaj' to fight against the caste system?",
+                options: ["B.R. Ambedkar", "Jyotiba Phule", "Periyar", "Gandhi"],
+                correct: 1,
+                expl: {
+                    correct: "ACADEMIC EXPLANATION: Jyotiba Phule founded the Satyashodhak Samaj (Truth Seekers' Society) in 1873 in Pune to secure human rights and social justice for the marginalized castes.",
+                    others: "Ambedkar founded Bahishkrit Hitakarini Sabha; Periyar led the Self-Respect Movement.",
+                    trick: "PRO TIP: Phule sought the Truth (Satya)."
+                }
+            },
+            {
+                topic: "📜 Definitions (Jamia MA)",
+                text: "Who defined caste as 'a hereditary, endogamous group which is usually localized'?",
+                options: ["M.N. Srinivas", "E.A.H. Blunt", "S.V. Ketkar", "A.L. Kroeber"],
+                correct: 2,
+                expl: {
+                    correct: "ACADEMIC EXPLANATION: S.V. Ketkar emphasized two main characteristics: membership confined to those born in members, and strict endogamy.",
+                    others: "Srinivas is functionalist; Kroeber called caste an 'extreme form of class'.",
+                    trick: "PRO TIP: Ketkar = Membership by Birth + Endogamy."
+                }
+            },
+            {
+                topic: "⚖️ Activism (CUET PG)",
+                text: "Which movement is associated with E.V. Ramasamy Naicker?",
+                options: ["Satyashodhak Samaj", "Self-Respect Movement", "Dalit Panther Movement", "Arya Samaj"],
+                correct: 1,
+                expl: {
+                    correct: "ACADEMIC EXPLANATION: E.V. Ramasamy Naicker (Periyar) led the Self-Respect Movement in Tamil Nadu, challenging Brahminical dominance and advocating for Dravidian identity.",
+                    others: "Dalit Panthers (Namdeo Dhasal/Dhale) was in Maharashtra.",
+                    trick: "PRO TIP: Periyar wanted Self-Respect."
+                }
+            },
+            {
+                topic: "🔄 Trends (UGC NET)",
+                text: "According to M.N. Srinivas, while the ritual importance of caste has decreased, its ________ importance has increased.",
+                options: ["Religious", "Political", "Educational", "Cultural"],
+                correct: 1,
+                expl: {
+                    correct: "ACADEMIC EXPLANATION: Srinivas observed that while ritual norms (purity/pollution) are weakening, the political role of caste (as a vote bank or interest group) has strengthened in modern democracy.",
+                    others: "Religious importance is declining alongside ritual importance.",
+                    trick: "PRO TIP: Rituals down, Politics up."
+                }
+            },
+            {
+                topic: "🏛️ Structure (BHU PET)",
+                text: "The distinction between 'Varna' and 'Jati' is that:",
+                options: ["Varna is a textual model, Jati is the functioning reality", "Varna is regional, Jati is all-India", "There are thousands of Varnas and only four Jatis", "Varna is endogamous, Jati is exogamous"],
+                correct: 0,
+                expl: {
+                    correct: "ACADEMIC EXPLANATION: Varna is the four-fold textual/ideological framework. Jati refers to the thousands of actual endogamous birth-groups that function in daily life.",
+                    others: "There are 4 Varnas and thousands of Jatis. Jati is the endogamous unit.",
+                    trick: "PRO TIP: Varna = Book Theory; Jati = Village Reality."
+                }
+            },
+            {
+                topic: "📑 Reports (CUET PG)",
+                text: "The Mandal Commission (1979) was established to identify:",
+                options: ["Scheduled Castes", "Scheduled Tribes", "Socially and Educationally Backward Classes", "Religious Minorities"],
+                correct: 2,
+                expl: {
+                    correct: "ACADEMIC EXPLANATION: The B.P. Mandal Commission was set up to identify the Socially and Educationally Backward Classes (SEBC/OBCs) and recommend reservations.",
+                    others: "SC/ST lists were already established.",
+                    trick: "PRO TIP: Mandal = OBC reservation."
+                }
+            },
+            {
+                topic: "🧬 Anthropology (JNU MA)",
+                text: "Who argued that the caste system is a system of 'Cumulative Inequality'?",
+                options: ["Andre Beteille", "M.N. Srinivas", "G.S. Ghurye", "F.G. Bailey"],
+                correct: 0,
+                expl: {
+                    correct: "ACADEMIC EXPLANATION: Andre Beteille described the traditional caste system as one of 'Cumulative Inequality' (where status, wealth, and power coincided), which is shifting to 'Dispersed Inequality'.",
+                    others: "Bailey focused on Involutory systems.",
+                    trick: "PRO TIP: Beteille sees the accumulation breaking up."
+                }
+            },
+            {
+                topic: "📖 Theory (UGC NET)",
+                text: "According to Louis Dumont, the caste system is based on the principle of:",
+                options: ["Egalitarianism", "Holism", "Individualism", "Liberalism"],
+                correct: 1,
+                expl: {
+                    correct: "ACADEMIC EXPLANATION: Dumont argues that Indian society is based on 'Holism' (the whole is greater than the parts/individuals), in contrast to the 'Individualism' of the West.",
+                    others: "Hierarchy and Holism are the twin pillars of Dumont's theory.",
+                    trick: "PRO TIP: Dumont: India = Holism; West = Individualism."
+                }
+            },
+            {
+                topic: "🔄 Mobility (BHU PET)",
+                text: "Which of the following conditions favors Sanskritization?",
+                options: ["Closing of economic frontiers", "Improving economic status of the caste", "Strict adherence to caste occupation", "Isolation from other castes"],
+                correct: 1,
+                expl: {
+                    correct: "ACADEMIC EXPLANATION: A caste usually attempts Sanskritization (claiming higher status) *after* it has improved its economic or political position. Economic mobility often precedes ritual mobility.",
+                    others: "Isolation or strict adherence usually maintains the status quo.",
+                    trick: "PRO TIP: Money first, Sacred Thread later."
+                }
+            },
+            {
+                topic: "👥 Identity (CUET PG)",
+                text: "The 'Dalit Panther' movement was inspired by:",
+                options: ["The French Revolution", "The Black Panther Party of USA", "The Russian Revolution", "The Naxalite Movement"],
+                correct: 1,
+                expl: {
+                    correct: "ACADEMIC EXPLANATION: The Dalit Panthers (formed in Bombay, 1972) were directly inspired by the Black Panther Party's militancy and literature in the United States.",
+                    others: "They focused on caste oppression similar to racial oppression.",
+                    trick: "PRO TIP: Panthers copy Panthers."
+                }
+            },
+            {
+                topic: "📜 Terminology (JNU PYQ)",
+                text: "The word 'Caste' is derived from the word 'Casta', which is of:",
+                options: ["Latin origin", "Spanish/Portuguese origin", "French origin", "Greek origin"],
+                correct: 1,
+                expl: {
+                    correct: "ACADEMIC EXPLANATION: 'Casta' is a Spanish/Portuguese word meaning race, lineage, or breed. It was applied to India by the Portuguese.",
+                    others: "The root is Latin 'Castus' (chaste), but 'Casta' is Iberian.",
+                    trick: "PRO TIP: Portuguese were the first colonizers to label it."
+                }
+            },
+            {
+                topic: "🧩 Concepts (UGC NET)",
+                text: "The concept of 'Unity and Reciprocity' in the caste system is best exemplified by:",
+                options: ["Endogamy", "Jajmani System", "Untouchability", "Sanskritization"],
+                correct: 1,
+                expl: {
+                    correct: "ACADEMIC EXPLANATION: The Jajmani system emphasizes interdependence (organic solidarity) and reciprocity between service castes and land-owning castes.",
+                    others: "Endogamy and Untouchability emphasize separation.",
+                    trick: "PRO TIP: Jajmani links people together in exchange."
+                }
+            },
+            {
+                topic: "🏛️ Thinkers (Delhi Univ)",
+                text: "Who viewed the caste system as an 'institutionalized system of inequality'?",
+                options: ["Gerald Berreman", "M.N. Srinivas", "G.S. Ghurye", "Yogendra Singh"],
+                correct: 0,
+                expl: {
+                    correct: "ACADEMIC EXPLANATION: Gerald Berreman compared Caste in India to Race in America, viewing both as systems of social stratification and institutionalized inequality.",
+                    others: "Ghurye focused on features; Singh on modernization.",
+                    trick: "PRO TIP: Berreman = Inequality specialist."
+                }
+            },
+            {
+                topic: "🌍 Comparisons (CUET PG)",
+                text: "The 'Tribe-Caste Continuum' concept suggests that:",
+                options: ["Tribes and castes are distinct and separate", "Tribes gradually transform into castes", "Castes become tribes", "There is no relation between them"],
+                correct: 1,
+                expl: {
+                    correct: "ACADEMIC EXPLANATION: Scholars like Surajit Sinha discussed the Tribe-Caste continuum, suggesting there is no rigid boundary, and tribes have historically merged into the caste structure (Hinduization).",
+                    others: "It rejects the rigid dichotomy between the two.",
+                    trick: "PRO TIP: It's a bridge, not a wall."
+                }
+            },
+            {
+                topic: "🧬 Genetics (Current)",
+                text: "Recent genetic studies (like Reich et al.) suggest that strict endogamy in India began approximately:",
+                options: ["5000 years ago", "2000 years ago", "500 years ago", "10,000 years ago"],
+                correct: 1,
+                expl: {
+                    correct: "ACADEMIC EXPLANATION: Genetic evidence indicates a shift from mixing to strict endogamy around 100 CE to 400 CE (approx 2000 years ago), coinciding with the Gupta period and codification of Dharma Shastras.",
+                    others: "Indus Valley times showed more mixing.",
+                    trick: "PRO TIP: Endogamy started roughly with the Smritis/Guptas."
+                }
+            }
+
+
+        ];
+
+        /* --- LOGIC ENGINE --- */
+        const MAX_ATTEMPTS = 5;
+        const SECONDS_PER_QUESTION = 72;
+        const STORAGE_KEY = 'Caste Dynamics';
+
+        // --- SECURITY CONFIGURATION ---
+        // 1. PASTE YOUR GOOGLE SCRIPT URL HERE:
+        // 1. PASTE YOUR GOOGLE SCRIPT URL HERE (From your Deployment):
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbye1nUUxpxcbMLQrby3tvyCD043fz6twdCZhueU04ZRsaLdiuX7c-Q3jaivpJf-vuL2/exec";
+
+        // 2. UNIQUE NAME FOR THIS SPECIFIC TEST (Demand #3)
+        // Change this string for every new HTML file you create (e.g., "History_2025", "Mock_01")
+        const TEST_ID = "Caste Dynamics";
+
+        // 3. ALLOWED USERS (Optional, since you are using Razorpay automation)
+        const ALLOWED_USERS = ["1111", "2025", "9999", "STUDENT1"];
+
+        // ------------------------------
+        let responses = new Array(questions.length).fill(null);
+        let status = new Array(questions.length).fill(0);
+        let timeLeft = 0;
+        let timerRef;
+        let userName = "Student";
+        let history = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+        let isMobile = false;
+
+        // Initialize
+        // --- 1. NEW SETUP & VISUALS ---
+        let typingTimer;
+
+        // --- 1. NEW WINDOW.ONLOAD (Includes "SocioLogic" Hint) ---
+        window.onload = function () {
+            if (window.innerWidth < 768) setMode('mobile');
+            else setMode('desktop');
+
+            document.getElementById('timer').innerText = "00:00:00";
+
+            // Add Listeners
+            document.getElementById('candidateName').addEventListener('input', checkStartConditions);
+            document.getElementById('username').addEventListener('keyup', handleIdInput);
+
+            // --- AUTO-SHOW HINT FOR FREE TESTS ---
+            if (typeof TEST_ID !== 'undefined' && TEST_ID.toUpperCase().startsWith("FREE")) {
+                const idInput = document.getElementById('username');
+
+                // 1. Change Placeholder
+                idInput.placeholder = "Enter ID: SocioLogic";
+
+                // 2. Insert Hint Text
+                const hintDiv = document.createElement("div");
+                hintDiv.innerHTML = "💡 <b>Guest Access:</b> Type <span style='color:#2563eb; font-weight:800;'>SocioLogic</span> as your ID.";
+                hintDiv.style.fontSize = "0.85rem";
+                hintDiv.style.color = "#64748b";
+                hintDiv.style.marginTop = "-10px";
+                hintDiv.style.marginBottom = "15px";
+                hintDiv.style.background = "#eff6ff";
+                hintDiv.style.padding = "8px";
+                hintDiv.style.borderRadius = "8px";
+                hintDiv.style.border = "1px dashed #bfdbfe";
+
+                // Insert it right after the input box
+                idInput.parentNode.insertBefore(hintDiv, idInput.nextSibling);
+            }
+        };
+
+        // --- 2. KEEP THIS FUNCTION (Do not delete!) ---
+        function setMode(mode) {
+            isMobile = (mode === 'mobile');
+            const dBtn = document.getElementById('btn-desktop');
+            const mBtn = document.getElementById('btn-mobile');
+
+            // Safety check in case buttons don't exist yet
+            if (dBtn && mBtn) {
+                dBtn.className = isMobile ? 'mode-btn' : 'mode-btn active';
+                mBtn.className = isMobile ? 'mode-btn active' : 'mode-btn';
+            }
+        }
+
+
+
+        let checkTimer;
+
+        function handleIdInput() {
+            const idVal = document.getElementById('username').value.trim();
+            const badge = document.getElementById('attempt-badge');
+            const btn = document.getElementById('start-btn');
+
+            // 1. Disable Button while typing
+            btn.disabled = true;
+            btn.style.backgroundColor = "#cbd5e1";
+            btn.innerText = "Enter Details to Start";
+            btn.style.cursor = "not-allowed";
+
+            clearTimeout(checkTimer);
+
+            // 2. Basic Validation
+            if (idVal.length < 4) {
+                badge.innerHTML = "Waiting for 4-digit ID...";
+                badge.style.background = "#f1f5f9";
+                badge.style.color = "#64748b";
+                badge.style.borderColor = "#e2e8f0";
+                return;
+            }
+
+            // 3. Show "Checking..."
+            badge.innerHTML = "🔄 Checking Records...";
+            badge.style.background = "#fffbeb";
+            badge.style.color = "#d97706";
+
+            checkTimer = setTimeout(() => {
+                fetch(SCRIPT_URL + "?type=check&id=" + encodeURIComponent(idVal) + "&test=" + encodeURIComponent(TEST_ID))
+                    .then(response => response.text())
+                    .then(countText => {
+                        // A. Check for Block
+                        if (countText.includes("BLOCK_NOT_PAID")) {
+                            badge.innerHTML = `⛔ <b>Access Denied: ID not found in Paid List.</b>`;
+                            badge.style.background = "#fee2e2";
+                            badge.style.color = "#b91c1c";
+                            badge.style.borderColor = "#fecaca";
+                            return;
+                        }
+
+                        // --- B. MAGIC FIX: If Test is FREE, Ignore Limits! ---
+                        if (typeof TEST_ID !== 'undefined' && TEST_ID.toUpperCase().startsWith("FREE")) {
+                            badge.innerHTML = `✅ <b>Free Access:</b> Unlimited Attempts Allowed`;
+                            badge.style.background = "#dcfce7";
+                            badge.style.color = "#15803d";
+                            badge.style.borderColor = "#86efac";
+
+                            checkStartConditions(); // Unlock immediately
+                            return;
+                        }
+                        // ---------------------------------------------------
+
+                        // C. Normal Logic for Paid Tests
+                        const used = parseInt(countText) || 0;
+                        const max = 5;
+                        const remaining = max - used;
+
+                        if (used >= max) {
+                            badge.innerHTML = `⛔ <b>Total: ${max} | Exhausted: ${used} | Remaining: 0</b>`;
+                            badge.style.background = "#fee2e2";
+                            badge.style.color = "#b91c1c";
+                            badge.style.borderColor = "#fecaca";
+                        } else {
+                            badge.innerHTML = `✅ <b>Total: ${max} | Exhausted: ${used} | Remaining: ${remaining}</b>`;
+                            badge.style.background = "#dcfce7";
+                            badge.style.color = "#15803d";
+                            badge.style.borderColor = "#86efac";
+                            checkStartConditions();
+                        }
+                    })
+                    .catch(err => {
+                        badge.innerHTML = "❌ Connection Error.";
+                    });
+            }, 800);
+        }
+        function calculateAndShowAttempts() {
+            const idVal = document.getElementById('username').value.trim();
+            // Filters history to only count items belonging to the ID entered
+            const attemptsUsed = history.filter(rec => rec.userID === idVal).length;
+
+            const attemptsLeft = MAX_ATTEMPTS - attemptsUsed;
+            const badge = document.getElementById('attempt-badge');
+
+            if (attemptsUsed >= MAX_ATTEMPTS) {
+                badge.innerHTML = `⚠️ <b>Attempts Exhausted</b> (0 remaining)`;
+                badge.style.color = "#ef4444";
+                badge.style.background = "#fee2e2";
+                badge.style.borderColor = "#fecaca";
+            } else {
+                badge.innerHTML = `✅ <b>Attempt #${attemptsUsed + 1}</b> (${attemptsLeft} remaining)`;
+                badge.style.color = "#15803d";
+                badge.style.background = "#dcfce7";
+                badge.style.borderColor = "#86efac";
+            }
+            checkStartConditions();
+        }
+
+        function checkStartConditions() {
+            const name = document.getElementById('candidateName').value.trim();
+            const id = document.getElementById('username').value.trim();
+            const badgeText = document.getElementById('attempt-badge').innerText;
+            const btn = document.getElementById('start-btn');
+
+            // Allow if badge says "Remaining" OR "Unlimited"
+            // This fixes the bug where the button stayed locked
+            const isBadgeValid = !badgeText.includes("Exhausted") &&
+                (badgeText.includes("Remaining") || badgeText.includes("Unlimited") || badgeText.includes("Attempt"));
+
+            if (name.length > 0 && id.length >= 4 && isBadgeValid) {
+                btn.disabled = false;
+                btn.style.backgroundColor = "#2563eb";
+                btn.style.cursor = "pointer";
+                btn.innerText = "Start Examination ➜";
+            }
+        }
+
+        // --- 2. THE SECURITY GATEKEEPER (The "Start" Click) ---
+        function startTest() {
+            const nameInput = document.getElementById('candidateName');
+            const idInput = document.getElementById('username');
+            const startBtn = document.getElementById('start-btn');
+
+            const nameVal = nameInput.value.trim();
+            const idVal = idInput.value.trim();
+
+            // Double Check
+            if (!nameVal || !idVal) return;
+
+            // UI Loading
+            startBtn.disabled = true;
+            startBtn.innerText = "Verifying Access...";
+
+            // SERVER CHECK (Blocks Random IDs)
+            const requestUrl = SCRIPT_URL + "?id=" + encodeURIComponent(idVal) +
+                "&name=" + encodeURIComponent(nameVal) +
+                "&test=" + encodeURIComponent(TEST_ID);
+
+            fetch(requestUrl)
+                .then(response => response.text())
+                .then(data => {
+                    if (data === "ALLOW") {
+                        // SUCCESS: User is Paid & Valid
+                        userName = nameVal;
+                        document.getElementById('nav-user').innerText = userName;
+
+                        document.getElementById('welcome-screen').style.display = 'none';
+                        document.getElementById('app-wrapper').style.display = 'flex';
+
+                        // Mobile Setup
+                        if (isMobile) {
+                            document.body.classList.add('mobile-mode');
+                            document.getElementById('mob-menu').style.display = 'block';
+                            document.getElementById('mob-close-sb').style.display = 'block';
+                            document.getElementById('btn-next').innerText = "Next ➜";
+                            document.getElementById('btn-review').innerText = "Review";
+                        } else {
+                            document.body.classList.remove('mobile-mode');
+                            document.getElementById('mob-menu').style.display = 'none';
+                            document.getElementById('mob-close-sb').style.display = 'none';
+                            document.getElementById('btn-next').innerText = "Save & Next ➜";
+                            document.getElementById('btn-review').innerText = "🚩 Review";
+                        }
+
+                        current = 0;
+                        responses = new Array(questions.length).fill(null);
+                        status = new Array(questions.length).fill(0);
+                        timeLeft = questions.length * SECONDS_PER_QUESTION;
+
+                        initTest();
+                    } else if (data === "BLOCK_NOT_PAID") {
+                        // BLOCKS RANDOM USERS
+                        alert("⛔ ACCESS DENIED: ID '" + idVal + "' not found. Please buy access first.");
+                        startBtn.disabled = false;
+                        startBtn.innerText = "Start Examination ➜";
+                    } else {
+                        // BLOCKS LIMIT EXCEEDED
+                        alert("⚠️ LIMIT REACHED: ID '" + idVal + "' has used all 5 attempts.");
+                        startBtn.disabled = false;
+                        startBtn.innerText = "Start Examination ➜";
+                    }
+                })
+                .catch(error => {
+                    alert("❌ CONNECTION ERROR: Unable to verify. Check internet.");
+                    startBtn.disabled = false;
+                    startBtn.innerText = "Start Examination ➜";
+                });
+        }
+        function initTest() {
+            renderQ(0);
+            renderPalette();
+            updateTimerDisplay();
+
+            clearInterval(timerRef);
+            timerRef = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                if (timeLeft <= 0) finishTest();
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            let h = Math.floor(timeLeft / 3600).toString().padStart(2, '0');
+            let m = Math.floor((timeLeft % 3600) / 60).toString().padStart(2, '0');
+            let s = (timeLeft % 60).toString().padStart(2, '0');
+            document.getElementById('timer').innerText = `${h}:${m}:${s}`;
+        }
+
+        function renderQ(idx) {
+            current = idx;
+            const q = questions[idx];
+            if (status[idx] === 0) { status[idx] = 1; renderPalette(); }
+
+            const optionsHtml = q.options.map((opt, i) => {
+                const isSelected = responses[idx] === i;
+                const isMarkedReview = (status[idx] === 4 && isSelected);
+                let cls = 'option';
+                if (isMarkedReview) cls += ' review-marked selected';
+                else if (isSelected) cls += ' selected';
+
+                return `
+            <div class="${cls}" onclick="selectOpt(${i})">
+                <div class="opt-key">${String.fromCharCode(65 + i)}</div>
+                <div style="flex:1">${opt}</div>
+            </div>`;
+            }).join('');
+
+            document.getElementById('q-panel').innerHTML = `
+            <div class="q-header">
+                <span class="topic-tag">${q.topic}</span>
+                <span class="q-counter">Q.${idx + 1} / ${questions.length}</span>
+            </div>
+            <div class="q-text">${q.text}</div>
+            <div>${optionsHtml}</div>
+        `;
+        }
+
+        function selectOpt(i) {
+            responses[current] = i;
+            status[current] = (status[current] === 3 || status[current] === 4) ? 4 : 2;
+            renderQ(current);
+            renderPalette();
+        }
+
+        function nav(d) {
+            const next = current + d;
+            if (next >= 0 && next < questions.length) renderQ(next);
+        }
+
+        function renderPalette() {
+            document.getElementById('palette').innerHTML = questions.map((_, i) => {
+                let cls = 'grid-btn';
+                if (i === current) cls += ' st-curr';
+                if (status[i] === 2) cls += ' st-ans';
+                else if (status[i] === 3) cls += ' st-rev';
+                else if (status[i] === 4) cls += ' st-ans-rev';
+                return `<div class="${cls}" onclick="renderQ(${i})">${i + 1}</div>`;
+            }).join('');
+        }
+
+        function markReview() {
+            status[current] = responses[current] !== null ? 4 : 3;
+            renderQ(current);
+            renderPalette();
+            nav(1);
+        }
+
+        function clearResp() {
+            responses[current] = null;
+            status[current] = 1;
+            renderQ(current);
+            renderPalette();
+        }
+
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
+
+        /* --- NEW HISTORY LOGIC --- */
+        function openHistory() {
+            const list = document.getElementById('history-list');
+            const currentID = document.getElementById('username').value.trim(); // Get ID from box
+            list.innerHTML = "";
+
+            // Filter history to show only records belonging to the current ID
+            const userHistory = history.filter(rec => rec.userID === currentID);
+
+            if (userHistory.length === 0) {
+                list.innerHTML = `
+        <div class="hist-empty">
+            <div style="font-size:3rem; margin-bottom:10px; opacity:0.5">📂</div>
+            No attempts recorded for ID: <b>${currentID || 'Guest'}</b>.<br>
+            Please enter your ID to see your history.
+        </div>`;
+            } else {
+                // Show only the filtered results (Newest first)
+                userHistory.slice().reverse().forEach((rec, i) => {
+                    const dateStr = rec.date ? rec.date : "Unknown Date";
+
+                    list.innerHTML += `
+            <div class="hist-item" onclick="reviewAttemptFromHistory('${rec.date}')">
+                <div class="h-left">
+                    <span class="h-title">Attempt #${userHistory.length - i}</span>
+                    <span class="h-date">📅 ${dateStr}</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:15px;">
+                    <div class="h-score-badge">${rec.score} Marks</div>
+                    <span style="color:#cbd5e1; font-size:1.2rem;">➜</span>
+                </div>
+            </div>`;
+                });
+            }
+            document.getElementById('history-modal').style.display = 'flex';
+        }
+
+        // Helper to find the right record when clicked in history
+        function reviewAttemptFromHistory(dateId) {
+            const record = history.find(r => r.date === dateId);
+            if (record) {
+                renderResultScreen(record);
+                closeHistory();
+            }
+        }
+
+        function closeHistory() { document.getElementById('history-modal').style.display = 'none'; }
+        function reviewAttempt(index) { renderResultScreen(history[index]); closeHistory(); }
+
+        /* --- RESULTS --- */
+        function finishTest() {
+            clearInterval(timerRef);
+            let score = 0, cor = 0, wro = 0;
+            responses.forEach((ans, i) => {
+                if (ans === questions[i].correct) { score += 4; cor++; }
+                else if (ans !== null) { score -= 1; wro++; }
+            });
+
+            // UPDATED RECORD: Now saves the userID so we can filter it later
+            const record = {
+                date: new Date().toLocaleString(),
+                userID: document.getElementById('username').value.trim(),
+                score: score,
+                correct: cor,
+                wrong: wro,
+                userResponses: [...responses]
+            };
+
+            history.push(record);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
+            renderResultScreen(record);
+        }
+
+        function renderResultScreen(data) {
+            // --- SAFETY FIX: Re-calculate stats in case old records miss them ---
+            // This ensures even old history opens perfectly.
+            let calculatedScore = 0;
+            let calculatedCorrect = 0;
+            let calculatedWrong = 0;
+            let calculatedAtt = 0;
+
+            // Check if userResponses exists (Legacy support)
+            const responsesToUse = data.userResponses || new Array(questions.length).fill(null);
+
+            questions.forEach((q, i) => {
+                const ans = responsesToUse[i];
+                if (ans !== null && ans !== undefined) {
+                    calculatedAtt++;
+                    if (ans === q.correct) {
+                        calculatedScore += 4;
+                        calculatedCorrect++;
+                    } else {
+                        calculatedScore -= 1;
+                        calculatedWrong++;
+                    }
+                }
+            });
+            // -------------------------------------------------------
+
+            // 1. Calculate Stats
+            const totalQ = questions.length;
+            const maxMarks = totalQ * 4;
+
+            // 2. Push to HTML (The Score Grid)
+            // We check if elements exist before setting them to prevent errors
+            if (document.getElementById('disp-att')) document.getElementById('disp-att').innerText = `${calculatedAtt} / ${totalQ}`;
+            if (document.getElementById('disp-cor')) document.getElementById('disp-cor').innerText = calculatedCorrect;
+            if (document.getElementById('disp-wro')) document.getElementById('disp-wro').innerText = calculatedWrong;
+            if (document.getElementById('disp-score')) document.getElementById('disp-score').innerText = `${calculatedScore} / ${maxMarks}`;
+
+            // 3. Switch Screens
+            document.getElementById('welcome-screen').style.display = 'none';
+            document.getElementById('result-overlay').style.display = 'flex';
+
+            // 4. Generate Detailed List
+            let topicData = {};
+            const html = questions.map((q, i) => {
+                const userAns = responsesToUse[i];
+                const isCor = userAns === q.correct;
+
+                if (!topicData[q.topic]) topicData[q.topic] = { total: 0, cor: 0 };
+                topicData[q.topic].total++;
+                if (isCor) topicData[q.topic].cor++;
+
+                let statIcon = isCor ? '<span class="txt-green">✓ Correct</span>' : (userAns !== null && userAns !== undefined ? '<span class="txt-red">✕ Incorrect</span>' : '<span>○ Skipped</span>');
+                let rowCls = isCor ? 'correct' : (userAns !== null && userAns !== undefined ? 'wrong' : '');
+
+                const optionsList = q.options.map((opt, idx) => {
+                    let style = "padding:8px 12px; border-radius:8px; margin-bottom:5px; display:flex; line-height:1.4; border:1px solid #e2e8f0; background:#f8fafc; color:#64748b;";
+                    let prefix = `<b style="min-width:25px;">${String.fromCharCode(65 + idx)}.</b>`;
+                    if (idx === q.correct) style = "padding:8px 12px; border-radius:8px; margin-bottom:5px; display:flex; line-height:1.4; border:1px solid #bbf7d0; background:#dcfce7; color:#166534; font-weight:600;";
+                    else if (idx === userAns && !isCor) style = "padding:8px 12px; border-radius:8px; margin-bottom:5px; display:flex; line-height:1.4; border:1px solid #fecaca; background:#fee2e2; color:#991b1b; font-weight:600;";
+                    return `<div style="${style}">${prefix} <span>${opt}</span></div>`;
+                }).join('');
+
+                return `
+            <div class="exp-row ${rowCls}">
+                <div style="display:flex; justify-content:space-between; margin-bottom:10px; font-weight:700;">
+                    <span style="color:#64748b; font-size:0.85rem">${q.topic}</span>${statIcon}
+                </div>
+                <div style="font-weight:600; margin-bottom:15px; font-size:1.1rem; color:#1e293b;">Q${i + 1}: ${q.text}</div>
+                <div style="margin-bottom:20px; font-size:0.95rem;">${optionsList}</div>
+                <div class="exp-detail">
+                    <div class="why-box"><span class="txt-green" style="font-weight:700">✅ Explanation:</span> ${q.expl.correct}</div>
+                    <div class="why-box"><span class="txt-red" style="font-weight:700">❌ Error Analysis:</span> ${q.expl.others}</div>
+                    <div style="background:#fffbeb; padding:10px; border-radius:8px; border:1px dashed #f59e0b; font-size:0.9rem; color:#92400e;">💡 <b>Trick:</b> ${q.expl.trick}</div>
+                </div>
+            </div>`;
+            }).join('');
+
+            document.getElementById('solution-feed').innerHTML = html;
+
+            // 5. Update Weakness/Strength
+            let best = { name: "N/A", acc: -1 }, worst = { name: "N/A", acc: 101 };
+            for (const [t, d] of Object.entries(topicData)) {
+                const acc = (d.cor / d.total) * 100;
+                if (acc > best.acc) best = { name: t, acc: acc };
+                if (acc < worst.acc) worst = { name: t, acc: acc };
+            }
+            if (best.acc === -1) { best = { name: "None", acc: 0 }; worst = { name: "None", acc: 0 }; }
+            document.getElementById('area-strong').innerText = best.name;
+            document.getElementById('area-weak').innerText = worst.name;
+            document.getElementById('area-strong-stat').innerText = `Accuracy: ${Math.round(best.acc)}%`;
+            document.getElementById('area-weak-stat').innerText = `Accuracy: ${Math.round(worst.acc)}%`;
+        }
+
+        function showThankYou() {
+            document.getElementById('result-overlay').style.display = 'none';
+            document.getElementById('ty-screen').style.display = 'flex';
+        }
+    </script>
+
+</body>
+
+</html>
