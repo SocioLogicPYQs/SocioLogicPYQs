@@ -702,39 +702,40 @@
         <div class="header-brand-trigger">
             <span onclick="toggleSidebar()"
                 style="font-size:1.8rem; color:#2563eb; cursor:pointer; padding: 5px;">☰</span>
-
             <div style="display:flex; align-items:center; gap:10px; cursor:pointer;"
                 onclick="showView('view-home', null)">
-                <img src="https://i.ibb.co/fYNNzJYS/Gemini-Generated-Image-fb7rm1fb7rm1fb7r.png" alt="Logo">
-                <span>SocioLogic</span>
+                <img src="https://i.ibb.co/fYNNzJYS/Gemini-Generated-Image-fb7rm1fb7rm1fb7r.png" alt="Logo"
+                    style="width:35px; height:35px; border-radius:6px;">
+                <span style="font-weight:800; color:#0f172a; font-size:1.2rem;">SocioLogic</span>
             </div>
         </div>
 
         <button id="desktop-menu-btn" onclick="toggleDesktopSidebar()"
-            style="background:none; border:none; font-size:1.8rem; cursor:pointer; color:#0f172a; margin-right:auto; display:none; padding-left: 20px;">
+            style="background:none; border:none; font-size:1.8rem; cursor:pointer; color:#0f172a; margin-right:auto; padding-left: 20px;">
             ☰
         </button>
 
-        <div class="control-panel">
-            <div id="panel-free" style="display:flex; align-items:center; gap:5px;">
-                <span class="status-display sd-free">👤 Free User</span>
-                <button class="btn-header btn-login" onclick="openLogin()">Login</button>
-                <a href="https://rzp.io/rzp/xddl5LdV" target="_blank" class="btn-header btn-buy">Buy Access</a>
-            </div>
-            <div id="panel-prem" style="display:none; align-items:center; position:relative;">
+        <div class="control-panel" style="margin-left: auto; display: flex; align-items: center; gap: 10px;">
+            <a href="https://rzp.io/rzp/xddl5LdV" target="_blank" id="buy-btn-header" class="btn-header btn-buy"
+                style="display:none;">Buy Access</a>
 
+            <div id="panel-prem" style="display:flex; align-items:center; position:relative;">
                 <div class="profile-trigger" onclick="toggleProfileMenu()">
-                    <div style="text-align:right; margin-right:5px; display:none;" id="desk-profile-text">
-                        <div id="disp-name" style="font-weight:700; font-size:0.9rem; color:#0f172a;">User</div>
-                        <div style="font-size:0.75rem; color:#15803d; font-weight:600;">Premium Access</div>
+                    <div style="text-align:right; margin-right:8px; display:none;" id="desk-profile-text">
+                        <div id="disp-name" style="font-weight:700; font-size:0.9rem; color:#0f172a;">Guest</div>
+                        <div id="user-status-label" style="font-size:0.75rem; color:#64748b; font-weight:600;">Free User
+                        </div>
                     </div>
-                    <div class="avatar-circle" id="disp-initial">U</div>
+                    <div class="avatar-circle" id="disp-initial">G</div>
                 </div>
 
                 <div class="profile-menu" id="profile-dropdown">
                     <div class="pm-header">
-                        <div class="pm-name" id="menu-name">Student Name</div>
-                        <div class="pm-mobile" id="menu-mobile">+91 98765XXXXX</div>
+                        <div class="pm-name" id="menu-name">Guest User</div>
+                        <div class="pm-mobile" id="menu-mobile">Not Logged In</div>
+                    </div>
+                    <div id="menu-login-opt" class="pm-item" onclick="openLogin()">
+                        <span>👤</span> Login
                     </div>
                     <div class="pm-item" onclick="openChangePass()">
                         <span>🔑</span> Change Password
@@ -1675,7 +1676,9 @@
             }
         }
 
-        function toggleDesktopSidebar() { document.body.classList.toggle('desktop-closed'); }
+        function toggleDesktopSidebar() {
+            document.body.classList.toggle('desktop-closed');
+        }
 
         // --- 2. AUTHENTICATION ---
         function openLogin() { document.getElementById('login-modal').style.display = 'flex'; }
@@ -1713,7 +1716,9 @@
                     btn.disabled = false;
                 });
         }
-
+        function toggleDesktopSidebar() {
+            document.body.classList.toggle('desktop-closed');
+        }
         function forgotPassTrigger() {
             const mobile = prompt("Enter your Registered Mobile Number:");
             if (!mobile) return;
@@ -1729,22 +1734,27 @@
 
         // --- 3. PREMIUM DASHBOARD ---
         function activatePremiumMode() {
-            document.getElementById('panel-free').style.display = 'none';
-            document.getElementById('panel-prem').style.display = 'flex';
+            const isPremium = localStorage.getItem('socio_is_premium') === 'true';
+            const name = localStorage.getItem('socio_user_name') || "Guest";
+            const mobile = localStorage.getItem('socio_user_id') || "Not Logged In";
 
-            document.querySelectorAll('.btn-lock').forEach(el => el.style.display = 'none');
-            document.querySelectorAll('.btn-unlock').forEach(el => el.style.display = 'block');
+            // 1. Update UI Text
+            document.getElementById('disp-name').innerText = name;
+            document.getElementById('disp-initial').innerText = name.charAt(0).toUpperCase();
+            document.getElementById('menu-name').innerText = name;
+            document.getElementById('menu-mobile').innerText = mobile;
+            document.getElementById('user-status-label').innerText = isPremium ? "Premium Access" : "Free User";
 
-            const name = localStorage.getItem('socio_user_name') || "Student";
-            const mobile = localStorage.getItem('socio_user_id') || "";
-            const initial = name.charAt(0).toUpperCase();
+            // 2. Smart Button Visibility (Razorpay & Login)
+            // Show Buy Button and Menu Login ONLY if NOT logged in
+            document.getElementById('buy-btn-header').style.display = isPremium ? 'none' : 'block';
+            document.getElementById('menu-login-opt').style.display = isPremium ? 'none' : 'flex';
 
-            if (document.getElementById('disp-name')) document.getElementById('disp-name').innerText = name;
-            if (document.getElementById('disp-initial')) document.getElementById('disp-initial').innerText = initial;
-            if (document.getElementById('menu-name')) document.getElementById('menu-name').innerText = name;
-            if (document.getElementById('menu-mobile')) document.getElementById('menu-mobile').innerText = mobile;
+            // 3. Unlock Content
+            document.querySelectorAll('.btn-lock').forEach(el => el.style.display = isPremium ? 'none' : 'flex');
+            document.querySelectorAll('.btn-unlock').forEach(el => el.style.display = isPremium ? 'block' : 'none');
 
-            if (window.innerWidth > 900 && document.getElementById('desk-profile-text')) {
+            if (window.innerWidth > 900) {
                 document.getElementById('desk-profile-text').style.display = 'block';
             }
         }
@@ -2004,6 +2014,33 @@
         .blur-content {
             filter: blur(15px);
             pointer-events: none;
+        }
+
+        /* Laptop Sidebar Toggle Logic */
+        body.desktop-closed {
+            --sidebar-width: 0px;
+        }
+
+        body.desktop-closed .sidebar {
+            transform: translateX(-100%);
+        }
+
+        body.desktop-closed .top-header,
+        body.desktop-closed .main-content {
+            left: 0 !important;
+            margin-left: 0 !important;
+        }
+
+        /* Mobile Header Alignment */
+        @media(max-width: 900px) {
+            .top-header {
+                left: 0 !important;
+                justify-content: space-between !important;
+            }
+
+            .main-content {
+                padding-top: 85px !important;
+            }
         }
     </style>
 </body>
