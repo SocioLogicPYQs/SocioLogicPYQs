@@ -1,0 +1,2492 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>YOUR PYQ BATTLE</title>
+    <style>
+        :root {
+            --brand-main: #2563eb;
+            --brand-grad: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+            --bg-grad: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-light: #64748b;
+            --success: #15803d;
+            --danger: #b91c1c;
+            --review: #7c3aed;
+            --selected: #eff6ff;
+            --radius: 16px;
+            --shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg-grad);
+            color: var(--text-main);
+            height: 100vh;
+            height: 100dvh;
+            /* Mobile Chrome Fix */
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* --- 1. WELCOME SCREEN --- */
+        #welcome-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            background: white;
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 24px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- UPDATED WELCOME SCREEN (Wider & Premium) --- */
+        .welcome-card {
+            background: white;
+            width: 90%;
+            /* Good for Mobile */
+            max-width: 700px;
+            /* Increased from 450px for Laptop (Wider look) */
+            padding: 50px;
+            /* More spacious "Grand" feel */
+            border-radius: 24px;
+            /* Softer corners */
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
+            /* Deeper shadow */
+            text-align: center;
+            border: 1px solid #e2e8f0;
+            max-height: 90vh;
+            overflow-y: auto;
+            display: flex;
+            /* Fixes layout alignment */
+            flex-direction: column;
+            align-items: center;
+            /* Centers everything perfectly */
+        }
+
+        /* Ensure input fields don't stretch too ugly on the wide screen */
+        .welcome-card .input-field {
+            max-width: 500px;
+            /* Keeps inputs looking neat */
+            width: 100%;
+        }
+
+        /* Mobile Adjustment */
+        @media(max-width: 600px) {
+            .welcome-card {
+                width: 95%;
+                /* Maximize space on phone */
+                padding: 30px 20px;
+                /* Slightly tighter padding for small screens */
+            }
+        }
+
+        .mode-selector {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .mode-btn {
+            flex: 1;
+            padding: 15px 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        .mode-btn.active {
+            border-color: #2563eb;
+            background: #eff6ff;
+            color: #2563eb;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+            transform: translateY(-2px);
+        }
+
+        /* --- SCORECARD GRID STYLES --- */
+        .score-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+
+        .score-card-item {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            text-align: center;
+        }
+
+        .sc-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.9;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .sc-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 15px;
+            margin: 15px 0;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            outline: none;
+            text-align: center;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .input-field:focus {
+            border-color: #2563eb;
+        }
+
+        #attempt-badge {
+            display: inline-block;
+            background: #fff7ed;
+            color: #c2410c;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            border: 1px solid #ffedd5;
+            margin-bottom: 20px;
+        }
+
+        /* --- 2. MAIN INTERFACE --- */
+        #app-wrapper {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+        }
+
+        /* Header */
+        nav {
+            background: var(--brand-grad);
+            color: white;
+            height: 64px;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow);
+            z-index: 50;
+            flex-shrink: 0;
+        }
+
+        .timer-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-weight: 700;
+            font-size: 1.1rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(4px);
+        }
+
+        /* Main Area */
+        .container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .main-area {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            display: flex;
+            justify-content: center;
+        }
+
+        .q-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 40px;
+            max-width: 900px;
+            width: 100%;
+            height: fit-content;
+            border-top: 5px solid #2563eb;
+            animation: slideUp 0.3s ease-out;
+            margin-bottom: 40px;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .q-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 15px;
+        }
+
+        .topic-tag {
+            background: #eff6ff;
+            color: #1e40af;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        .q-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            line-height: 1.6;
+            color: var(--text-main);
+            margin-bottom: 25px;
+        }
+
+        /* Options */
+        .option {
+            display: flex;
+            align-items: flex-start;
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+            line-height: 1.5;
+        }
+
+        .option:hover {
+            border-color: #93c5fd;
+            background: #f8fafc;
+        }
+
+        .option.selected {
+            border-color: #2563eb;
+            background: var(--selected);
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.1);
+        }
+
+        .option.selected .opt-key {
+            background: #2563eb;
+            color: white;
+            border-color: #2563eb;
+        }
+
+        .option.review-marked {
+            border-color: var(--review);
+            background: #f5f3ff;
+        }
+
+        .option.review-marked .opt-key {
+            background: var(--review);
+            color: white;
+            border-color: var(--review);
+        }
+
+        .opt-key {
+            min-width: 32px;
+            height: 32px;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #64748b;
+            margin-right: 15px;
+            font-size: 0.9rem;
+        }
+
+        /* Sidebar (Desktop Default) */
+        .sidebar {
+            width: 340px;
+            background: white;
+            border-left: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            z-index: 40;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .sb-grid {
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            overflow-y: auto;
+            align-content: start;
+        }
+
+        .grid-btn {
+            aspect-ratio: 1;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #64748b;
+            background: white;
+        }
+
+        /* States */
+        .st-curr {
+            border-color: #2563eb;
+            color: #2563eb;
+            box-shadow: inset 0 0 0 2px #2563eb;
+        }
+
+        .st-ans {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        .st-rev {
+            background: #f59e0b;
+            border-color: #f59e0b;
+            color: white;
+        }
+
+        .st-ans-rev {
+            background: var(--review);
+            border-color: var(--review);
+            color: white;
+        }
+
+        /* Footer */
+        .footer-bar {
+            height: 72px;
+            background: white;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            z-index: 30;
+            flex-shrink: 0;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-pri {
+            background: #1e40af;
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(30, 64, 175, 0.2);
+        }
+
+        .btn-sec {
+            background: white;
+            border: 2px solid #e2e8f0;
+            color: #475569;
+        }
+
+        .btn-rev {
+            background: #fffbeb;
+            color: #b45309;
+            border: 1px solid #fcd34d;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        /* --- PREMIUM MOBILE/TABLET ADAPTATION --- */
+        /* Only activates when 'mobile-mode' class is on body */
+        body.mobile-mode .sidebar {
+            position: fixed;
+            right: 0;
+            top: 64px;
+            bottom: 0;
+            width: 85%;
+            max-width: 320px;
+            transform: translateX(100%);
+            /* Hidden by default */
+            box-shadow: -10px 0 30px rgba(0, 0, 0, 0.2);
+        }
+
+        body.mobile-mode .sidebar.active {
+            transform: translateX(0);
+        }
+
+        /* Slide in */
+
+        body.mobile-mode .main-area {
+            padding: 15px;
+        }
+
+        body.mobile-mode .q-card {
+            padding: 25px;
+            border-radius: 12px;
+        }
+
+        /* Bigger Touch Targets for Mobile */
+        body.mobile-mode .option {
+            padding: 18px 15px;
+            margin-bottom: 12px;
+        }
+
+        body.mobile-mode .btn {
+            padding: 14px 18px;
+            font-size: 1rem;
+        }
+
+        body.mobile-mode .footer-bar {
+            height: 80px;
+            padding: 0 15px;
+        }
+
+        /* Hide Text Labels on Mobile Footer if needed to fit */
+        body.mobile-mode .btn-sec span {
+            display: none;
+        }
+
+        body.mobile-mode .btn svg {
+            display: block;
+        }
+
+        /* --- COMPACT RESULT CARD STYLES --- */
+        /* --- UPDATED WIDTH FOR RESULT CARD --- */
+        .res-card {
+            background: #ffffff;
+            width: 95%;
+            /* Uses 95% screen width on Mobile */
+            max-width: 900px;
+            /* Increased from 500px to 900px for Laptop */
+            max-height: 90vh;
+            /* Keeps it fitting vertically */
+            border-radius: 20px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+            animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .res-header {
+            background: var(--brand-grad);
+            padding: 20px;
+            /* Reduced padding */
+            text-align: center;
+            color: white;
+            flex-shrink: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .res-header h2 {
+            font-size: 1.1rem;
+            margin: 0 0 15px 0;
+            opacity: 0.95;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        /* Compact Score Grid */
+        .score-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            /* 4 items in one row */
+            gap: 8px;
+            margin: 0;
+        }
+
+        .score-card-item {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 8px 4px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(4px);
+            text-align: center;
+        }
+
+        .sc-label {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            opacity: 0.85;
+            margin-bottom: 3px;
+            font-weight: 600;
+        }
+
+        .sc-value {
+            font-size: 1.15rem;
+            font-weight: 700;
+            line-height: 1.1;
+        }
+
+        /* Result Body */
+        .res-body {
+            padding: 20px;
+            overflow-y: auto;
+            flex: 1;
+            background: #f8fafc;
+        }
+
+        /* Analysis Boxes */
+        .analysis-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .analysis-box {
+            background: white;
+            padding: 12px 15px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+        }
+
+        .ab-title {
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .ab-val {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #334155;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* --- MISSING OVERLAY & EXPLANATION STYLES --- */
+        .overlay {
+            display: none;
+            /* Hidden by default */
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            background: rgba(15, 23, 42, 0.8);
+            /* Dark background */
+            backdrop-filter: blur(5px);
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        /* Explanation Feed Styling */
+        .exp-row {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
+        }
+
+        .exp-row.correct {
+            border-left: 5px solid #16a34a;
+        }
+
+        .exp-row.wrong {
+            border-left: 5px solid #dc2626;
+        }
+
+        .exp-detail {
+            background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+            margin-top: 15px;
+            padding-top: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .why-box {
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: #334155;
+        }
+
+        .txt-green {
+            color: #16a34a;
+            font-weight: 700;
+        }
+
+        .txt-red {
+            color: #dc2626;
+            font-weight: 700;
+        }
+
+        /* Mobile Tweak: Stack scores if screen is too small */
+        @media(max-width: 400px) {
+            .score-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* --- PREMIUM HISTORY MODAL --- */
+        #history-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 250;
+            background: rgba(15, 23, 42, 0.7);
+            /* Darker blur */
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(8px);
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        .history-card {
+            background: white;
+            width: 90%;
+            max-width: 550px;
+            max-height: 80vh;
+            border-radius: 24px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .hist-header {
+            padding: 25px;
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .hist-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #1e293b;
+            letter-spacing: -0.5px;
+        }
+
+        .hist-close {
+            background: #fee2e2;
+            color: #ef4444;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 99px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+
+        .hist-close:hover {
+            background: #fecaca;
+            transform: scale(1.05);
+        }
+
+        .hist-list {
+            padding: 20px;
+            overflow-y: auto;
+            background: #f8fafc;
+            flex: 1;
+        }
+
+        /* The Individual Attempt Card */
+        .hist-item {
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 12px;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
+        }
+
+        .hist-item:hover {
+            transform: translateY(-3px);
+            border-color: #3b82f6;
+            box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.1);
+        }
+
+        .h-left {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .h-title {
+            font-weight: 700;
+            color: #334155;
+            font-size: 1rem;
+        }
+
+        .h-date {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            font-weight: 500;
+        }
+
+        .h-score-badge {
+            background: #eff6ff;
+            color: #2563eb;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 1.1rem;
+            border: 1px solid #dbeafe;
+        }
+
+        /* Empty State */
+        .hist-empty {
+            text-align: center;
+            padding: 40px;
+            color: #94a3b8;
+            font-style: italic;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @media(max-width: 768px) {
+            .analysis-row {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            /* Default hide on small screens until toggled */
+            .sidebar.active {
+                display: flex;
+                position: fixed;
+                right: 0;
+                top: 64px;
+                bottom: 0;
+                width: 85%;
+                transform: none;
+                box-shadow: -10px 0 20px rgba(0, 0, 0, 0.2);
+            }
+        }
+
+
+        /* --- NEW HEADER STYLES --- */
+        .header-left-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-box {
+            background: white;
+            width: 45px;
+            height: 45px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo-box img {
+            max-width: 80%;
+            max-height: 80%;
+            object-fit: contain;
+        }
+
+        .candidate-details {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            line-height: 1.2;
+        }
+
+        .candidate-name {
+            color: #ffffff;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 20px;
+            /* Bigger Font */
+            font-weight: 700;
+            /* Bold */
+            margin: 0;
+            letter-spacing: 0.5px;
+            text-transform: capitalize;
+        }
+
+        .test-badge {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 2px;
+        }
+
+        /* --- GLOBAL WATERMARK --- */
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background-image: url('https://i.ibb.co/fYNNzJYS/Gemini-Generated-Image-fb7rm1fb7rm1fb7r.png');
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 50vmin;
+            opacity: 0.1;
+            z-index: 9999;
+            pointer-events: none;
+            filter: grayscale(100%);
+            mix-blend-mode: multiply;
+        }
+
+        /* --- IMPROVED THANK YOU SCREEN --- */
+        .ty-card {
+            background: white;
+            width: 90%;
+            max-width: 750px;
+            /* Wider on Laptop for grandeur */
+            padding: 60px 40px;
+            /* Generous spacing for symmetry */
+            text-align: center;
+            border-radius: 30px;
+            box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: slideUp 0.4s ease-out;
+        }
+
+        .ty-header {
+            font-size: 3.5rem;
+            /* Very large, clear text */
+            font-weight: 800;
+            color: #0f172a;
+            margin: 20px 0 15px 0;
+            line-height: 1.1;
+            letter-spacing: -1px;
+        }
+
+        .ty-msg {
+            font-size: 1.4rem;
+            /* Large, easy-to-read body text */
+            color: #475569;
+            line-height: 1.8;
+            /* High readability */
+            margin-bottom: 40px;
+            max-width: 90%;
+            /* Prevents text stretching too wide */
+        }
+
+        /* Mobile Adjustments */
+        @media(max-width: 600px) {
+            .ty-card {
+                padding: 40px 20px;
+            }
+
+            .ty-header {
+                font-size: 2.5rem;
+            }
+
+            /* Adjusted for phone screens */
+            .ty-msg {
+                font-size: 1.15rem;
+                line-height: 1.6;
+            }
+        }
+
+        /* --- RESUME NAVIGATION TOAST --- */
+        .resume-toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            /* Hidden initially */
+            background: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            z-index: 1000;
+            border: 1px solid #e2e8f0;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            min-width: 300px;
+        }
+
+        .resume-toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .rt-text {
+            font-size: 0.9rem;
+            color: #1e293b;
+            flex: 1;
+        }
+
+        .rt-btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .rt-close {
+            background: #f1f5f9;
+            color: #64748b;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="instrOverlay"
+        style="display:flex; position:fixed; inset:0; background:rgba(255,255,255,0.98); z-index:9999; align-items:center; justify-content:center; font-family:'Segoe UI', sans-serif;">
+        <div
+            style="width:100%; max-width:600px; background:white; padding:30px; border-radius:20px; box-shadow:0 25px 50px rgba(0,0,0,0.15); border:1px solid #e2e8f0; max-height:90vh; overflow-y:auto; margin:15px;">
+            <div style="text-align:center; border-bottom:2px solid #eff6ff; padding-bottom:15px; margin-bottom:20px;">
+                <h2 style="margin:0; color:#1e293b; font-size:22px;">📜 Instructions</h2>
+                <p style="margin:5px 0 0; color:#64748b; font-size:14px;">Please read the marking scheme carefully</p>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-bottom:25px;">
+                <div
+                    style="background:#f0fdf4; padding:15px; border-radius:12px; border:1px solid #bbf7d0; text-align:center;">
+                    <div style="color:#166534; font-size:12px; font-weight:700; text-transform:uppercase;">Correct
+                        Answer</div>
+                    <div style="font-size:24px; font-weight:800; color:#15803d;">+4</div>
+                </div>
+                <div
+                    style="background:#fef2f2; padding:15px; border-radius:12px; border:1px solid #fecaca; text-align:center;">
+                    <div style="color:#991b1b; font-size:12px; font-weight:700; text-transform:uppercase;">Incorrect
+                        Answer</div>
+                    <div style="font-size:24px; font-weight:800; color:#dc2626;">-1</div>
+                </div>
+            </div>
+
+            <div
+                style="background:#f8fafc; padding:20px; border-radius:12px; margin-bottom:25px; border:1px solid #e2e8f0;">
+                <h3 style="margin:0 0 10px 0; font-size:16px; color:#334155;">🎮 How to Submit:</h3>
+                <ul style="margin:0; padding-left:20px; color:#475569; font-size:14px; line-height:1.6;">
+                    <li><strong>Smartphone Users:</strong> Use the <span style="color:#dc2626; font-weight:bold;">Red
+                            Submit Button</span> in the bottom footer.</li>
+                    <li><strong>Laptop Users:</strong> Click 'Submit Test' on the sidebar.</li>
+                    <li>You can review and change answers anytime before submitting.</li>
+                </ul>
+            </div>
+
+            <button onclick="document.getElementById('instrOverlay').style.display='none'"
+                style="width:100%; padding:16px; background:#2563eb; color:white; border:none; border-radius:12px; font-size:16px; font-weight:700; cursor:pointer; box-shadow:0 4px 12px rgba(37,99,235,0.2);">I
+                am ready to begin ➜</button>
+        </div>
+    </div>
+
+    <div id="welcome-screen">
+        <div class="welcome-card">
+            <img src="https://i.ibb.co/fYNNzJYS/Gemini-Generated-Image-fb7rm1fb7rm1fb7r.png" alt="SocioLogic"
+                style="height: 120px; width: auto; display: inline-block;">
+
+            <h1 style="color:#1e293b; margin:0; font-size:1.8rem; letter-spacing:-0.5px;">YOUR PYQ BATTLE</h1>
+            <p style="color:#64748b; margin-top:5px; margin-bottom:20px;">CUET PG Sociology 2025 Full Paper</p>
+
+            <div class="mode-selector">
+                <div class="mode-btn active" onclick="setMode('desktop')" id="btn-desktop">
+                    <span style="font-size:1.5rem">💻</span>
+                    <span style="font-size:0.9rem">Laptop/Tablet</span>
+                </div>
+                <div class="mode-btn" onclick="setMode('mobile')" id="btn-mobile">
+                    <span style="font-size:1.5rem">📱</span>
+                    <span style="font-size:0.9rem">Mobile</span>
+                </div>
+            </div>
+
+            <input type="text" id="candidateName" class="input-field" placeholder="Enter Your Name" autocomplete="off"
+                style="margin-bottom:10px;">
+
+            <input type="text" id="username" class="input-field" placeholder="Enter Registered Mobile" autocomplete="off">
+
+            <div id="attempt-badge"
+                style="margin-bottom:15px; font-size:0.85rem; color:#64748b; font-weight:600; padding:10px; border-radius:8px; background:#f1f5f9; border:1px solid #e2e8f0;">
+                Waiting for Candidate ID...
+            </div>
+            <button id="start-btn" class="btn btn-pri"
+                style="width:100%; justify-content:center; padding:15px; font-size:1.1rem;" onclick="startTest()">
+                Start Examination ➜
+            </button>
+
+            <button class="btn btn-sec" style="width:100%; justify-content:center; margin-top:10px;"
+                onclick="openHistory()">
+                📜 View Past Attempts
+            </button>
+
+            <div style="margin-top: 25px; border-top: 1px dashed #cbd5e1; padding-top: 20px;">
+                <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 10px; font-weight:600;">New Student?</p>
+                <a href="https://rzp.io/rzp/xddl5LdV" target="_blank" style="text-decoration: none;">
+                    <button class="btn"
+                        style="background: #10b981; color: white; width: 100%; justify-content: center; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);">
+                        ⚡ Buy Full Access at just (₹149)
+                    </button>
+                </a>
+                <div style="font-size:0.75rem; color:#94a3b8; margin-top:5px;">Last 4 digits of your phone will be your
+                    ID</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="history-modal">
+        <div class="history-card">
+            <div class="hist-header">
+                <span class="hist-title">📜 Past Attempts</span>
+                <button class="hist-close" onclick="closeHistory()">Close</button>
+            </div>
+            <div id="history-list" class="hist-list"></div>
+        </div>
+    </div>
+
+    <div id="app-wrapper">
+        <nav>
+            <div class="header-left-section">
+                <div class="logo-box">
+                    <img src="https://i.ibb.co/fYNNzJYS/Gemini-Generated-Image-fb7rm1fb7rm1fb7r.png" alt="Logo" />
+                </div>
+                <div class="candidate-details">
+                    <h1 class="candidate-name" id="nav-user">Guest</h1>
+                    <div class="test-badge">CUET PG SOCIOLOGY 2025 Full Paper</div>
+                </div>
+            </div>
+            <div class="timer-badge" id="timer">00:00:00</div>
+            <button class="btn btn-sec" style="padding:8px;" onclick="toggleSidebar()" id="mob-menu">☰</button>
+        </nav>
+
+        <div class="container">
+            <div class="main-area">
+                <div class="q-card" id="q-panel"></div>
+            </div>
+
+            <aside class="sidebar" id="sidebar">
+                <div
+                    style="padding:15px; border-bottom:1px solid #e2e8f0; font-weight:700; color:#334155; display:flex; justify-content:space-between; align-items:center;">
+                    <span>Question Map</span>
+                    <span onclick="toggleSidebar()" style="cursor:pointer; font-size:1.2rem; display:none;"
+                        id="mob-close-sb">✕</span>
+                </div>
+                <div class="sb-grid" id="palette"></div>
+                <div style="padding:20px; border-top:1px solid #e2e8f0; margin-top:auto;">
+                    <button class="btn btn-danger" style="width:100%; justify-content:center;"
+                        onclick="finishTest()">SUBMIT TEST</button>
+                </div>
+            </aside>
+        </div>
+
+        <div class="footer-bar" style="padding:0 10px; gap:5px; height:auto; min-height:72px;">
+            <div style="display:flex; gap:5px; flex:1;">
+                <button class="btn btn-sec" onclick="clearResp()"
+                    style="flex:1; justify-content:center; padding:10px; font-size:0.8rem;">Clear</button>
+                <button class="btn btn-rev" onclick="markReview()" id="btn-review"
+                    style="flex:1; justify-content:center; padding:10px; font-size:0.8rem;">🚩 Review</button>
+            </div>
+            <div style="display:flex; gap:5px; flex:1.5;">
+                <button class="btn btn-sec" onclick="nav(-1)" style="padding:10px;">Prev</button>
+                <button class="btn btn-pri" onclick="nav(1)" id="btn-next"
+                    style="flex:1; justify-content:center; padding:10px; font-size:0.9rem;">Next ➜</button>
+                <button class="btn btn-danger" onclick="finishTest()"
+                    style="padding:10px; background:#dc2626; color:white;">Submit</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="overlay" id="result-overlay">
+        <div class="res-card">
+            <div class="res-header">
+                <h2>Assessment Report</h2>
+                <div class="score-grid">
+                    <div class="score-card-item">
+                        <div class="sc-label">Attempted</div>
+                        <div class="sc-value" id="disp-att">0</div>
+                    </div>
+                    <div class="score-card-item"
+                        style="background: rgba(220, 252, 231, 0.25); border-color: rgba(220, 252, 231, 0.5);">
+                        <div class="sc-label" style="color:#dcfce7;">Correct</div>
+                        <div class="sc-value" style="color:#f0fdf4;" id="disp-cor">0</div>
+                    </div>
+                    <div class="score-card-item"
+                        style="background: rgba(254, 226, 226, 0.25); border-color: rgba(254, 226, 226, 0.5);">
+                        <div class="sc-label" style="color:#fee2e2;">Wrong</div>
+                        <div class="sc-value" style="color:#fef2f2;" id="disp-wro">0</div>
+                    </div>
+                    <div class="score-card-item">
+                        <div class="sc-label">Score</div>
+                        <div class="sc-value" id="disp-score">0</div>
+                    </div>
+                </div>
+
+                <button onclick="showThankYou()"
+                    style="margin-top:15px; width:100%; padding:10px; background:#ffffff; color:#1e40af; border:none; border-radius:8px; font-weight:800; cursor:pointer; font-size:0.9rem; box-shadow:0 4px 6px rgba(0,0,0,0.1); transition:transform 0.2s;">
+                    Exit & Save Report ➜
+                </button>
+            </div>
+
+            <div class="res-body">
+
+                <div class="analysis-row">
+                    <div class="analysis-box" style="border-left:4px solid #15803d;">
+                        <div class="ab-title" style="color:#15803d">💪 Strongest</div>
+                        <div class="ab-val" id="area-strong">--</div>
+                        <div style="font-size:0.75rem; color:#94a3b8; margin-top:3px;" id="area-strong-stat">Acc: 0%
+                        </div>
+                    </div>
+                    <div class="analysis-box" style="border-left:4px solid #b91c1c;">
+                        <div class="ab-title" style="color:#b91c1c">⚠️ Weakest</div>
+                        <div class="ab-val" id="area-weak">--</div>
+                        <div style="font-size:0.75rem; color:#94a3b8; margin-top:3px;" id="area-weak-stat">Acc: 0%</div>
+                    </div>
+                </div>
+
+                <h3
+                    style="font-size:0.95rem; font-weight:700; color:#0f172a; margin-bottom:15px; border-bottom:1px solid #e2e8f0; padding-bottom:8px;">
+                    Detailed Explanations
+                </h3>
+
+                <div id="solution-feed"></div>
+
+                <div style="text-align:center; margin-top:25px;">
+                    <button class="btn btn-pri" style="width:100%; justify-content:center; padding:12px;"
+                        onclick="showThankYou()">
+                        Exit & Save Report
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="overlay" id="ty-screen">
+        <div class="ty-card">
+
+            <img src="https://i.ibb.co/fYNNzJYS/Gemini-Generated-Image-fb7rm1fb7rm1fb7r.png" alt="SocioLogic"
+                style="height: 140px; width: auto; margin-bottom: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-radius: 50%;">
+
+            <h1 class="ty-header">Test Submitted!</h1>
+
+            <p class="ty-msg">
+                Your performance on <b style="color:#1e40af;">SocioLogic</b> has been recorded.<br>
+                You are one step closer to your <b style="color:#d97706;">DREAM UNIVERSITY</b>.
+            </p>
+
+            <a href="https://t.me/SocioLogicPYQs" target="_blank"
+                style="text-decoration:none; width: 100%; max-width: 400px;">
+                <button class="btn btn-pri"
+                    style="width:100%; justify-content:center; padding: 16px; font-size: 1.1rem; border-radius: 12px; background: #0088cc;">
+                    ✈️ Join Telegram Channel
+                </button>
+            </a>
+
+            <div style="display: flex; gap: 15px; width: 100%; max-width: 500px; margin-top: 25px; flex-wrap: wrap;">
+
+                <button class="btn btn-sec" onclick="location.reload()"
+                    style="flex: 1; min-width: 200px; justify-content: center; padding: 16px; border-radius: 12px; font-weight: 700; border: 2px solid #e2e8f0; color: #475569;">
+                    🔄 View Current Page
+                </button>
+
+                <a href="index.html" style="text-decoration: none; flex: 1; min-width: 200px;">
+                    <button class="btn btn-pri"
+                        style="width: 100%; justify-content: center; padding: 16px; border-radius: 12px; background: #0f172a; color: white; font-weight: 700; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);">
+                        View Main Page
+                    </button>
+                </a>
+
+            </div>
+        </div>
+    </div>
+    <script>
+        /* -------------------------------------------------------------
+           PASTE YOUR QUESTION DATA HERE
+           const questions = [ ... ];
+        ------------------------------------------------------------- */
+        const questions = [
+
+
+
+            {
+                topic: "Statistics",
+                text: "What is a median?",
+                options: ["the value that has highest frequency", "the value that is an average", "the most representative average", "the average that progresses"],
+                correct: 2,
+                expl: {
+                    correct: "The median is the middle value in a dataset. In skewed distributions (like income), it is considered the 'most representative average' because it is not skewed by outliers like the mean.",
+                    others: "Option 1 describes the Mode. Option 2 is generic. Option 4 is nonsensical.",
+                    trick: "Median = Middle = Representative (for skewed data)."
+                }
+            },
+            {
+                topic: "Sociological Theory",
+                text: "In Parson's Social Systems, arrange the following functional prerequisites from lower to higher order.\nA. Integration\nB. Goal Attainment\nC. Latency\nD. Adaptation",
+                options: ["A, B, C, D", "D, B, A, C", "B, A, D, C", "C, B, D, A"],
+                correct: 1,
+                expl: {
+                    correct: "Parsons' Cybernetic Hierarchy places systems with high energy/low information at the bottom and high information/high control at the top. The order is Adaptation (Organism) -> Goal Attainment (Personality) -> Integration (Social) -> Latency (Cultural).",
+                    others: "The AGIL scheme is the standard acronym, but the hierarchy moves from A (environment/bottom) to L (values/top).",
+                    trick: "AGIL is the order of phases, but Hierarchy is A -> G -> I -> L."
+                }
+            },
+            {
+                topic: "Demography",
+                text: "Which among the following influences demographic change?\nA. fertility\nB. acculturation\nC. mortality\nD. migration",
+                options: ["A, B and D only", "A, B and C only", "A, C and D only", "B, C and D only"],
+                correct: 2,
+                expl: {
+                    correct: "The three components of population change are Fertility (births), Mortality (deaths), and Migration (movement).",
+                    others: "Acculturation is a cultural process, not a demographic statistic.",
+                    trick: "Demography = Stats of Life (Birth, Death, Move)."
+                }
+            },
+            {
+                topic: "Sociological Literature",
+                text: "Match the LIST-I with LIST-II\n\nLIST-I (Book/Theory)\nA. Vindication of the Rights of Women\nB. The Beauty Myth\nC. The Second Shift\nD. The Second Sex\n\nLIST-II (Author/Thinker)\nI. Arlie Hoschild\nII. Simone de Beauvoir\nIII. Naomi Wolf\nIV. Mary Wollstonecraft",
+                options: ["A-I, B-II, C-III, D-IV", "A-IV, B-III, C-I, D-II", "A-III, B-II, C-IV, D-I", "A-IV, B-II, C-III, D-I"],
+                correct: 1,
+                expl: {
+                    correct: "Mary Wollstonecraft wrote 'Vindication...' (1792). Naomi Wolf wrote 'The Beauty Myth'. Arlie Hochschild coined 'The Second Shift'. Simone de Beauvoir wrote 'The Second Sex'.",
+                    others: "Mismatched authors.",
+                    trick: "Wollstonecraft = Women's Rights (Classic). Second Sex = Beauvoir."
+                }
+            },
+            {
+                topic: "Kinship",
+                text: "Nayyars of Kerala live in 'Taravad'. What is 'Taravad'?",
+                options: ["community", "rule of residence", "a kinship term", "association"],
+                correct: 2,
+                expl: {
+                    correct: "Taravad refers to the ancestral home and the matrilineal joint family unit among the Nayars. In this context, it is a kinship term designating the lineage/residential unit.",
+                    others: "It is not the community itself (which is Nayar). It is the *result* of matrilocal residence, not the rule itself.",
+                    trick: "Taravad = The Big House (Family Unit)."
+                }
+            },
+            {
+                topic: "Basic Concepts",
+                text: "What is the relation between status and role?",
+                options: ["Status is impersonal, role is enacted", "Status is social, role is personal", "Status is a social position, role is the expected behaviour in that position", "Status is ascribed, role is achieved"],
+                correct: 2,
+                expl: {
+                    correct: "Ralph Linton defined Status as a position in a social system, and Role as the dynamic aspect (behavior) associated with that position.",
+                    others: "Status can be achieved (not just ascribed).",
+                    trick: "Status = Position; Role = Action."
+                }
+            },
+            {
+                topic: "Research Methodology",
+                text: "Which of the following is a probability sampling?",
+                options: ["stratified sampling", "convenience sampling", "quota sampling", "chain sampling"],
+                correct: 0,
+                expl: {
+                    correct: "Stratified sampling allows every member of the population a known, non-zero chance of selection (random selection within strata).",
+                    others: "Convenience, Quota, and Chain (Snowball) are non-probability methods.",
+                    trick: "Probability = Randomization (Simple, Stratified, Cluster)."
+                }
+            },
+            {
+                topic: "Sociological Theory",
+                text: "'Verstehen' is derived from which of these field?",
+                options: ["Positivism", "Hermeneutics", "Methodological Holism", "Functionalism"],
+                correct: 1,
+                expl: {
+                    correct: "Verstehen (Understanding) was adopted by Max Weber from Hermeneutics, the tradition of text interpretation.",
+                    others: "Positivism focuses on external laws, not internal meaning.",
+                    trick: "Verstehen = Interpretation = Hermeneutics."
+                }
+            },
+            {
+                topic: "Nature of Sociology",
+                text: "What kind of scientific knowledge is sociology interested in?",
+                options: ["normative science", "common sense science", "general science", "social science"],
+                correct: 3,
+                expl: {
+                    correct: "Sociology is defined fundamentally as a social science—the empirical study of social behavior and structures.",
+                    others: "It is not 'normative' (judging what ought to be) in its scientific aspiration, nor is it common sense.",
+                    trick: "Sociology = Social Science."
+                }
+            },
+            {
+                topic: "Indian Society",
+                text: "Which of the following aptly describes 'sanskritization' as a process?",
+                options: ["reformation based on exclusion", "reformation based on varna model", "reformation based on traditions", "adoption of dominant caste culture"],
+                correct: 3,
+                expl: {
+                    correct: "M.N. Srinivas defined Sanskritization as the process where a lower caste adopts the customs, rituals, and way of life of a 'dominant caste' (or upper caste) to improve its status.",
+                    others: "While it often references the Varna model, Srinivas emphasized the local 'Dominant Caste' as the model for emulation.",
+                    trick: "Sanskritization = Copying the Dominant."
+                }
+            },
+            {
+                topic: "Indian Society",
+                text: "Identify a characteristic that distinguishes tribal society from caste society.",
+                options: ["agnatic kinship bonds/clans are more significant", "prolonged dependency with other groups", "non-kinship relations with other groups", "cultural heterogenity maintained across groups"],
+                correct: 0,
+                expl: {
+                    correct: "Tribal societies are often 'segmentary,' meaning they are organized almost entirely around kinship (clans/lineages) and are relatively self-sufficient. Caste societies are 'organic,' characterized by interdependence between different groups (Jajmani).",
+                    others: "Dependency and non-kinship economic relations are traits of Caste, not Tribe.",
+                    trick: "Tribe = Kinship/Segmentary; Caste = Interdependence/Hierarchy."
+                }
+            },
+            {
+                topic: "Cultural Processes",
+                text: "In the border areas of Rajasthan and Gujarat we often find Muslim and Hindu communities who have adopted elements of each other's culture.\nWhat has been the process here?",
+                options: ["cultural unity", "cultural accommodation", "cultural assimilation", "cultural cooperation"],
+                correct: 1,
+                expl: {
+                    correct: "Accommodation is the process where conflicting or distinct groups adjust to each other to coexist, often adopting some traits without losing their distinct identities.",
+                    others: "Assimilation implies complete absorption and loss of distinct identity.",
+                    trick: "Live and let live + Mixing = Accommodation."
+                }
+            },
+            {
+                topic: "Research Methodology",
+                text: "A researcher wants to study mental health issues among Indian women. For her study she only chooses women through known references. What type of sampling method is used here?",
+                options: ["random sampling", "systematic sampling", "purposive sampling", "snowball sampling"],
+                correct: 3,
+                expl: {
+                    correct: "Snowball sampling (or chain sampling) relies on referrals from initial subjects to generate additional subjects. It is used when the population is hard to reach.",
+                    others: "Random/Systematic are probability methods. Purposive is judgmental but not necessarily referral-based.",
+                    trick: "References -> Rolling a snowball."
+                }
+            },
+            {
+                topic: "Sociological Theory",
+                text: "Match the LIST-I with LIST-II\n\nLIST-I (Theory)\nA. Middle Range Theory\nB. Labelling Theory\nC. Dyad and Triad\nD. De-schooling\n\nLIST-II (Thinker)\nI. Ivan Illich\nII. Robert K. Merton\nIII. Georg Simmel\nIV. Howard Becker",
+                options: ["A-I, B-II, C-III, D-IV", "A-II, B-IV, C-III, D-I", "A-I, B-II, C-IV, D-III", "A-II, B-I, C-III, D-IV"],
+                correct: 1,
+                expl: {
+                    correct: "Merton = Middle Range. Becker = Labelling. Simmel = Dyad/Triad (Formal Sociology). Illich = De-schooling Society.",
+                    others: "Mismatched pairs.",
+                    trick: "Merton = Middle; Simmel = Numbers (Dyad)."
+                }
+            },
+            {
+                topic: "Social Change",
+                text: "Which of the following contributes to cultural change?\nA. Invention\nB. Integration\nC. Diffusion\nD. Discovery",
+                options: ["A, B and D only", "A, B and C only", "B, C and D only", "A, C and D only"],
+                correct: 3,
+                expl: {
+                    correct: "The three standard mechanisms of cultural change are Discovery (finding new things), Invention (creating new things), and Diffusion (spreading things).",
+                    others: "Integration (B) is usually a force for stability or the result of change, not a primary mechanism of change itself.",
+                    trick: "New things (Invention/Discovery) + Sharing (Diffusion)."
+                }
+            },
+            {
+                topic: "Indian Society",
+                text: "Among the following, which of the traits describe the relationship between families in the jajmani system?\nA. durable\nB. exclusive\nC. inclusive\nD. multiple",
+                options: ["A, B and D only", "A, C and D only", "A, B and C only", "B, C and D only"],
+                correct: 0,
+                expl: {
+                    correct: "Jajmani relations were 'Durable' (generational), 'Exclusive' (specific rights to serve specific families), and 'Multiple' (a patron had links to many service castes).",
+                    others: "Inclusive is not a standard trait; the system was based on specific, exclusive hereditary rights.",
+                    trick: "Jajmani = Hereditary (Durable) rights (Exclusive)."
+                }
+            },
+            {
+                topic: "Basic Concepts",
+                text: "Match the LIST-I with LIST-II\n\nLIST-I (Concept)\nA. Incest\nB. Taboo\nC. Folkways\nD. Laws\n\nLIST-II (Definition)\nI. term to describe prohibitive social action\nII. formally codified rules of a group\nIII. term to describe prohibitive sexual relation within kins\nIV. customary habits of a group",
+                options: ["A-I, B-II, C-III, D-IV", "A-II, B-IV, C-III, D-I", "A-III, B-I, C-IV, D-II", "A-III, B-IV, C-I, D-II"],
+                correct: 2,
+                expl: {
+                    correct: "Incest = Prohibited sex (III). Taboo = Prohibited action (I). Folkways = Habits (IV). Laws = Codified rules (II).",
+                    others: "Mismatched definitions.",
+                    trick: "Incest = Sex; Taboo = Forbidden; Laws = Codes."
+                }
+            },
+            {
+                topic: "Sociological Theory",
+                text: "Which form of social organizations is central to Durkheim's functionalism?",
+                options: ["normal and forced", "normal and healthy", "normal and pathological", "normal and average"],
+                correct: 2,
+                expl: {
+                    correct: "Durkheim's method involved distinguishing between 'Normal' social facts (common and functional) and 'Pathological' ones (exceptional or dysfunctional, like excessively high crime rates).",
+                    others: "Healthy is a synonym for Normal, but the analytical pair is Normal vs Pathological.",
+                    trick: "Medicine analogy: Normal vs Pathological."
+                }
+            },
+            {
+                topic: "Anthropology",
+                text: "What is 'thick description' in sociology and social anthropology?",
+                options: ["framing of field data", "final reporting of field data", "context-sensitive interpretation of culture", "detailed description of culture"],
+                correct: 2,
+                expl: {
+                    correct: "Coined by Gilbert Ryle and popularized by Clifford Geertz, 'thick description' isn't just detail; it interprets the *meaning* and *context* of action (e.g., distinguishing a wink from a twitch).",
+                    others: "Option 4 is 'thin description'. Option 3 captures the interpretive essence.",
+                    trick: "Thick = Meaning + Context."
+                }
+            },
+            {
+                topic: "Sociological Theory",
+                text: "What according to Weber influenced the rise of modern capitalist West as opposed to the East?",
+                options: ["science", "religious ethics", "technology", "bureaucracy"],
+                correct: 1,
+                expl: {
+                    correct: "In 'The Protestant Ethic and the Spirit of Capitalism', Weber argued that the rational religious ethics of ascetic Protestantism provided the psychological conditions for modern capitalism.",
+                    others: "Science and Bureaucracy were part of rationalization, but the *differential* factor was the Ethic.",
+                    trick: "Weber = Protestant Ethic (Religion)."
+                }
+            },
+            {
+                topic: "Research Methodology",
+                text: "Who among the following used 'participant observation' in the study of a Street Corner Society in the USA?",
+                options: ["William Foote Whyte", "Paul Lazarsfeld", "Talcott Parsons", "Edwin Sutherland"],
+                correct: 0,
+                expl: {
+                    correct: "William Foote Whyte authored 'Street Corner Society' (1943), a classic participant observation study of an Italian-American slum.",
+                    others: "Lazarsfeld (Quant), Parsons (Theory), Sutherland (Criminology).",
+                    trick: "Whyte = White street corners."
+                }
+            },
+            {
+                topic: "Demography",
+                text: "As per Census report, during the year 1991-2011, there have been a decline in female infanticide but an increase in female foeticide. What are the reasons of this shift?\nA. increase in prosperity\nB. technological advancement\nC. smaller family size in urban areas\nD. girl child education",
+                options: ["A, B and D only", "A, B and C only", "A, C and D only", "B, C and D only"],
+                correct: 1,
+                expl: {
+                    correct: "The shift is driven by Technology (Ultrasound/B), which allows detection. Prosperity (A) allows people to afford the tech. Small family norms (C) create a 'fertility squeeze' where people want 1 son and stop.",
+                    others: "Girl child education (D) is generally associated with reducing discrimination, though the relationship is complex.",
+                    trick: "Tech + Money + Small Family = Foeticide."
+                }
+            },
+            {
+                topic: "Research Methodology",
+                text: "Census is an example of what kind of research?",
+                options: ["explanatory research", "exploratory research", "descriptive research", "diagonistic research"],
+                correct: 2,
+                expl: {
+                    correct: "A Census is a comprehensive survey designed to describe the characteristics of a population at a specific time. It is the archetype of descriptive research.",
+                    others: "It does not test hypotheses (Explanatory) or explore new phenomena (Exploratory).",
+                    trick: "Census = Description of everyone."
+                }
+            },
+            {
+                topic: "Basic Concepts",
+                text: "Family, church, trade union, music club are all instances of:",
+                options: ["society", "community", "association", "institution"],
+                correct: 2,
+                expl: {
+                    correct: "In sociology, an 'Association' is a group organized for a specific purpose or interest. A music club, a trade union, and a church congregation are all associations.",
+                    others: "An 'Institution' refers to established forms of procedure (like Marriage or Religion), not the group itself. Community implies a whole life shared in a locality.",
+                    trick: "Group with a goal = Association."
+                }
+            },
+            {
+                topic: "Research Methodology",
+                text: "The use of multiple methods of data collection in the same research is known as:",
+                options: ["field research", "variation", "correlation", "triangulation"],
+                correct: 3,
+                expl: {
+                    correct: "Triangulation refers to using more than one method, data source, or researcher to validate findings and cross-check data.",
+                    others: "Correlation is a statistical relationship.",
+                    trick: "Triangle = 3 points = Multiple methods."
+                }
+            },
+            {
+                topic: "Research Methodology",
+                text: "Who developed the tradition of fieldwork in social anthropology?",
+                options: ["Robert Redfield", "A.R. Radcliffe-Brown", "Bronislaw Malinowski", "Margaret Mead"],
+                correct: 2,
+                expl: {
+                    correct: "Bronislaw Malinowski is credited with establishing the 'functionalist' tradition of rigorous, long-term fieldwork (participant observation) during his work in the Trobriand Islands.",
+                    others: "Radcliffe-Brown focused more on structural theory. Mead came later.",
+                    trick: "Malinowski = Man in the Field (Trobrianders)."
+                }
+            },
+            {
+                topic: "Social Problems",
+                text: "Nepotism, favouritism and misuse of power are all instances of:",
+                options: ["white collar crime", "corruption", "social hierarchy", "social reproduction"],
+                correct: 1,
+                expl: {
+                    correct: "Corruption is the broad category encompassing the misuse of public power for private gain, including nepotism (favoring kin) and favoritism.",
+                    others: "White collar crime is a specific type of crime by high-status individuals, but 'favoritism' itself is a general trait of corruption.",
+                    trick: "Misuse of power = Corruption."
+                }
+            },
+            {
+                topic: "Social Control",
+                text: "Which of the following is an informal process of social control?",
+                options: ["spreading rumour", "imprisoning", "imposing fines", "identifying madness"],
+                correct: 0,
+                expl: {
+                    correct: "Informal social control relies on unofficial reactions like gossip, ridicule, smiles, or rumours to enforce norms.",
+                    others: "Imprisonment and fines are sanctions of the legal system (Formal control).",
+                    trick: "Rumour = Gossip (Informal)."
+                }
+            },
+            {
+                topic: "Sociological Theory",
+                text: "Which ontological position asserts that social phenomenon and their meanings have an existence independent of social actors?",
+                options: ["positivism", "interpretivism", "constructionism", "objectivism"],
+                correct: 3,
+                expl: {
+                    correct: "Objectivism is the ontological position that implies social phenomena confront us as external facts that are independent of social actors.",
+                    others: "Constructionism argues they are created by social actors. Positivism is an epistemological approach (how we know), often linked to objectivism.",
+                    trick: "Independent existence = Object (Objectivism)."
+                }
+            },
+            {
+                topic: "Statistics",
+                text: "Which of the following averages can be calculated only from a close ended table?",
+                options: ["mean", "median", "mode", "central tendency"],
+                correct: 0,
+                expl: {
+                    correct: "The Arithmetic Mean requires the exact value of every item. In an open-ended table (e.g., 'Above 50'), the midpoint cannot be defined, making the Mean impossible to calculate without assumptions.",
+                    others: "Median and Mode rely on position or frequency density, which are usually located in the middle ranges, not the open ends.",
+                    trick: "Mean needs All Numbers (Closed)."
+                }
+            },
+            {
+                topic: "Indian Society",
+                text: "Which of the following system helps in the maintenance of the ideal filial-fraternal solidarity of family in India?",
+                options: ["Dayabhaga", "Mitakshara", "Joint residence", "Inheritance laws"],
+                correct: 2,
+                expl: {
+                    correct: "While Mitakshara/Dayabhaga are legal frameworks, 'Joint residence' (living under one roof) is the physical and social mechanism that maintains the daily solidarity of the joint family.",
+                    others: "Laws define rights; Residence defines the actual solidarity/interaction.",
+                    trick: "Solidarity happens where you Live (Joint Residence)."
+                }
+            },
+            {
+                topic: "Sociology of Religion",
+                text: "Match the LIST-I with LIST-II\n\nLIST-I (Concept)\nA. Cult\nB. Rites\nC. Civil religion\nD. Fundamentalism\n\nLIST-II (Explanation)\nI. a religious doctrine that is in favor of restoring the traditional elements of a religion\nII. religious organisation that is largely outside a society's cultural traditions\nIII. ceremonial action in response to religious beliefs\nIV. a quasi-religious loyalty binding individuals in a secular society",
+                options: ["A-I, B-II, C-III, D-IV", "A-II, B-III, C-IV, D-I", "A-I, B-II, C-IV, D-III", "A-III, B-IV, C-I, D-II"],
+                correct: 1,
+                expl: {
+                    correct: "Cult = Outside tradition (II). Rites = Ceremonial action (III). Civil Religion = Secular loyalty (IV). Fundamentalism = Restoring tradition (I).",
+                    others: "Mismatched definitions.",
+                    trick: "Cult = Outsiders; Fundamentalism = Tradition; Civil = Secular."
+                }
+            },
+            {
+                topic: "Industrial Sociology",
+                text: "According to Robert Blauner production technology is a major factor influencing the degree of worker's alienation. Which of these industries does he refer to?\nA. handicraft industry\nB. automobile industry\nC. textile industry\nD. oil and chemical industry",
+                options: ["A, B and D only", "A, B and C only", "A, C and D only", "B, C and D only"],
+                correct: 3,
+                expl: {
+                    correct: "Blauner's 'Alienation and Freedom' studied four industries: Printing (Craft), Textile (Machine), Automobile (Assembly), and Chemical (Process). 'Handicraft industry' is a general term, whereas B, C, and D are specific modern industrial types he analyzed.",
+                    others: "The text likely excludes 'Handicraft' (A) as the distractor for 'Printing'.",
+                    trick: "Blauner's Curve: Textile -> Auto (Peak Alienation) -> Chemical."
+                }
+            },
+            {
+                topic: "Social Problems",
+                text: "Which among the following is NOT a possible cause of drug abuse in India?",
+                options: ["disintegration of family systems", "availability of drugs", "stress and strain of urban lifestyle", "poverty and unemployment"],
+                correct: 3,
+                expl: {
+                    correct: "While poverty is a stressor, drug abuse is often sociologically characterized as a problem cutting across class lines (affecting the rich/urban youth significantly). Factors 1, 2, and 3 are more universally cited as direct psychological/social triggers.",
+                    others: "This is a 'best of the worst' choice. All can be causes, but Poverty is the least distinctively linked compared to family breakdown or availability.",
+                    trick: "Drugs affect the rich too -> Poverty is not the unique cause."
+                }
+            },
+            {
+                topic: "Sociological Theory",
+                text: "What is postmodernism?",
+                options: ["cultural traits of postindustrial society", "cultural traits of industrial society", "mental attitude of post-industrial society", "cultural traits of modernity"],
+                correct: 0,
+                expl: {
+                    correct: "Fredric Jameson defined Postmodernism as the 'cultural logic of late capitalism' (or post-industrial society). It reflects the fragmentation and depthlessness of this era.",
+                    others: "It is the successor to modernity/industrial society.",
+                    trick: "Post-modern = Post-industrial culture."
+                }
+            },
+            {
+                topic: "Indian Society",
+                text: "What is 'vertical solidarity' in the village?",
+                options: ["unity of villagers as a community", "temporary cooperation across jatis within a village", "villagers united because of shared occupation", "villagers united because of living in a joint family"],
+                correct: 0,
+                expl: {
+                    correct: "M.N. Srinivas distinguished between 'Horizontal Solidarity' (Caste unity across villages) and 'Vertical Solidarity' (Unity of different castes within a village). The latter makes the village a community.",
+                    others: "Option 2 is the mechanism, Option 1 is the definition/result.",
+                    trick: "Vertical = Village (Community); Horizontal = Caste."
+                }
+            },
+            {
+                topic: "Gender & Society",
+                text: "A job advertisement states 'the job involves lot of outstation travel, male applicants are specifically encouraged to apply'.\nWhat does such statement imply?",
+                options: ["gendered norm", "gender discrimination", "status of women", "pressure of community"],
+                correct: 1,
+                expl: {
+                    correct: "Explicitly encouraging one gender over another based on stereotypes (travel = men) is a direct form of gender discrimination.",
+                    others: "It is based on norms, but the act itself is discrimination.",
+                    trick: "Excluding women = Discrimination."
+                }
+            },
+            {
+                topic: "Research Methodology",
+                text: "Case study aims at",
+                options: ["quantitative analysis", "detailed descriptive analysis", "exploratory reasoning", "life history approach"],
+                correct: 1,
+                expl: {
+                    correct: "The primary strength of a case study is the provision of a 'detailed descriptive analysis' (thick description) of a single unit or event.",
+                    others: "It is qualitative, not quantitative.",
+                    trick: "Case Study = Detail/Description."
+                }
+            },
+            {
+                topic: "Sociological Theory",
+                text: "Arrange the following thinkers in a chronological order\nA. Karl Marx\nB. Talcott Parsons\nC. Max Weber\nD. Anthony Giddens",
+                options: ["A, B, C, D", "A, C, B, D", "B, A, D, C", "C, A, D, B"],
+                correct: 1,
+                expl: {
+                    correct: "Marx (1818-1883) -> Weber (1864-1920) -> Parsons (1902-1979) -> Giddens (b. 1938).",
+                    others: "Chronological flow from Classical to Functionalist to Contemporary.",
+                    trick: "Marx -> Weber -> Parsons -> Moderns."
+                }
+            },
+            {
+                topic: "Sociological Theory",
+                text: "What is interpretive sociology?",
+                options: ["the study of society that focuses on social change", "the study of society that focuses on interpretation of institutions", "the study of society that focuses on the meanings people attach to their social world", "the study of society that focuses on non-industrial communities"],
+                correct: 2,
+                expl: {
+                    correct: "Interpretive sociology (associated with Weber) argues that to understand social action, one must understand the subjective meanings individuals attach to their behaviors.",
+                    others: "It focuses on meaning, not just change or structure.",
+                    trick: "Interpretive = Meaning."
+                }
+            },
+            {
+                topic: "Kinship",
+                text: "Which among the following is NOT a kinship category?",
+                options: ["gotra", "biradari", "kutumb", "jajman"],
+                correct: 3,
+                expl: {
+                    correct: "Jajman is an economic/ritual role (the patron) in the Jajmani system, defined by exchange of service, not by blood or marriage (kinship).",
+                    others: "Gotra (Clan), Biradari (Brotherhood), and Kutumb (Family) are kinship terms.",
+                    trick: "Jajman = Boss/Patron (Economic)."
+                }
+            },
+            {
+                topic: "Basic Concepts",
+                text: "Who is called the 'Father of Sociology'?",
+                options: ["August Comte", "Emile Durkheim", "Sorokin", "Herbert Spencer"],
+                correct: 0,
+                expl: {
+                    correct: "Auguste Comte coined the term 'Sociology' in 1838 and is traditionally considered its father.",
+                    others: "Durkheim is the father of *academic* sociology/functionalism.",
+                    trick: "Comte Coined it."
+                }
+            },
+            {
+                topic: "Social Gerontology",
+                text: "It is understood that an increase in the elderly population will increase the pressures of caregiving in a society. What is 'caregiving' in this context?",
+                options: ["increased responsibility of the state to provision for elderly care", "informal and unpaid care provided by family members, relatives or friends", "increased hospitalisation requirement for elderly", "increased medical innovation requirement for the medical industry"],
+                correct: 1,
+                expl: {
+                    correct: "In the sociological context of family and aging, 'caregiving' primarily refers to the 'informal care' burden falling on family members (often women).",
+                    others: "State provision is 'formal care'.",
+                    trick: "Caregiving = Family work (Unpaid)."
+                }
+            },
+            {
+                topic: "Indian Society",
+                text: "Which of the following statements are applicable to industrialisation in India?\nA. it is a structural shift\nB. it is induced through colonialism\nC. it denotes movement of people\nD. it denotes no change in the nature of family structure",
+                options: ["A, B and D only", "A, B and C only", "A, C and D only", "B, C and D only"],
+                correct: 1,
+                expl: {
+                    correct: "Industrialization causes structural shifts, was kickstarted by colonial railways/mills, and causes migration (movement).",
+                    others: "It *does* change family structure (Joint to Nuclear thesis), so D is false.",
+                    trick: "Industrialization changes everything (including family)."
+                }
+            },
+            {
+                topic: "Sociological Literature",
+                text: "Match the LIST-I with LIST-II\n\nLIST-I (Author)\nA. Henry Maine\nB. Emile Durkheim\nC. Irawati Karve\nD. Peter Berger\n\nLIST-II Book()\nI. Suicide\nII. The Sacred Canopy\nIII. Village-communities in the East and West\nIV. Yuganta",
+                options: ["A-I, B-II, C-IV, D-III", "A-I, B-III, C-II, D-IV", "A-III, B-III, C-IV, D-II", "A-III, B-I, C-IV, D-II"],
+                correct: 3,
+                expl: {
+                    correct: "Henry Maine = Village Communities (III). Durkheim = Suicide (I). Irawati Karve = Yuganta (IV). Peter Berger = Sacred Canopy (II).",
+                    others: "Mismatched pairs.",
+                    trick: "Durkheim = Suicide; Berger = Sacred Canopy."
+                }
+            },
+            {
+                topic: "Indian Society",
+                text: "Who among the following studied kinship system in India?",
+                options: ["Irawati Karve", "S. C. Dube", "G. S. Ghurye", "T. N. Madan"],
+                correct: 0,
+                expl: {
+                    correct: "Irawati Karve wrote the seminal book 'Kinship Organization in India', mapping kinship patterns across zones (North, South, East, Central).",
+                    others: "Dube (Village), Ghurye (Caste), Madan (Family/Pandits).",
+                    trick: "Karve = Kinship."
+                }
+            },
+            {
+                topic: "Basic Concepts",
+                text: "Which of the following is NOT an 'institution'?",
+                options: ["marriage", "religion", "property", "theatre"],
+                correct: 3,
+                expl: {
+                    correct: "In sociology, institutions are established mechanisms of social order (Marriage, Religion, Property). Theatre is an art form or an association, not a primary social institution in the same structural sense.",
+                    others: "Marriage, Religion, and Property are the 'Great Institutions'.",
+                    trick: "Theatre = Art/Performance; Others = Social Structures."
+                }
+            },
+            {
+                topic: "Deviance",
+                text: "Which of the following best describes 'deviance'?",
+                options: ["defined by how everyone in a society labels a particular action", "defined by people's bizarre actions", "defined by individual's morality", "defined by inherent psychological mindsets"],
+                correct: 0,
+                expl: {
+                    correct: "Sociologically (especially in Labelling Theory), deviance is not inherent in the act but is a consequence of the application of rules and sanctions (labels) by others.",
+                    others: "It is not just 'bizarre' (statistical) or 'psychological' (inherent).",
+                    trick: "Deviance = Label (Social Reaction)."
+                }
+            },
+            {
+                topic: "Indian Society",
+                text: "What are 'khap' panchayats?",
+                options: ["local governing bodies", "village panchayats", "jati panchayats", "family panchayats"],
+                correct: 2,
+                expl: {
+                    correct: "Khap Panchayats are caste or clan-based councils (Jati/Gotra), distinct from the constitutional Village Panchayats.",
+                    others: "They operate on kinship/caste lines, not territorial 'village' lines in the formal sense.",
+                    trick: "Khap = Caste/Clan Council."
+                }
+            },
+            {
+                topic: "Criminology",
+                text: "Every society has a criminal justice system. It is about punishing crime/deviant behaviour. What are the ideas behind punishment?\nA. retribution\nB. deterrance\nC. rehabilitation\nD. removing pathology",
+                options: ["A, B and D only", "A, B and C only", "A, C and D only", "B, C and D only"],
+                correct: 1,
+                expl: {
+                    correct: "The four standard justifications for punishment are Retribution, Deterrence, Rehabilitation, and Incapacitation (Protection).",
+                    others: "Removing pathology is a medical/clinical term, not a standard penological theory.",
+                    trick: "Punishment goals = Pay back (Retribution), Scare (Deterrence), Fix (Rehab)."
+                }
+            },
+            {
+                topic: "Globalization",
+                text: "A foreign brand serving chicken tikka bowl in its outlets in India is an example of:",
+                options: ["globalisation", "glocalisation", "assimilation", "cultural integration"],
+                correct: 1,
+                expl: {
+                    correct: "Glocalization (Roland Robertson) is the adaptation of global products to local tastes (e.g., McDonald's McAloo Tikki or Chicken Tikka bowls).",
+                    others: "Globalization is the general flow; Assimilation is absorbing a minority into the majority.",
+                    trick: "Global + Local = Glocal (Chicken Tikka in KFC)."
+                }
+            },
+            {
+                topic: "Nature of Sociology",
+                text: "Which among these reflect the relationship between sociology and history?\nA. historians describe unique events, sociologists provide generalisations\nB. sociology and history cannot be radically separated\nC. sociologists use historical data while historians have no use of sociological data\nD. historians are concerned with the interplay between personality and massive social forces; sociologists are concerned with the social forces themselves",
+                options: ["A, B and D only", "A, B and C only", "A, C and D only", "B, C and D only"],
+                correct: 0,
+                expl: {
+                    correct: "The classic distinction (Methodological) is that History is idiographic (unique events) and Sociology is nomothetic (general laws). However, they are intertwined (B) and both look at social forces (D).",
+                    others: "Statement C is false; historians frequently use sociological concepts (Social History).",
+                    trick: "History = Unique; Sociology = General. They are friends (not separated)."
+                }
+            },
+            {
+                topic: "Sociological Theory",
+                text: "What are the types of suicide identified by Durkheim?\nA. anomic\nB. alienating\nC. egoistic\nD. altruistic",
+                options: ["A, B and D only", "A, B and C only", "A, C and D only", "B, C and D only"],
+                correct: 2,
+                expl: {
+                    correct: "Durkheim identified four types: Egoistic (low integration), Altruistic (high integration), Anomic (low regulation), and Fatalistic (high regulation).",
+                    others: "'Alienating' is a Marxist concept, not one of Durkheim's suicide types.",
+                    trick: "Durkheim's Suicide = Integration (Ego/Altru) + Regulation (Anomic/Fatal)."
+                }
+            },
+            {
+                topic: "Social Problems",
+                text: "Which one of the following cannot be a reason for increasing rates of unemployment in India?",
+                options: ["economic recession", "doctrine of karma", "lack of innovation", "shifts in government policy"],
+                correct: 1,
+                expl: {
+                    correct: "The 'Doctrine of Karma' is a cultural/religious belief system. While it might explain how people *cope* with fate, it is not an economic or structural cause of *unemployment rates* rising.",
+                    others: "Recession, lack of innovation, and policy shifts are structural/economic causes.",
+                    trick: "Karma is a belief, not an economic force."
+                }
+            },
+            {
+                topic: "Urban Sociology",
+                text: "Which among the following can be seen as a concrete impact of urbanisation in India?",
+                options: ["weakening of kinship ties", "reduced dowry burden", "enlarged boundaries of endogamous marriage", "reorganised gendered division of labour"],
+                correct: 2,
+                expl: {
+                    correct: "A specific, observed structural change in urban India is the fusion of sub-castes, leading to 'enlarged boundaries of endogamous marriage' (marrying within the wider caste category rather than the tiny sub-caste).",
+                    others: "Kinship ties often modify rather than weaken (family adaptation). Dowry has increased, not reduced. Option 0 is the classic Western theory, but Option 2 is the specific Indian sociological insight.",
+                    trick: "Urban = Bigger pool (Sub-caste fusion)."
+                }
+            },
+            {
+                topic: "Sociological Theory",
+                text: "What, according to Max Weber is the defining social character of modern industrial society?",
+                options: ["industrialisation", "rationalisation", "institutionalisation", "capitalism"],
+                correct: 1,
+                expl: {
+                    correct: "Weber viewed 'Rationalization' (the drive for efficiency, calculability, and predictability) as the master trend of modernity, affecting law, music, religion, and economy.",
+                    others: "Marx focused on Capitalism. Industrialization is the technological aspect.",
+                    trick: "Weber = Rationalization (Iron Cage)."
+                }
+            },
+            {
+                topic: "Gender & Society",
+                text: "Data show that a higher percentage of old women are abandoned in India than old men. What can be the factor behind this phenomenon?",
+                options: ["gender and work", "gender and family", "gender and property", "gender and health"],
+                correct: 2,
+                expl: {
+                    correct: "The sociological explanation relies on power and resources. 'Gender and property' (Option 3) highlights that men typically hold title to property, ensuring care from heirs, whereas women often lack assets, making them 'burdens'.",
+                    others: "While health and family dynamics play a part, the structural lack of property rights is the critical determinant of vulnerability.",
+                    trick: "No Property = No Power (Abandonment)."
+                }
+            },
+            {
+                topic: "Research Methodology",
+                text: "Which one of the following is NOT a characteristic of a usable hypothesis?",
+                options: ["conceptual clarity", "empirical verifiability", "lack of theoretical orientation", "specificity"],
+                correct: 2,
+                expl: {
+                    correct: "A hypothesis must be theoretically grounded to contribute to scientific knowledge. 'Lack of theoretical orientation' makes it a random guess, not a scientific hypothesis.",
+                    others: "Clarity, Verifiability, and Specificity are essential virtues.",
+                    trick: "Hypothesis needs Theory (No theory = Bad)."
+                }
+            },
+            {
+                topic: "Gender & Society",
+                text: "Young boys and men in India are often discouraged to take up humanities and apply for jobs as school teachers. What is the process happening here?",
+                options: ["cultural reproduction of gender", "gender discrimination", "inequality of gender", "informal and formal socialisation of boys"],
+                correct: 3,
+                expl: {
+                    correct: "The mechanism described is 'socialisation' (both informal by family/peers and formal by schools) that steers boys toward 'masculine' technical roles and away from 'feminine' nurturing roles.",
+                    others: "It leads to reproduction (Option 1), but the *process* itself is socialisation.",
+                    trick: "Discouraging/Steering = Socialisation."
+                }
+            },
+            {
+                topic: "Sociological Theory",
+                text: "Match the LIST-I with LIST-II\n\nLIST-I (Author)\nA. Ferdinand Tonnies\nB. Park and Burgess\nC. Radcliffe-Brown\nD. Vilfredo Pareto\n\nLIST-II (Analytical Framework)\nI. Structural functionalism\nII. Community-association\nIII. Territorial-Non territorial\nIV. Circulation of elites",
+                options: ["A-I, B-II, C-III, D-IV", "A-II, B-III, C-I, D-IV", "A-III, B-II, C-IV, D-I", "A-II, B-III, C-IV, D-I"],
+                correct: 1,
+                expl: {
+                    correct: "Tonnies = Community/Association (Gemeinschaft/Gesellschaft). Park & Burgess (Chicago School) = Ecological/Territorial zones. Radcliffe-Brown = Structural Functionalism. Pareto = Circulation of Elites.",
+                    others: "Mismatched pairs.",
+                    trick: "Tonnies = Comm/Assoc; Pareto = Elites."
+                }
+            },
+            {
+                topic: "Sociology of Religion",
+                text: "Which of the following concepts is measured by levels of involvement with religious organisations, the social and material influence of religious organisations, and the degree to which people hold religious beliefs?",
+                options: ["sanskritisation", "modernisation", "westernisation", "secularisation"],
+                correct: 3,
+                expl: {
+                    correct: "Secularisation is the process defined by the *decline* in these very metrics (involvement, influence, and belief). Measuring these levels is how sociologists assess the degree of secularisation.",
+                    others: "Sanskritisation is about caste mobility. Westernisation is cultural imitation of the West.",
+                    trick: "Measuring Religion's Decline = Secularisation."
+                }
+            },
+            {
+                topic: "Indian Society",
+                text: "Who wrote 'The Remembered Village'?",
+                options: ["S. C. Dube", "M. N. Srinivas", "T. N. Madan", "A. M. Shah"],
+                correct: 1,
+                expl: {
+                    correct: "M.N. Srinivas wrote 'The Remembered Village' (1976) based on his memory of fieldwork in Rampura after his field notes were burned in a fire.",
+                    others: "Dube wrote 'Indian Village'.",
+                    trick: "Srinivas = Remembered (Notes burned)."
+                }
+            },
+            {
+                topic: "Sociology of Family",
+                text: "When analysed from a functionalist perspective, divorce is understood as:",
+                options: ["cruelty", "dysfunctional", "role conflict", "result of adultery"],
+                correct: 1,
+                expl: {
+                    correct: "In classic functionalism (Parsons), the family is a system. Divorce is often viewed as a 'dysfunction' or a breakdown of that system's equilibrium, though later functionalists (Goode) saw it as a safety valve.",
+                    others: "Cruelty and Adultery are legal grounds, not functionalist concepts.",
+                    trick: "Functionalism: Breakdown = Dysfunctional."
+                }
+            },
+            {
+                topic: "Research Methodology",
+                text: "Which of the following softwares can be used for qualitative data analysis?",
+                options: ["Stata", "SPSS", "there are no such softwares", "Nvivo"],
+                correct: 3,
+                expl: {
+                    correct: "NVivo (along with ATLAS.ti) is the standard software for Qualitative Data Analysis (CAQDAS).",
+                    others: "Stata and SPSS are for quantitative (statistical) analysis.",
+                    trick: "Nvivo = Narrative/Qualitative."
+                }
+            },
+            {
+                topic: "Sociological Theory",
+                text: "According to Durkheim, what kind of solidarity defines industrial society?",
+                options: ["organic solidarity", "mechanical solidarity", "rational solidarity", "specialised solidarity"],
+                correct: 0,
+                expl: {
+                    correct: "Organic Solidarity is based on interdependence and high division of labor, characteristic of modern/industrial society. Mechanical Solidarity is based on sameness (pre-industrial).",
+                    others: "Rational solidarity is not the term.",
+                    trick: "Modern = Organ (Complex interdependence)."
+                }
+            },
+            {
+                topic: "Indian Society",
+                text: "Which of the following concept was used by McKim Marriott and Milton Singer to study social change in India?",
+                options: ["Westernisation and Modernisation", "Industrialisation and Modernisation", "Little tradition and Great tradition", "Structure and Function"],
+                correct: 2,
+                expl: {
+                    correct: "Marriott and Singer developed the framework of 'Universalization' and 'Parochialization' to analyze the interaction between the 'Great Tradition' (Sanskritic/Elites) and 'Little Tradition' (Folk/Local).",
+                    others: "Srinivas used Westernization. Structure/Function is a general theory.",
+                    trick: "Marriott = Little & Great Traditions."
+                }
+            },
+            {
+                topic: "Globalization",
+                text: "Which one of the following is a gendered economic impact of modern globalization?",
+                options: ["international migration", "feminization of labour", "reduction of fertility rate", "increase in marriageable age"],
+                correct: 1,
+                expl: {
+                    correct: "Globalization has led to the 'Feminization of Labour', where women increasingly enter the workforce, often in low-paid, insecure jobs (sweatshops, service sector) driven by global demand.",
+                    others: "Migration happens to both. Fertility/Marriage age are demographic trends influenced by many factors.",
+                    trick: "Global jobs for women = Feminization of Labour."
+                }
+            },
+            {
+                topic: "Education & Society",
+                text: "Despite the Total Literacy Programs run by the government, scholars and activists complain that the problem of functional illiteracy remains in India. What is functional illiteracy?",
+                options: ["a lack of reading and writing skills needed for everyday living", "an increase in school drop-outs", "a lack of consciousness for the need of literacy", "a lack of formal education and persistence of inequalities"],
+                correct: 0,
+                expl: {
+                    correct: "Functional illiteracy is the inability to use reading, writing, and calculation skills for their intended purpose in daily life (e.g., filling forms, reading instructions), even if the person can technically sign their name.",
+                    others: "It is about *function*, not just school attendance or formal status.",
+                    trick: "Functional = Can't function in daily life."
+                }
+            },
+            {
+                topic: "Environment & Society",
+                text: "Which of the following factors have led to the forced displacement of forest dwellers in India?\nA. dams\nB. mining\nC. education\nD. declining access to forest resources",
+                options: ["A, B and D only", "A, B and C only", "A, C and D only", "B, C and D only"],
+                correct: 0,
+                expl: {
+                    correct: "Development projects like Dams (A) and Mining (B) are the primary causes of physical displacement. Declining access (D) (due to state control) forces economic displacement.",
+                    others: "Education (C) does not cause forced displacement.",
+                    trick: "Development (Dams/Mines) = Displacement."
+                }
+            },
+            {
+                topic: "Research Methodology",
+                text: "Match the LIST-I with LIST-II\n\nLIST-I (Concept)\nA. Reliability\nB. Validity\nC. Correlation\nD. Measurement\n\nLIST-II (Explanation)\nI. actually measuring exactly what one intends to measure\nII. a procedure for determining the value of a variable\nIII. consistency in measurement\nIV. a relationship in which two (or more) variables change together",
+                options: ["A-III, B-I, C-IV, D-II", "A-I, B-III, C-II, D-IV", "A-I, B-II, C-IV, D-III", "A-III, B-IV, C-I, D-II"],
+                correct: 0,
+                expl: {
+                    correct: "Reliability = Consistency (III). Validity = Accuracy/Intent (I). Correlation = Co-variation (IV). Measurement = Procedure (II).",
+                    others: "Mismatched definitions.",
+                    trick: "Reliable = Consistent; Valid = Accurate."
+                }
+            },
+            {
+                topic: "Social Stratification",
+                text: "The ghettoisation of Jews in Europe is an example of:",
+                options: ["ethnic discrimination", "community discrimination", "regional discrimination", "genocide"],
+                correct: 0,
+                expl: {
+                    correct: "Ghettoisation is the spatial segregation of a specific group. In the case of Jews, it was based on their ethnicity/religion, making it 'ethnic discrimination'.",
+                    others: "Genocide is the killing (Holocaust). Regional/Community are vague.",
+                    trick: "Jews = Ethnic group -> Ethnic discrimination."
+                }
+            },
+            {
+                topic: "Research Methodology",
+                text: "What is 'operationalization of concept' in sociological research?",
+                options: ["deciding how to do fieldwork", "specifying the measurable indicators of a concept", "arriving at a relationship of variables", "arriving at a relationship of two concepts"],
+                correct: 1,
+                expl: {
+                    correct: "Operationalization is the process of strictly defining variables into measurable factors. For example, operationalizing 'class' as 'income level'.",
+                    others: "It bridges the abstract concept and the empirical measurement.",
+                    trick: "Operationalize = Make it measurable."
+                }
+            },
+            {
+                topic: "Political Sociology",
+                text: "In the past India has experienced separatist movement like that of the ULFA. What is 'separatism' influenced by?\nA. withdrawal from dominant group because of past discrimination\nB. wish to build a separate social and economic life\nC. development of a subculture\nD. lack of cultural integration",
+                options: ["A, C and D only", "A, B and C only", "B, C and D only", "A, B and D only"],
+                correct: 3,
+                expl: {
+                    correct: "Separatism is political and structural. It stems from discrimination (A), a desire for autonomy (B), and a failure of integration (D).",
+                    others: "Development of a 'subculture' (C) is a cultural phenomenon (like punks or goths) and does not necessarily lead to political separatism.",
+                    trick: "Separatism = Discrimination + Autonomy + Lack of Integration."
+                }
+            },
+            {
+                topic: "Criminology",
+                text: "We often hear about money laundering as a rising crime in capitalist societies. What kind of crime is it?",
+                options: ["hate crime", "corporate crime", "crimes against property", "organized crime"],
+                correct: 3,
+                expl: {
+                    correct: "Money laundering is the process of concealing the origins of illegally obtained money. It is the primary mechanism and definition of 'Organized Crime' operations (making dirty money clean).",
+                    others: "Corporate crime implies acts by a legitimate firm. White collar crime is by individuals. Laundering *serves* organized crime.",
+                    trick: "Laundering = Organized Crime (Mafia/Cartels)."
+                }
+            },
+            {
+                topic: "Basic Concepts",
+                text: "Sneha is extremely worried about dressing for her first day at her new office because she has shifted from an American company to join a Japanese company. What is she worried about?",
+                options: ["of not knowing 'norms'", "of not knowing 'laws'", "of not knowing 'folkways'", "of not knowing 'colleagues'"],
+                correct: 2,
+                expl: {
+                    correct: "Dress codes and etiquette are classic examples of 'Folkways'—norms that stem from custom and politeness, violation of which causes minor embarrassment rather than severe punishment (Mores/Laws).",
+                    others: "Norms (Option 1) is the general category, but Folkways is the specific sociological type for dress/manners.",
+                    trick: "Dress/Manners = Folkways."
+                }
+            }
+        ];
+
+        /* -------------------------------------------------------------------------
+       FINAL UNIVERSAL LOGIC ENGINE (Paste BELOW your 'questions' array)
+       ------------------------------------------------------------------------- */
+
+        // 1. CONFIGURATION (Update this for each file!)
+        const TEST_ID = "paper_2025_Full"; // <--- CHANGE THIS NAME FOR EACH FILE
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxLOznQI6LSDWDsM5IvSJxKDpYUQNmM1dzB1VSQns2tkSs4k4d9FxhbF3Za1K-vkEMdIg/exec";
+
+        // 2. SETTINGS
+        const MAX_ATTEMPTS = 5;
+        const SECONDS_PER_QUESTION = 72;
+
+        // 3. VARIABLES
+        let responses = new Array(questions.length).fill(null);
+        let status = new Array(questions.length).fill(0);
+        let timeLeft = questions.length * SECONDS_PER_QUESTION;
+        let timerRef, checkTimer, isMobile;
+        let userName = "Student";
+        let history = []; // Local session history
+
+        // --- INITIALIZATION ---
+        window.onload = function () {
+            isMobile = window.innerWidth < 768;
+            if (isMobile) setMode('mobile'); else setMode('desktop');
+
+            document.getElementById('timer').innerText = formatTime(timeLeft);
+
+            // Listeners
+            document.getElementById('candidateName').addEventListener('input', checkStartConditions);
+            document.getElementById('username').addEventListener('keyup', handleIdInput);
+
+            // Auto-Fill from Dashboard
+            const savedID = localStorage.getItem('socio_user_id');
+            const savedName = localStorage.getItem('socio_user_name');
+            if (savedID) {
+                document.getElementById('username').value = savedID;
+                document.getElementById('candidateName').value = savedName || "";
+                handleIdInput();
+            }
+
+            // FEATURE: Guest Hint & Placeholder for Free Tests
+            if (typeof TEST_ID !== 'undefined' && TEST_ID.toUpperCase().startsWith("FREE")) {
+                const idBox = document.getElementById('username');
+                idBox.placeholder = "Enter ID: SocioLogic";
+
+                // Avoid duplicate hint if already exists
+                if (!idBox.parentNode.querySelector('.guest-hint')) {
+                    const hint = document.createElement("div");
+                    hint.className = "guest-hint";
+                    hint.innerHTML = "💡 <b>Guest Access:</b> Type <span style='color:#2563eb; font-weight:800;'>SocioLogic</span>";
+                    hint.style.cssText = "font-size:0.85rem; color:#64748b; margin:-10px 0 15px 0; background:#eff6ff; padding:8px; border-radius:8px; border:1px dashed #bfdbfe;";
+                    idBox.parentNode.insertBefore(hint, idBox.nextSibling);
+                }
+            }
+        };
+
+        function formatTime(s) {
+            let h = Math.floor(s / 3600).toString().padStart(2, '0');
+            let m = Math.floor((s % 3600) / 60).toString().padStart(2, '0');
+            let sec = (s % 60).toString().padStart(2, '0');
+            return `${h}:${m}:${sec}`;
+        }
+
+        function setMode(mode) {
+            isMobile = (mode === 'mobile');
+            const dBtn = document.getElementById('btn-desktop');
+            const mBtn = document.getElementById('btn-mobile');
+            if (dBtn && mBtn) {
+                dBtn.className = isMobile ? 'mode-btn' : 'mode-btn active';
+                mBtn.className = isMobile ? 'mode-btn active' : 'mode-btn';
+            }
+        }
+
+        // --- ID CHECK (RESTORED MAGIC FIX) ---
+        function handleIdInput() {
+            const idVal = document.getElementById('username').value.trim();
+            const badge = document.getElementById('attempt-badge');
+            const btn = document.getElementById('start-btn');
+
+            // Disable button while typing
+            btn.disabled = true;
+            btn.style.backgroundColor = "#cbd5e1";
+            btn.style.cursor = "not-allowed";
+
+            clearTimeout(checkTimer);
+
+            // 1. Basic Length Check
+            if (idVal.length < 10 && idVal.toUpperCase() !== "SOCIOLOGIC") {
+                badge.innerHTML = "Enter 10-digit Mobile...";
+                badge.style.background = "#f1f5f9"; badge.style.color = "#64748b"; badge.style.borderColor = "#e2e8f0";
+                return;
+            }
+
+            // --- MAGIC FIX: IMMEDIATE UNLOCK FOR FREE TESTS ---
+            if (typeof TEST_ID !== 'undefined' && TEST_ID.toUpperCase().startsWith("FREE")) {
+                badge.innerHTML = `✅ <b>Free Access:</b> Unlimited Attempts Allowed`;
+                badge.style.background = "#dcfce7"; badge.style.color = "#15803d"; badge.style.borderColor = "#86efac";
+                checkStartConditions(); // Unlock immediately
+                return;
+            }
+            // --------------------------------------------------
+
+            // 2. Paid Tests: Check Cloud
+            badge.innerHTML = "🔄 Checking Cloud Records...";
+            badge.style.background = "#fffbeb"; badge.style.color = "#d97706";
+
+            checkTimer = setTimeout(() => {
+                fetch(SCRIPT_URL + "?type=check&id=" + encodeURIComponent(idVal) + "&test=" + encodeURIComponent(TEST_ID))
+                    .then(res => res.text())
+                    .then(data => {
+                        if (data === "BLOCK_NOT_PAID") {
+                            badge.innerHTML = "⛔ <b>ID Not Authorized.</b> Please buy access.";
+                            badge.style.background = "#fee2e2"; badge.style.color = "#b91c1c"; badge.style.borderColor = "#fecaca";
+                        } else {
+                            const used = parseInt(data) || 0;
+                            if (used >= MAX_ATTEMPTS) {
+                                badge.innerHTML = `⚠️ <b>Limit Reached</b> (Used: ${used}/${MAX_ATTEMPTS})`;
+                                badge.style.background = "#fee2e2"; badge.style.color = "#b91c1c"; badge.style.borderColor = "#fecaca";
+                            } else {
+                                badge.innerHTML = `✅ <b>Attempt ${used + 1} Available</b> (${MAX_ATTEMPTS - used} left)`;
+                                badge.style.background = "#dcfce7"; badge.style.color = "#15803d"; badge.style.borderColor = "#86efac";
+                                checkStartConditions();
+                            }
+                        }
+                    })
+                    .catch(() => {
+                        badge.innerHTML = "❌ Network Error";
+                        // Fallback: Allow start if network fails? Better to block to prevent bypass.
+                    });
+            }, 800);
+        }
+
+        function checkStartConditions() {
+            const name = document.getElementById('candidateName').value.trim();
+            const id = document.getElementById('username').value.trim();
+            const badgeText = document.getElementById('attempt-badge').innerText;
+            const btn = document.getElementById('start-btn');
+
+            if (name.length > 0 && id.length >= 4 && (badgeText.includes("✅") || badgeText.includes("Unlimited"))) {
+                btn.disabled = false;
+                btn.style.backgroundColor = "#2563eb";
+                btn.style.cursor = "pointer";
+                btn.innerText = "Start Examination ➜";
+            }
+        }
+
+        // --- START TEST (TRACKING) ---
+        function startTest() {
+            const nameVal = document.getElementById('candidateName').value.trim();
+            const idVal = document.getElementById('username').value.trim();
+
+            userName = nameVal;
+            document.getElementById('nav-user').innerText = userName.split(' ')[0];
+
+            // Track Attempt (Only if NOT Free/Guest)
+            if (!TEST_ID.toUpperCase().startsWith("FREE")) {
+                fetch(SCRIPT_URL + "?type=track&id=" + encodeURIComponent(idVal) + "&test=" + encodeURIComponent(TEST_ID) + "&name=" + encodeURIComponent(nameVal));
+            }
+
+            document.getElementById('welcome-screen').style.display = 'none';
+            document.getElementById('app-wrapper').style.display = 'flex';
+
+            if (isMobile) {
+                document.body.classList.add('mobile-mode');
+                document.getElementById('mob-menu').style.display = 'block';
+                document.getElementById('mob-close-sb').style.display = 'block';
+            } else {
+                document.body.classList.remove('mobile-mode');
+                document.getElementById('mob-menu').style.display = 'none';
+            }
+
+            initTest();
+        }
+
+        // --- TEST ENGINE ---
+        let current = 0;
+        function initTest() {
+            renderQ(0);
+            renderPalette();
+            clearInterval(timerRef);
+            timerRef = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer').innerText = formatTime(timeLeft);
+                if (timeLeft <= 0) finishTest();
+            }, 1000);
+        }
+
+        function renderQ(idx) {
+            current = idx;
+            const q = questions[idx];
+            if (status[idx] === 0) { status[idx] = 1; renderPalette(); }
+
+            const optionsHtml = q.options.map((opt, i) => {
+                const isSelected = responses[idx] === i;
+                let cls = isSelected ? 'option selected' : 'option';
+                if (status[idx] === 4 && isSelected) cls += ' review-marked';
+
+                return `<div class="${cls}" onclick="selectOpt(${i})">
+                <div class="opt-key">${String.fromCharCode(65 + i)}</div>
+                <div style="flex:1">${opt}</div>
+            </div>`;
+            }).join('');
+
+            document.getElementById('q-panel').innerHTML = `
+            <div class="q-header"><span class="topic-tag">${q.topic}</span><span>Q.${idx + 1}/${questions.length}</span></div>
+            <div class="q-text">${q.text}</div>
+            <div>${optionsHtml}</div>`;
+        }
+
+        function selectOpt(i) {
+            responses[current] = i;
+            status[current] = (status[current] >= 3) ? 4 : 2;
+            renderQ(current); renderPalette();
+        }
+
+        function nav(d) {
+            let next = current + d;
+            if (next >= 0 && next < questions.length) renderQ(next);
+        }
+
+        function renderPalette() {
+            document.getElementById('palette').innerHTML = questions.map((_, i) => {
+                let cls = 'grid-btn';
+                if (i === current) cls += ' st-curr';
+                if (status[i] === 2) cls += ' st-ans';
+                else if (status[i] === 3) cls += ' st-rev';
+                else if (status[i] === 4) cls += ' st-ans-rev';
+                return `<div class="${cls}" onclick="renderQ(${i})">${i + 1}</div>`;
+            }).join('');
+        }
+
+        function markReview() {
+            status[current] = (responses[current] !== null) ? 4 : 3;
+            renderPalette(); nav(1);
+        }
+
+        function clearResp() { responses[current] = null; status[current] = 1; renderQ(current); renderPalette(); }
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
+
+        // --- SUBMIT & SYNC ---
+        function finishTest() {
+            clearInterval(timerRef);
+            let s = 0, c = 0, w = 0;
+            responses.forEach((ans, i) => {
+                if (ans === questions[i].correct) { s += 4; c++; }
+                else if (ans !== null && ans !== undefined) { s -= 1; w++; }
+            });
+
+            const id = document.getElementById('username').value.trim();
+            const name = document.getElementById('candidateName').value.trim();
+
+            // Show Result Immediately
+            renderResultScreen({ userResponses: [...responses] });
+
+            // Cloud Sync (Skip if Free Test & using dummy ID)
+            if (!TEST_ID.toUpperCase().startsWith("FREE") || id.toUpperCase() !== "SOCIOLOGIC") {
+                const resStr = responses.map(r => (r === null || r === undefined) ? '' : r).join(",");
+                const url = SCRIPT_URL + "?type=submit&id=" + encodeURIComponent(id) + "&test=" + encodeURIComponent(TEST_ID) + "&score=" + s + "&name=" + encodeURIComponent(name) + "&resp=" + encodeURIComponent(resStr);
+                fetch(url, { mode: 'no-cors' });
+            }
+        }
+
+        // --- ANALYSIS SCREEN ---
+        function renderResultScreen(data) {
+            let s = 0, c = 0, w = 0, att = 0;
+            const resps = data.userResponses || [];
+
+            questions.forEach((q, i) => {
+                const ans = resps[i];
+                if (ans !== null && ans !== undefined) {
+                    att++;
+                    if (ans === q.correct) { s += 4; c++; } else { s -= 1; w++; }
+                }
+            });
+
+            const max = questions.length * 4;
+
+            // Update DOM
+            if (document.getElementById('disp-att')) document.getElementById('disp-att').innerText = `${att}/${questions.length}`;
+            if (document.getElementById('disp-cor')) document.getElementById('disp-cor').innerText = c;
+            if (document.getElementById('disp-wro')) document.getElementById('disp-wro').innerText = w;
+            if (document.getElementById('disp-score')) document.getElementById('disp-score').innerText = `${s}/${max}`;
+
+            document.getElementById('welcome-screen').style.display = 'none';
+            document.getElementById('app-wrapper').style.display = 'none';
+            document.getElementById('result-overlay').style.display = 'flex';
+
+            // Analysis Feed
+            const feed = document.getElementById('solution-feed');
+            if (feed) {
+                let html = "", topicStats = {};
+                questions.forEach((q, i) => {
+                    const ans = resps[i], isCor = (ans === q.correct);
+                    if (!topicStats[q.topic]) topicStats[q.topic] = { t: 0, c: 0 };
+                    topicStats[q.topic].t++; if (isCor) topicStats[q.topic].c++;
+
+                    let statusIcon = isCor ? '<span class="txt-green">✓ Correct</span>' : (ans !== null && ans !== undefined ? '<span class="txt-red">✕ Incorrect</span>' : '<span>○ Skipped</span>');
+                    let rowClass = isCor ? 'correct' : (ans !== null && ans !== undefined ? 'wrong' : '');
+
+                    const opts = q.options.map((opt, idx) => {
+                        let style = "padding:8px 12px; border-radius:8px; margin-bottom:5px; border:1px solid #e2e8f0; background:#f8fafc; color:#64748b;";
+                        if (idx === q.correct) style = "padding:8px; border-radius:8px; margin-bottom:5px; border:1px solid #bbf7d0; background:#dcfce7; color:#166534; font-weight:600;";
+                        else if (idx === ans && !isCor) style = "padding:8px; border-radius:8px; margin-bottom:5px; border:1px solid #fecaca; background:#fee2e2; color:#991b1b; font-weight:600;";
+                        return `<div style="${style}"><b>${String.fromCharCode(65 + idx)}.</b> ${opt}</div>`;
+                    }).join('');
+
+                    html += `<div class="exp-row ${rowClass}">
+                    <div style="display:flex; justify-content:space-between; font-weight:700;">
+                        <span style="color:#64748b; font-size:0.8rem">${q.topic}</span>${statusIcon}
+                    </div>
+                    <div style="font-weight:600; margin:10px 0;">Q${i + 1}: ${q.text}</div>
+                    <div style="margin-bottom:20px; font-size:0.95rem;">${opts}</div>
+                    <div class="exp-detail">
+                        <div class="why-box"><span class="txt-green">✅ Solution:</span> ${q.expl.correct}</div>
+                        <div class="why-box"><span class="txt-red">❌ Error Analysis:</span> ${q.expl.others}</div>
+                        <div style="background:#fffbeb; padding:10px; border:1px dashed #f59e0b; border-radius:8px; margin-top:8px;">💡 <b>Trick:</b> ${q.expl.trick}</div>
+                    </div>
+                </div>`;
+                });
+                feed.innerHTML = html;
+
+                // Weak/Strong
+                let best = { n: '-', v: -1 }, worst = { n: '-', v: 101 };
+                for (let t in topicStats) {
+                    let acc = (topicStats[t].c / topicStats[t].t) * 100;
+                    if (acc > best.v) best = { n: t, v: acc };
+                    if (acc < worst.v) worst = { n: t, v: acc };
+                }
+                if (document.getElementById('area-strong')) document.getElementById('area-strong').innerText = best.n;
+                if (document.getElementById('area-weak')) document.getElementById('area-weak').innerText = worst.n;
+            }
+        }
+
+        function showThankYou() {
+            document.getElementById('result-overlay').style.display = 'none';
+            document.getElementById('ty-screen').style.display = 'flex';
+        }
+
+        // --- CLOUD HISTORY & REVIEW ---
+        function openHistory() {
+            const id = document.getElementById('username').value.trim();
+            const list = document.getElementById('history-list');
+            if (id.length < 4) { alert("Enter ID first."); return; }
+
+            document.getElementById('history-modal').style.display = 'flex';
+            list.innerHTML = `<div style="padding:30px; text-align:center;">🔄 Loading Cloud Records...</div>`;
+
+            fetch(SCRIPT_URL + "?type=history&id=" + encodeURIComponent(id))
+                .then(r => r.json())
+                .then(data => {
+                    list.innerHTML = "";
+                    const myData = data.filter(d => d.test === TEST_ID).reverse();
+                    if (myData.length === 0) list.innerHTML = `<div class="hist-empty">No records found.</div>`;
+                    else {
+                        myData.forEach((rec, i) => {
+                            list.innerHTML += `<div class="hist-item" onclick="loadCloudReview('${rec.resp || ""}')" style="cursor:pointer;">
+                            <div class="h-left"><span class="h-title">Attempt #${myData.length - i}</span><span class="h-date">${rec.date}</span></div>
+                            <div style="display:flex; align-items:center; gap:10px;"><span style="font-size:0.75rem; color:#2563eb; text-decoration:underline;">Review</span><div class="h-score-badge">${rec.score} Marks</div></div>
+                        </div>`;
+                        });
+                    }
+                })
+                .catch(() => list.innerHTML = `<div style="padding:30px; text-align:center; color:red;">Connection Failed</div>`);
+        }
+
+        function closeHistory() { document.getElementById('history-modal').style.display = 'none'; }
+        function loadCloudReview(respStr) {
+            if (!respStr) { alert("Data unavailable."); return; }
+            const arr = respStr.split(',').map(x => x === '' ? null : parseInt(x));
+            closeHistory();
+            document.getElementById('welcome-screen').style.display = 'none';
+            renderResultScreen({ userResponses: arr });
+        }
+    </script>
+</body>
+
+</html>
