@@ -1886,19 +1886,53 @@
                 const id = localStorage.getItem('socio_user_id');
                 const user = localStorage.getItem('socio_user_name');
 
-                const original = btn.innerText;
-                btn.innerText = "Checking..."; btn.style.opacity = "0.7";
+                if (!id) { alert("Please Login first."); openLogin(); return; }
 
-                fetch(SCRIPT_URL + "?type=check&test=" + encodeURIComponent(name) + "&id=" + id + "&name=" + encodeURIComponent(user))
+                const originalText = btn.innerText;
+                btn.innerText = "Checking...";
+                btn.style.opacity = "0.7";
+
+                // Add timestamp to prevent caching
+                const fullUrl = SCRIPT_URL + "?type=check&test=" + encodeURIComponent(name) +
+                    "&id=" + encodeURIComponent(id) +
+                    "&name=" + encodeURIComponent(user) +
+                    "&ts=" + new Date().getTime();
+
+                fetch(fullUrl)
                     .then(r => r.text())
                     .then(s => {
-                        if (s === "ALLOW") window.location.href = url;
-                        else if (s === "LIMIT_REACHED") alert("⚠️ 5 Attempts Used.");
-                        else if (s === "BLOCK_NOT_PAID") { alert("⛔ Access Denied."); logout(); }
-                        else alert("Error: " + s);
-                        btn.innerText = original; btn.style.opacity = "1";
+                        // CLEANUP: Remove any accidental quotes from the response
+                        s = s.trim().replace(/^"|"$/g, '');
+
+                        // LOGIC FIX: Check if 's' is "ALLOW" OR a number less than 5
+                        const attempts = parseInt(s);
+                        const isNumericAuth = !isNaN(attempts) && attempts < 5;
+
+                        if (s === "ALLOW" || isNumericAuth) {
+                            // Success! Go to the test page
+                            window.location.href = url;
+                        }
+                        else if (s === "LIMIT_REACHED" || attempts >= 5) {
+                            alert("⚠️ Limit Reached: You have used all 5 attempts.");
+                            btn.innerText = "Limit Reached";
+                        }
+                        else if (s === "BLOCK_NOT_PAID") {
+                            alert("⛔ Access Denied. Please buy the plan.");
+                            logout();
+                        }
+                        else {
+                            // This catches actual errors
+                            alert("Server Response: " + s);
+                            btn.innerText = originalText;
+                        }
+                        btn.style.opacity = "1";
                     })
-                    .catch(() => { alert("Network Error"); btn.innerText = original; btn.style.opacity = "1"; });
+                    .catch(error => {
+                        console.error(error);
+                        alert("Connection Error. Please check your internet.");
+                        btn.innerText = originalText;
+                        btn.style.opacity = "1";
+                    });
             }
 
             // --- SECURITY ---
