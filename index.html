@@ -675,49 +675,41 @@
             }
         }
 
-        /* --- GEMINI-STYLE DESKTOP SIDEBAR LOGIC --- */
-        @media (min-width: 992px) {
+        /* --- CORRECTED DESKTOP BREAKPOINT (900px) --- */
+        @media (min-width: 900px) {
 
-            /* 1. Sidebar sits under the header and is visible by default */
+            /* 1. Sidebar: Visible and Pushing Content */
             .sidebar {
                 top: var(--header-height);
-                /* Starts below header */
-                transform: translateX(0);
-                /* Visible by default */
+                transform: translateX(0) !important;
+                /* Force Open */
                 box-shadow: none;
-                /* Cleaner look */
                 border-right: 1px solid #e2e8f0;
                 z-index: 900;
-                /* Lower than header */
+                transition: transform 0.3s ease;
             }
 
-            /* 2. Hide the redundant logo inside sidebar on desktop (since header has one) */
-            .sb-brand {
-                display: none;
-            }
-
-            /* 3. Push the main content to the right */
+            /* 2. Main Content: Pushed Right */
             .main {
-                margin-left: var(--sidebar-width);
-                /* Make space for sidebar */
-                transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                /* Smooth slide */
+                margin-left: var(--sidebar-width) !important;
+                width: calc(100% - var(--sidebar-width)) !important;
+                transition: margin-left 0.3s ease, width 0.3s ease;
             }
 
-            /* 4. State: When sidebar is explicitly closed on Desktop */
+            /* 3. Hide Mobile Overlay elements */
+            .sb-brand,
+            #sb-overlay {
+                display: none !important;
+            }
+
+            /* 4. Closed State (When you toggle it OFF on Desktop) */
             body.sb-closed .sidebar {
-                transform: translateX(-100%);
+                transform: translateX(-100%) !important;
             }
 
             body.sb-closed .main {
-                margin-left: 0;
-                /* Content expands to fill space */
-            }
-
-            /* 5. Disable the dark overlay on desktop */
-            .overlay.active {
-                display: none;
-                pointer-events: none;
+                margin-left: 0 !important;
+                width: 100% !important;
             }
         }
 
@@ -916,7 +908,7 @@
                         style="color:var(--text-muted); max-width:600px; margin:0 auto; font-size:1rem; line-height:1.6;">
                         The difference between qualifying and ranking high is <b
                             style="color:var(--primary);">STRATEGY</b>.
-                        We help you build it.
+                        We help you build it - all through PYQs.
                     </p>
                 </div>
 
@@ -1009,7 +1001,8 @@
                     <p style="color:#64748b; font-size:1rem; line-height: 1.6;">
                         We require you to login with your Name and ID to <b>track your 5 attempts</b> and save your
                         history.<br>
-                        <b style="color:#ef4444;">Forgot your ID?</b> No worries. Your ID is simply the <b>mobile Number you gave</b>
+                        <b style="color:#ef4444;">Forgot your ID?</b> No worries. Your ID is simply the <b>mobile Number
+                            you gave</b>
                         while making payment.
                     </p>
 
@@ -1812,16 +1805,16 @@
             function toggleSidebar() {
                 const width = window.innerWidth;
 
-                if (width >= 992) {
-                    // DESKTOP LOGIC: Toggle the class on BODY to push/pull content
+                // MATCHED TO CSS: 900px
+                if (width >= 900) {
+                    // DESKTOP LOGIC: Toggle the class 'sb-closed' on BODY
                     document.body.classList.toggle('sb-closed');
                 } else {
-                    // MOBILE LOGIC: Slide over using the original logic
+                    // MOBILE LOGIC: Toggle the class 'active' on SIDEBAR
                     document.getElementById('sidebar').classList.toggle('active');
                     document.getElementById('sb-overlay').classList.toggle('active');
                 }
             }
-
             function toggleProfile() {
                 const dd = document.getElementById('u-dropdown');
                 dd.style.display = (dd.style.display === 'block') ? 'none' : 'block';
