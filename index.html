@@ -209,10 +209,37 @@
             line-height: 1.1;
         }
 
-        /* Auto-hide text on small screens */
-        @media(max-width: 450px) {
+        /* --- MOBILE HEADER FIX --- */
+        @media(max-width: 480px) {
+
+            /* 1. Force Name & Badge to show */
             .pp-info {
-                display: none;
+                display: flex !important;
+                margin-right: 5px;
+                /* Add breathing room */
+            }
+
+            /* 2. Scale down text so it fits */
+            .pp-name {
+                font-size: 0.75rem;
+            }
+
+            .pp-badge {
+                font-size: 0.55rem;
+                letter-spacing: 0.3px;
+            }
+
+            /* 3. Adjust the Pill padding */
+            .profile-pill {
+                padding: 4px 4px 4px 12px;
+                gap: 8px;
+            }
+
+            /* 4. Slightly smaller Avatar */
+            .pp-avatar {
+                width: 34px;
+                height: 34px;
+                font-size: 0.9rem;
             }
         }
 
@@ -1039,6 +1066,9 @@
             font-size: 0.7rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+
+            white-space: nowrap;
+            /* <--- ADD THIS LINE (Prevents ugly wrapping) */
         }
 
         /* Emerald Glow (High Score) */
@@ -1252,6 +1282,142 @@
             color: #991b1b;
             padding: 4px 10px;
             border-radius: 10px;
+        }
+
+        /* --- ANALYTICS HUB CSS --- */
+        .analytics-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .grade-pill {
+            background: #0f172a;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
+        }
+
+        .insight-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .i-card {
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .i-card:hover {
+            transform: translateY(-3px);
+            border-color: #cbd5e1;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .i-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .i-blue {
+            background: #eff6ff;
+            color: #2563eb;
+        }
+
+        .i-green {
+            background: #ecfdf5;
+            color: #10b981;
+        }
+
+        .i-red {
+            background: #fef2f2;
+            color: #ef4444;
+        }
+
+        .i-purple {
+            background: #f5f3ff;
+            color: #7c3aed;
+        }
+
+        .i-label {
+            display: block;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: #64748b;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .i-val {
+            display: block;
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin-top: 2px;
+        }
+
+        .chart-section {
+            background: white;
+            padding: 24px;
+            border-radius: 20px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            margin-bottom: 40px;
+        }
+
+        .chart-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .c-tab {
+            background: transparent;
+            border: none;
+            padding: 8px 16px;
+            font-weight: 600;
+            color: #64748b;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .c-tab:hover {
+            background: #f1f5f9;
+            color: #334155;
+        }
+
+        .c-tab.active {
+            background: #2563eb;
+            color: white;
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+        }
+
+        .chart-canvas-wrap {
+            height: 350px;
+            position: relative;
+            width: 100%;
         }
     </style>
 </head>
@@ -1811,45 +1977,71 @@
 
             </div>
             <div id="view-history" class="view">
-                <h2 style="margin-bottom:20px; border-left:5px solid var(--primary); padding-left:15px;">Performance
-                    Analytics</h2>
+                <div class="analytics-header">
+                    <div>
+                        <h2 style="margin:0; font-weight: 800; color:#1e293b;">Performance Analytics</h2>
+                        <p style="color:#64748b; margin:5px 0 0 0;">Your personal growth report card.</p>
+                    </div>
+                    <div class="grade-pill" id="global-grade">Calculating...</div>
+                </div>
 
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <span class="stat-value" id="disp-tests">0</span>
-                        <span class="stat-label">Tests Taken</span>
+                <div class="insight-grid">
+                    <div class="i-card">
+                        <div class="i-icon i-blue">📈</div>
+                        <div>
+                            <span class="i-label">Current Trend</span>
+                            <span class="i-val" id="ins-trend">--</span>
+                        </div>
                     </div>
-                    <div class="stat-card">
-                        <span class="stat-value" id="disp-avg">0%</span>
-                        <span class="stat-label">Avg. Score</span>
+                    <div class="i-card">
+                        <div class="i-icon i-green">🏆</div>
+                        <div>
+                            <span class="i-label">Strongest Topic</span>
+                            <span class="i-val" id="ins-strong">--</span>
+                        </div>
                     </div>
-                    <div class="stat-card">
-                        <span class="stat-value" id="disp-best">0%</span>
-                        <span class="stat-label">Best Score</span>
+                    <div class="i-card">
+                        <div class="i-icon i-red">⚠️</div>
+                        <div>
+                            <span class="i-label">Needs Focus</span>
+                            <span class="i-val" id="ins-weak">--</span>
+                        </div>
+                    </div>
+                    <div class="i-card">
+                        <div class="i-icon i-purple">🎯</div>
+                        <div>
+                            <span class="i-label">Avg Accuracy</span>
+                            <span class="i-val" id="ins-avg">0%</span>
+                        </div>
                     </div>
                 </div>
 
-                <div class="chart-container">
-                    <canvas id="performanceChart"></canvas>
+                <div class="chart-section">
+                    <div class="chart-tabs">
+                        <button class="c-tab active" onclick="switchChart('timeline', this)">⏳ Timeline</button>
+                        <button class="c-tab" onclick="switchChart('topic', this)">🧠 Topic Strength</button>
+                    </div>
+                    <div class="chart-canvas-wrap">
+                        <canvas id="performanceChart"></canvas>
+                    </div>
                 </div>
 
+                <h3 style="margin-bottom:15px; color:#1e293b; font-weight:700;">Attempt Log</h3>
                 <div class="table-wrap">
-                    <table>
+                    <table id="history-table">
                         <thead>
                             <tr>
-                                <th>Test Module</th>
+                                <th>Test Name</th>
                                 <th>Date</th>
                                 <th>Score</th>
-                                <th>Status</th>
+                                <th>Verdict</th>
                             </tr>
                         </thead>
                         <tbody id="hist-body"></tbody>
                     </table>
                 </div>
-                <div id="hist-msg" style="text-align:center; padding:20px; color:var(--text-muted);">Loading data...
-                </div>
+                <div id="hist-msg" style="text-align:center; padding:20px; color:#64748b;">Loading analytics...</div>
             </div>
-
             <div id="view-free" class="view">
                 <h2>🎁 Free PYQs</h2>
                 <div class="grid">
@@ -2498,7 +2690,8 @@
             }
 
             // --- NEW HISTORY & CHART LOGIC ---
-            let myChart = null; // Store chart instance
+            let historyData = [];
+            let myChart = null;
 
             function loadHistory() {
                 showView('history');
@@ -2506,127 +2699,203 @@
                 const msg = document.getElementById('hist-msg');
                 const id = localStorage.getItem('socio_user_id');
 
+                // Reset UI
                 body.innerHTML = "";
                 msg.style.display = "block";
+                msg.innerText = "Crunching your numbers...";
 
-                // Reset stats display while loading
-                document.getElementById('disp-tests').innerText = "-";
-                document.getElementById('disp-avg').innerText = "-";
-                document.getElementById('disp-best').innerText = "-";
+                // Clear previous insights
+                document.getElementById('ins-trend').innerText = "--";
+                document.getElementById('ins-strong').innerText = "--";
+                document.getElementById('ins-weak').innerText = "--";
+                document.getElementById('ins-avg').innerText = "0%";
 
                 fetch(SCRIPT_URL + "?type=history&id=" + id)
                     .then(r => r.json())
                     .then(data => {
                         msg.style.display = "none";
-                        if (data.length === 0) {
-                            msg.innerText = "No attempts yet.";
+                        if (!data || data.length === 0) {
+                            msg.innerText = "No attempts yet. Take a test to see analytics!";
                             msg.style.display = "block";
                             return;
                         }
 
-                        // 1. RENDER DASHBOARD (Chart + Cards)
-                        renderDashboard(data);
+                        historyData = data;
+                        generateInsights(data);
 
-                        // 2. RENDER TABLE
-                        data.forEach(item => {
-                            // Determine Badge
-                            let badgeClass = 'badge-low';
-                            let statusText = 'Needs Improvement.';
-                            let s = parseInt(item.score);
+                        // Auto-load Timeline Chart
+                        switchChart('timeline', document.querySelector('.c-tab.active'));
 
-                            if (s >= 80) { badgeClass = 'badge-high'; statusText = 'Excellent'; }
-                            else if (s >= 60) { badgeClass = 'badge-avg'; statusText = 'Good'; }
-
-                            body.innerHTML += `
-                                <tr>
-                                    <td style="font-weight:600">${item.test}</td>
-                                    <td style="color:#64748b; font-size:0.85rem;">${item.date}</td>
-                                    <td style="font-weight:800; color:var(--primary);">${item.score}%</td>
-                                    <td><span class="${badgeClass}">${statusText}</span></td>
-                                </tr>`;
-                        });
+                        renderTable(data);
                     })
                     .catch(e => {
                         console.error(e);
-                        msg.innerText = "Error loading history.";
+                        msg.innerText = "Error loading history. Check connection.";
+                        msg.style.display = "block";
                     });
             }
 
-            function renderDashboard(data) {
-                // 1. Calculate Stats
-                const scores = data.map(d => parseInt(d.score));
-                const total = data.length;
-                const avg = Math.round(scores.reduce((a, b) => a + b, 0) / total);
-                const best = Math.max(...scores);
+            function generateInsights(data) {
+                if (data.length === 0) return;
 
-                // 2. Update Stats Cards
-                document.getElementById('disp-tests').innerText = total;
-                document.getElementById('disp-avg').innerText = avg + "%";
-                document.getElementById('disp-best').innerText = best + "%";
+                let totalScore = 0;
+                let topicMap = {};
 
-                // 3. Destroy old chart
-                if (myChart) myChart.destroy();
+                data.forEach(d => {
+                    let s = parseInt(d.score);
+                    totalScore += s;
 
-                // 4. Create The "Elite" Chart
+                    if (!topicMap[d.test]) topicMap[d.test] = { total: 0, count: 0 };
+                    topicMap[d.test].total += s;
+                    topicMap[d.test].count++;
+                });
+
+                const avg = Math.round(totalScore / data.length);
+                document.getElementById('ins-avg').innerText = avg + "%";
+
+                // Trend Logic (Last 3 vs Global)
+                const recentCount = Math.min(data.length, 3);
+                const recentData = data.slice(0, recentCount);
+                const recentAvg = recentData.reduce((a, b) => a + parseInt(b.score), 0) / recentCount;
+
+                const trendEl = document.getElementById('ins-trend');
+                if (recentAvg >= avg) {
+                    trendEl.innerText = "↗ Improving";
+                    trendEl.style.color = "#10b981";
+                } else {
+                    trendEl.innerText = "↘ Slumping";
+                    trendEl.style.color = "#ef4444";
+                }
+
+                // Best/Worst Topic Logic
+                let bestTopic = { name: 'None', score: -1 };
+                let weakTopic = { name: 'None', score: 101 };
+
+                for (const [name, val] of Object.entries(topicMap)) {
+                    let topicAvg = Math.round(val.total / val.count);
+                    if (topicAvg > bestTopic.score) bestTopic = { name: name, score: topicAvg };
+                    if (topicAvg < weakTopic.score) weakTopic = { name: name, score: topicAvg };
+                }
+
+                const trunc = (str) => str.length > 18 ? str.substring(0, 15) + "..." : str;
+                document.getElementById('ins-strong').innerText = trunc(bestTopic.name);
+                document.getElementById('ins-weak').innerText = trunc(weakTopic.name);
+
+                let grade = "Novice";
+                if (avg >= 85) grade = "Scholar 🎓";
+                else if (avg >= 70) grade = "Aspirant 📚";
+                else if (avg >= 50) grade = "Student 📝";
+                document.getElementById('global-grade').innerText = grade;
+            }
+
+            function switchChart(type, btnElement) {
+                if (btnElement) {
+                    document.querySelectorAll('.c-tab').forEach(b => b.classList.remove('active'));
+                    btnElement.classList.add('active');
+                }
+
                 const ctx = document.getElementById('performanceChart').getContext('2d');
 
-                // Purple Gradient Fill
-                let gradient = ctx.createLinearGradient(0, 0, 0, 400);
-                gradient.addColorStop(0, 'rgba(79, 70, 229, 0.4)'); // Deep Purple
-                gradient.addColorStop(1, 'rgba(79, 70, 229, 0.0)'); // Transparent
+                if (myChart) {
+                    myChart.destroy();
+                    myChart = null;
+                }
 
-                myChart = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        // Logic: Shows Month-Day (e.g. 05-20)
-                        labels: data.map(d => d.date.substring(5, 10)),
-                        datasets: [{
-                            label: 'Performance',
-                            data: scores,
-                            borderColor: '#4f46e5', // Indigo
-                            backgroundColor: gradient,
-                            borderWidth: 4,
-                            tension: 0.4, // Smooth Curves
-                            fill: true,
-                            pointBackgroundColor: '#ffffff',
-                            pointBorderColor: '#4f46e5',
-                            pointBorderWidth: 3,
-                            pointRadius: 6,
-                            pointHoverRadius: 9
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { display: false },
-                            tooltip: {
-                                backgroundColor: '#1e293b',
-                                titleColor: '#fff',
-                                bodyColor: '#fff',
-                                padding: 12,
-                                cornerRadius: 10,
-                                displayColors: false,
-                                callbacks: {
-                                    label: function (context) {
-                                        return ' Score: ' + context.parsed.y + '%';
-                                    }
-                                }
-                            }
+                if (!historyData || historyData.length === 0) return;
+
+                if (type === 'timeline') {
+                    const chronologicalData = [...historyData].reverse();
+                    const scores = chronologicalData.map(d => parseInt(d.score));
+                    const labels = chronologicalData.map(d => d.date.split(' ')[0]);
+
+                    let gradient = ctx.createLinearGradient(0, 0, 0, 400);
+                    gradient.addColorStop(0, 'rgba(37, 99, 235, 0.4)');
+                    gradient.addColorStop(1, 'rgba(37, 99, 235, 0.0)');
+
+                    myChart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Score (%)',
+                                data: scores,
+                                borderColor: '#2563eb',
+                                backgroundColor: gradient,
+                                borderWidth: 3,
+                                pointBackgroundColor: '#fff',
+                                pointBorderColor: '#2563eb',
+                                pointRadius: 6,
+                                fill: true,
+                                tension: 0.4
+                            }]
                         },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                max: 100,
-                                grid: { color: '#f1f5f9' },
-                                ticks: { font: { weight: 'bold' }, color: '#94a3b8' }
-                            },
-                            x: {
-                                grid: { display: false },
-                                ticks: { color: '#64748b' }
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { display: false } },
+                            scales: {
+                                y: { beginAtZero: true, max: 100, grid: { color: '#f1f5f9' } },
+                                x: { grid: { display: false }, ticks: { maxTicksLimit: 6 } }
                             }
                         }
-                    }
+                    });
+                } else {
+                    let topicMap = {};
+                    historyData.forEach(d => {
+                        if (!topicMap[d.test]) topicMap[d.test] = [];
+                        topicMap[d.test].push(parseInt(d.score));
+                    });
+
+                    const labels = Object.keys(topicMap);
+                    const data = labels.map(l => {
+                        const arr = topicMap[l];
+                        return Math.round(arr.reduce((a, b) => a + b, 0) / arr.length);
+                    });
+
+                    myChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Avg Score',
+                                data: data,
+                                backgroundColor: data.map(s => s >= 75 ? '#10b981' : (s >= 50 ? '#f59e0b' : '#ef4444')),
+                                borderRadius: 6,
+                                barPercentage: 0.6
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { display: false } },
+                            scales: {
+                                y: { beginAtZero: true, max: 100 },
+                                x: { ticks: { autoSkip: false, maxRotation: 25, minRotation: 0 } }
+                            }
+                        }
+                    });
+                }
+            }
+
+            function renderTable(data) {
+                const body = document.getElementById('hist-body');
+                body.innerHTML = "";
+
+                data.forEach(item => {
+                    let s = parseInt(item.score);
+                    let badge = "";
+
+                    if (s >= 80) badge = `<span class="score-badge badge-high">Mastery</span>`;
+                    else if (s >= 50) badge = `<span class="score-badge badge-avg">Good</span>`;
+                    else badge = `<span class="score-badge badge-low">Review</span>`;
+
+                    body.innerHTML += `
+            <tr>
+                <td style="font-weight:600; color:#334155;">${item.test}</td>
+                <td style="color:#64748b; font-size:0.85rem;">${item.date}</td>
+                <td style="font-weight:800; font-family:'Courier New';">${item.score}%</td>
+                <td>${badge}</td>
+            </tr>`;
                 });
             }
             // --- START TEST ---
