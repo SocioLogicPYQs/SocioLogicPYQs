@@ -1371,10 +1371,16 @@
 
         .i-val {
             display: block;
-            font-size: 1.1rem;
+            font-size: 1rem;
+            /* Slightly smaller to fit 2 lines nicely */
             font-weight: 800;
             color: #0f172a;
-            margin-top: 2px;
+            margin-top: 4px;
+
+            /* ADD THESE LINES FOR WRAPPING: */
+            white-space: normal;
+            line-height: 1.2;
+            word-break: break-word;
         }
 
         .chart-section {
@@ -2763,7 +2769,7 @@
                     trendEl.innerText = "↗ Improving";
                     trendEl.style.color = "#10b981";
                 } else {
-                    trendEl.innerText = "↘ Slumping";
+                    trendEl.innerText = "↘ Declining";
                     trendEl.style.color = "#ef4444";
                 }
 
@@ -2778,10 +2784,10 @@
                 }
 
                 const trunc = (str) => str.length > 18 ? str.substring(0, 15) + "..." : str;
-                document.getElementById('ins-strong').innerText = trunc(bestTopic.name);
-                document.getElementById('ins-weak').innerText = trunc(weakTopic.name);
-
-                let grade = "Novice";
+                // Show FULL Name (No truncation)
+                document.getElementById('ins-strong').innerText = bestTopic.name;
+                document.getElementById('ins-weak').innerText = weakTopic.name;
+                let grade = "Beginner";
                 if (avg >= 85) grade = "Scholar 🎓";
                 else if (avg >= 70) grade = "Aspirant 📚";
                 else if (avg >= 50) grade = "Student 📝";
@@ -2804,9 +2810,13 @@
                 if (!historyData || historyData.length === 0) return;
 
                 if (type === 'timeline') {
+                    // --- TIMELINE CHART ---
                     const chronologicalData = [...historyData].reverse();
+
+                    // 1. Get ALL data points aligned
                     const scores = chronologicalData.map(d => parseInt(d.score));
                     const labels = chronologicalData.map(d => d.date.split(' ')[0]);
+                    const testNames = chronologicalData.map(d => d.test); // <--- NEW: Store Test Names
 
                     let gradient = ctx.createLinearGradient(0, 0, 0, 400);
                     gradient.addColorStop(0, 'rgba(37, 99, 235, 0.4)');
@@ -2817,7 +2827,7 @@
                         data: {
                             labels: labels,
                             datasets: [{
-                                label: 'Score (%)',
+                                label: 'Score',
                                 data: scores,
                                 borderColor: '#2563eb',
                                 backgroundColor: gradient,
@@ -2825,6 +2835,7 @@
                                 pointBackgroundColor: '#fff',
                                 pointBorderColor: '#2563eb',
                                 pointRadius: 6,
+                                pointHoverRadius: 8,
                                 fill: true,
                                 tension: 0.4
                             }]
@@ -2832,7 +2843,36 @@
                         options: {
                             responsive: true,
                             maintainAspectRatio: false,
-                            plugins: { legend: { display: false } },
+                            interaction: {
+                                mode: 'index',
+                                intersect: false,
+                            },
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    backgroundColor: 'rgba(15, 23, 42, 0.9)', // Dark Premium Background
+                                    titleFont: { size: 13, family: 'system-ui' },
+                                    bodyFont: { size: 14, weight: 'bold', family: 'Courier New' },
+                                    padding: 12,
+                                    cornerRadius: 8,
+                                    displayColors: false, // Hides the little color box
+                                    callbacks: {
+                                        // 2. CUSTOM TITLE: Show "Date • Test Name"
+                                        title: (tooltipItems) => {
+                                            const index = tooltipItems[0].dataIndex;
+                                            return `${labels[index]} • ${testNames[index]}`;
+                                        },
+                                        // 3. CUSTOM LABEL: Show "Score + Verdict"
+                                        label: (context) => {
+                                            const val = context.parsed.y;
+                                            let verdict = "⚠️ Review";
+                                            if (val >= 80) verdict = "🔥 Mastery";
+                                            else if (val >= 50) verdict = "👍 Good";
+                                            return `Score: ${val}%  (${verdict})`;
+                                        }
+                                    }
+                                }
+                            },
                             scales: {
                                 y: { beginAtZero: true, max: 100, grid: { color: '#f1f5f9' } },
                                 x: { grid: { display: false }, ticks: { maxTicksLimit: 6 } }
@@ -2885,9 +2925,9 @@
                     let s = parseInt(item.score);
                     let badge = "";
 
-                    if (s >= 80) badge = `<span class="score-badge badge-high">Mastery</span>`;
+                    if (s >= 80) badge = `<span class="score-badge badge-high">Excellent</span>`;
                     else if (s >= 50) badge = `<span class="score-badge badge-avg">Good</span>`;
-                    else badge = `<span class="score-badge badge-low">Review</span>`;
+                    else badge = `<span class="score-badge badge-low">Poor</span>`;
 
                     body.innerHTML += `
             <tr>
