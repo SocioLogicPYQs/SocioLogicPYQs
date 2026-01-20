@@ -1,0 +1,2031 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SocioLogic | Exam Portal</title>
+    <style>
+        :root {
+            /* --- COLOR PALETTE --- */
+            --primary: #2563eb;
+            --primary-dark: #1e3a8a;
+            --primary-grad: linear-gradient(135deg, #2563eb 0%, #172554 100%);
+            --accent: #f59e0b;
+            /* Amber */
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --success: #10b981;
+            --danger: #ef4444;
+
+            /* --- DIMENSIONS --- */
+            --sidebar-width: 280px;
+            --header-height: 70px;
+
+            /* --- EFFECTS --- */
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+
+        /* --- GLOBAL RESET --- */
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg-body);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            -webkit-user-select: none;
+            user-select: none;
+            /* Security */
+        }
+
+        input,
+        textarea {
+            user-select: text;
+        }
+
+        /* --- 1. HEADER (CLEAN & SOLID) --- */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: var(--header-height);
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            z-index: 1050;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            /* Space between the hamburger and the logo */
+        }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-main);
+            padding: 8px;
+            /* Touch target size */
+            border-radius: 50%;
+            /* Circle hover effect */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .menu-btn:hover {
+            background: #f1f5f9;
+            /* Light grey circle on hover */
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            /* Space between logo image and text */
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .brand-logo img {
+            height: 32px;
+            width: 32px;
+            border-radius: 6px;
+        }
+
+        .brand-logo span {
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: var(--text-main);
+            letter-spacing: -0.5px;
+            /* Tighter, more modern text */
+        }
+
+        /* Control Panel (Login/Profile) */
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Free User State */
+        #panel-free {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .badge-guest {
+            background: #f1f5f9;
+            color: var(--text-muted);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .btn-head {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border: none;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        .btn-head-dark {
+            background: var(--text-main);
+            color: white;
+        }
+
+        .btn-head-accent {
+            background: var(--success);
+            color: white;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-head:hover {
+            transform: translateY(-1px);
+            opacity: 0.9;
+        }
+
+        /* Premium User State */
+        #panel-prem {
+            display: none;
+            position: relative;
+        }
+
+        .profile-trigger {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 4px 8px 4px 4px;
+            border-radius: 50px;
+            border: 1px solid transparent;
+            transition: 0.2s;
+        }
+
+        .profile-trigger:hover {
+            background: #f8fafc;
+            border-color: #e2e8f0;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            background: var(--primary-grad);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .user-meta {
+            text-align: right;
+            display: none;
+        }
+
+        /* Hidden on mobile */
+        @media(min-width: 768px) {
+            .user-meta {
+                display: block;
+            }
+        }
+
+        .u-name {
+            font-size: 0.9rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .u-role {
+            font-size: 0.75rem;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* Dropdown */
+        .dropdown {
+            position: absolute;
+            top: 120%;
+            right: 0;
+            width: 240px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            display: none;
+            overflow: hidden;
+            animation: slideDown 0.2s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .dd-header {
+            padding: 16px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .dd-item {
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-main);
+            cursor: pointer;
+            transition: 0.1s;
+            font-size: 0.95rem;
+        }
+
+        .dd-item:hover {
+            background: #f1f5f9;
+            color: var(--primary);
+        }
+
+        .dd-item.danger {
+            color: var(--danger);
+        }
+
+        .dd-item.danger:hover {
+            background: #fef2f2;
+        }
+
+        /* --- 2. SIDEBAR (UPDATED FOR MOBILE) --- */
+        .sidebar {
+            /* Sit BELOW the header */
+            top: var(--header-height);
+            left: 0;
+            /* Height is screen minus header */
+            height: calc(100vh - var(--header-height));
+            width: var(--sidebar-width);
+
+            background: var(--text-main);
+            color: white;
+
+            /* Z-Index Logic: Header(1050) > Sidebar(1040) > Overlay(1030) */
+            z-index: 1040;
+
+            transform: translateX(-100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+            box-shadow: 10px 0 25px rgba(0, 0, 0, 0.2);
+            position: fixed;
+        }
+
+        .sidebar.active {
+            transform: translateX(0);
+        }
+
+        .sb-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sb-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .nav-link {
+            padding: 12px 16px;
+            border-radius: 8px;
+            color: #94a3b8;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 500;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .nav-link.active {
+            box-shadow: inset 3px 0 0 var(--primary);
+            background: rgba(37, 99, 235, 0.1);
+        }
+
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 1030;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
+        /* --- 3. MAIN CONTENT --- */
+        .main {
+            padding-top: var(--header-height);
+            min-height: 100vh;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .view {
+            display: none;
+            padding: 30px;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* --- 4. CARDS GRID --- */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: #cbd5e1;
+        }
+
+        .card-body {
+            padding: 24px;
+            flex: 1;
+        }
+
+        .tag {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            border-radius: 20px;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .tag-free {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .tag-prem {
+            background: #eff6ff;
+            color: #1e40af;
+        }
+
+        .c-head {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin: 0 0 8px 0;
+            line-height: 1.3;
+        }
+
+        .c-sub {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .btn-card {
+            display: block;
+            text-align: center;
+            padding: 16px;
+            font-weight: 700;
+            text-decoration: none;
+            border-top: 1px solid #f1f5f9;
+            transition: background 0.2s;
+        }
+
+        .btn-lock {
+            background: #f8fafc;
+            color: #94a3b8;
+            cursor: not-allowed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-unlock {
+            background: var(--text-main);
+            color: white;
+            display: none;
+        }
+
+        .btn-unlock:hover {
+            background: var(--primary);
+        }
+
+        .btn-free {
+            background: var(--text-main);
+            color: white;
+        }
+
+        .btn-free:hover {
+            background: var(--primary);
+        }
+
+        /* --- 5. MODALS (LOGIN/CHANGE PASS) --- */
+        .modal-wrap {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-box {
+            background: white;
+            width: 90%;
+            max-width: 400px;
+            padding: 32px;
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+            text-align: left;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        .form-input:focus {
+            border-color: var(--primary);
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.7;
+            cursor: wait;
+        }
+
+        .btn-cancel {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            margin-top: 12px;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        /* --- 6. HISTORY TABLE --- */
+        .table-wrap {
+            overflow-x: auto;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 500px;
+        }
+
+        th {
+            text-align: left;
+            padding: 16px 24px;
+            background: #f8fafc;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+
+        td {
+            padding: 16px 24px;
+            border-top: 1px solid #f1f5f9;
+            font-size: 0.95rem;
+        }
+
+        .score-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #eff6ff;
+            color: var(--primary);
+            border-radius: 20px;
+            font-weight: 700;
+        }
+
+        /* --- UTILITIES --- */
+        .hero {
+            text-align: center;
+            max-width: 800px;
+            margin: 40px auto;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 16px;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+        }
+
+        .welcome-box {
+            background: white;
+            border-left: 4px solid var(--accent);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: left;
+            margin: 0 auto 40px auto;
+            max-width: 600px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        @media(max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .controls #panel-free {
+                gap: 4px;
+            }
+
+            .badge-guest {
+                display: none;
+            }
+
+            .u-name,
+            .u-role {
+                display: none;
+            }
+        }
+
+        /* --- CORRECTED DESKTOP BREAKPOINT (900px) --- */
+        @media (min-width: 900px) {
+
+            /* 1. Sidebar: Visible and Pushing Content */
+            .sidebar {
+                top: var(--header-height);
+                transform: translateX(0) !important;
+                /* Force Open */
+                box-shadow: none;
+                border-right: 1px solid #e2e8f0;
+                z-index: 900;
+                transition: transform 0.3s ease;
+            }
+
+            /* 2. Main Content: Pushed Right */
+            .main {
+                margin-left: var(--sidebar-width) !important;
+                width: calc(100% - var(--sidebar-width)) !important;
+                transition: margin-left 0.3s ease, width 0.3s ease;
+            }
+
+            /* 3. Hide Mobile Overlay elements */
+            .sb-brand,
+            #sb-overlay {
+                display: none !important;
+            }
+
+            /* 4. Closed State (When you toggle it OFF on Desktop) */
+            body.sb-closed .sidebar {
+                transform: translateX(-100%) !important;
+            }
+
+            body.sb-closed .main {
+                margin-left: 0 !important;
+                width: 100% !important;
+            }
+        }
+
+        /* --- BACKGROUND WATERMARKS --- */
+        .watermark {
+            position: fixed;
+            /* Stays in place when scrolling */
+            opacity: 0.03;
+            /* Very faint/dim */
+            pointer-events: none;
+            /* Clicks go through it */
+            z-index: 0;
+            /* Sits behind everything */
+            filter: grayscale(100%);
+            /* Removes color for that 'shadow' look */
+        }
+
+        .wm-1 {
+            bottom: -50px;
+            right: -50px;
+            width: 500px;
+            transform: rotate(-15deg);
+        }
+
+        .wm-2 {
+            top: 10%;
+            left: 20%;
+            width: 300px;
+            opacity: 0.02;
+            /* Even fainter */
+            transform: rotate(10deg);
+        }
+
+        .wm-3 {
+            top: -50px;
+            right: 15%;
+            width: 250px;
+            opacity: 0.02;
+            transform: rotate(-5deg);
+        }
+    </style>
+</head>
+
+<body>
+
+    <body>
+        <img src="https://i.ibb.co/fYNNzJYS/Gemini-Generated-Image-fb7rm1fb7rm1fb7r.png" class="watermark wm-1" alt="">
+        <img src="https://i.ibb.co/fYNNzJYS/Gemini-Generated-Image-fb7rm1fb7rm1fb7r.png" class="watermark wm-2" alt="">
+        <img src="https://i.ibb.co/fYNNzJYS/Gemini-Generated-Image-fb7rm1fb7rm1fb7r.png" class="watermark wm-3" alt="">
+
+        <div class="modal-wrap" id="login-modal">
+            <div class="modal-box">
+                <h2 style="margin:0 0 8px 0;">Student Login</h2>
+                <p style="margin:0 0 24px 0; color:#64748b; font-size:0.9rem;">Access Premium Tests & History</p>
+                <div class="form-group">
+                    <label class="form-label">Mobile Number</label>
+                    <input type="number" id="login-mobile" class="form-input" placeholder="e.g. 9876543210">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">PIN (Password)</label>
+                    <input type="password" id="login-pass" class="form-input" placeholder="Enter PIN">
+                </div>
+                <button class="btn-submit" id="btn-login-action" onclick="verifyLogin()">Login Securely</button>
+                <div style="margin-top:16px; display:flex; justify-content:space-between; font-size:0.9rem;">
+                    <span onclick="document.getElementById('login-modal').style.display='none'"
+                        style="cursor:pointer; color:#64748b;">Cancel</span>
+                    <span onclick="forgotPassTrigger()"
+                        style="cursor:pointer; color:var(--primary); font-weight:600;">Forgot PIN?</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-wrap" id="cp-modal">
+            <div class="modal-box">
+                <h2 style="margin-bottom:20px;">Change PIN</h2>
+                <div class="form-group">
+                    <label class="form-label">Old PIN</label>
+                    <input type="password" id="cp-old" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">New PIN (6 Digits)</label>
+                    <input type="number" id="cp-new" class="form-input">
+                </div>
+                <button class="btn-submit" id="btn-cp-action" onclick="submitChangePass()">Update PIN</button>
+                <button class="btn-cancel"
+                    onclick="document.getElementById('cp-modal').style.display='none'">Close</button>
+            </div>
+        </div>
+
+        <div class="modal-wrap" id="fp-modal">
+            <div class="modal-box">
+                <h2 style="margin-bottom:10px;">Reset PIN</h2>
+                <p style="margin-bottom:20px; color:#64748b; font-size:0.9rem;">We will email you a new PIN.</p>
+                <div class="form-group">
+                    <label class="form-label">Registered Mobile</label>
+                    <input type="number" id="fp-mobile" class="form-input">
+                </div>
+                <button class="btn-submit" id="btn-fp-action" onclick="submitForgotPass()">Send Email</button>
+                <button class="btn-cancel"
+                    onclick="document.getElementById('fp-modal').style.display='none'">Close</button>
+            </div>
+        </div>
+
+        <div class="overlay" id="sb-overlay" onclick="toggleSidebar()"></div>
+
+        <header class="header">
+            <div class="header-left">
+                <button class="menu-btn" onclick="toggleSidebar()" aria-label="Menu">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+
+                <div class="brand-logo" onclick="showView('home')">
+                    <img src="https://i.ibb.co/fYNNzJYS/Gemini-Generated-Image-fb7rm1fb7rm1fb7r.png" alt="Logo">
+                    <span>SocioLogic</span>
+                </div>
+            </div>
+
+            <div class="controls">
+                <div id="panel-free">
+                    <span class="badge-guest">Guest Mode</span>
+                    <button class="btn-head btn-head-dark" onclick="openLogin()">Login</button>
+                    <a href="https://rzp.io/rzp/xddl5LdV" target="_blank" class="btn-head btn-head-accent">Buy ₹99</a>
+                </div>
+                <div id="panel-prem">
+                    <div class="profile-trigger" onclick="toggleProfile()">
+                        <div class="avatar" id="u-avatar">U</div>
+                        <div class="user-meta">
+                            <div class="u-name" id="u-name">Student</div>
+                            <div class="u-role">Premium</div>
+                        </div>
+                        <span style="font-size:0.8rem; margin-left:4px;">▼</span>
+                    </div>
+                    <div class="dropdown" id="u-dropdown">
+                        <div class="dd-header">
+                            <div style="font-weight:700;" id="dd-name">User</div>
+                            <div style="font-size:0.85rem; color:#64748b; font-family:monospace;" id="dd-id">ID: --
+                            </div>
+                        </div>
+                        <div class="dd-item" onclick="openCP()">🔑 Change PIN</div>
+                        <div class="dd-item" onclick="loadHistory()">📊 Past Results</div>
+                        <div class="dd-item danger" onclick="logout()">🚪 Log Out</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <nav class="sidebar" id="sidebar">
+            <div class="sb-brand">
+                <img src="https://i.ibb.co/fYNNzJYS/Gemini-Generated-Image-fb7rm1fb7rm1fb7r.png"
+                    style="width:40px; border-radius:8px;">
+                <span style="font-size:1.4rem; font-weight:800;">SocioLogic</span>
+            </div>
+            <div class="sb-menu">
+                <div class="nav-link active" onclick="showView('home', this)">🏠 Home Dashboard</div>
+                <div class="nav-link" onclick="showView('about', this)">ℹ️ About Us</div>
+                <div class="nav-link" onclick="showView('guide', this)">🧭 How to Navigate</div>
+                <div style="height:1px; background:rgba(255,255,255,0.1); margin:10px 0;"></div>
+                <div class="nav-link" onclick="showView('free', this)">🎁 Free PYQs</div>
+                <div class="nav-link" onclick="showView('full', this)">🔒 Full Length</div>
+                <div class="nav-link" onclick="showView('topic', this)">🔒 Topic Wise</div>
+                <div class="nav-link" onclick="showView('thinker', this)">🔒 Thinkers</div>
+                <div class="nav-link" onclick="showView('unit', this)">🔒 Unit Wise</div>
+            </div>
+            <a href="https://t.me/SocioLogicPYQs" target="_blank" class="nav-link"
+                style="margin-top:auto; color:#38bdf8;">
+                ✈️ Telegram Channel
+            </a>
+        </nav>
+
+        <main class="main">
+
+            <div id="view-home" class="view active">
+                <div class="hero">
+                    <img src="https://i.ibb.co/fYNNzJYS/Gemini-Generated-Image-fb7rm1fb7rm1fb7r.png"
+                        style="width:100px; border-radius:20px; box-shadow:var(--shadow-lg); margin-bottom:24px;">
+                    <h1>Master CUET PG with <br><span style="color:var(--primary);">Real-Time Simulation</span></h1>
+                    <p>The only platform bridging the gap between academic reading and NTA exam patterns.</p>
+                </div>
+                <div class="welcome-box">
+                    <b style="color:var(--accent); font-size:1.1rem;">🚀 Getting Started?</b>
+                    <p style="margin:4px 0 0 0; color:var(--text-muted);">
+                        1. Try the <b>Free PYQs</b> from the menu.<br>
+                        2. Login to access <b>Premium Content</b>.
+                    </p>
+                </div>
+                <div style="margin-top: 60px; text-align: center; margin-bottom: 30px;">
+                    <h3 style="color:var(--text-main); font-size:1.5rem; margin-bottom:10px; font-weight:800;">
+                        More Than Just a Question Bank
+                    </h3>
+                    <p
+                        style="color:var(--text-muted); max-width:600px; margin:0 auto; font-size:1rem; line-height:1.6;">
+                        The difference between qualifying and ranking high is <b
+                            style="color:var(--primary);">STRATEGY</b>.
+                        We help you build it - all through PYQs.
+                    </p>
+                </div>
+
+                <div class="grid">
+                    <div class="card" style="text-align:center;">
+                        <div class="card-body">
+                            <div
+                                style="font-size:2.5rem; margin-bottom:15px; background:#eff6ff; width:60px; height:60px; display:flex; align-items:center; justify-content:center; border-radius:50%; margin-left:auto; margin-right:auto;">
+                                🖥️</div>
+                            <div class="c-head" style="font-size:1.1rem;">100% NTA Simulation</div>
+                            <p class="c-sub">
+                                Get comfortable with the pressure. Our interface mimics the actual exam screen to
+                                eliminate test-day anxiety.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="card" style="text-align:center;">
+                        <div class="card-body">
+                            <div
+                                style="font-size:2.5rem; margin-bottom:15px; background:#eff6ff; width:60px; height:60px; display:flex; align-items:center; justify-content:center; border-radius:50%; margin-left:auto; margin-right:auto;">
+                                💡</div>
+                            <div class="c-head" style="font-size:1.1rem;">"Pro-Hint" Explanations</div>
+                            <p class="c-sub">
+                                Don't just memorize options. Get Mnemonics, Tricks, and Sociological context with every
+                                solution.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="card" style="text-align:center;">
+                        <div class="card-body">
+                            <div
+                                style="font-size:2.5rem; margin-bottom:15px; background:#eff6ff; width:60px; height:60px; display:flex; align-items:center; justify-content:center; border-radius:50%; margin-left:auto; margin-right:auto;">
+                                🎯</div>
+                            <div class="c-head" style="font-size:1.1rem;">Topic Diagnostics</div>
+                            <p class="c-sub">
+                                Weak in <em>Research Methods</em>? Strong in <em>Indian Thinkers</em>? Our tests help
+                                you isolate and fix your weak spots.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-about" class="view">
+                <h2 style="color:#0f172a; border-bottom:2px solid #e2e8f0; padding-bottom:15px; margin-bottom: 30px;">ℹ️
+                    About SocioLogic</h2>
+                <div style="background: white; padding: 40px; border-radius: 24px; box-shadow: var(--shadow-card);">
+                    <h3
+                        style="margin-top:0; color:#1e40af; font-size: 2.5rem; text-align: center; margin-bottom: 25px;">
+                        Our Mission</h3>
+                    <p style="color:#475569; line-height:1.8; font-size:1.05rem;">
+                        This channel was created with a singular vision: to help you facilitate what matters most in the
+                        final hour - solving PYQs.
+                        <br><br>
+                        Time bears testimony that looking at PYQs last minute is often unyielding due to the huge
+                        mismatch
+                        between academic reading and what NTA actually asks.
+                        <br><br>
+                        <b>SocioLogic bridges that gap.</b> We bring you a real-time simulated exam environment that is
+                        not
+                        just a PDF, but an interactive experience.
+                        <br><br>
+                        We not only provide you with a wide variety of PYQs ranging from the most common to the least
+                        talked-about topics,
+                        but also offer<b> well-structured explanations for all the options.
+                    </p>
+                    <p style="font-size:18px; line-height:1.6;">
+                        <strong>✨ Most Exciting Feature:</strong><br>
+                        <span style="color:#2c7be5; font-weight:600;">A Pro Hint with Every Question</span> -
+                        packed with <em>smart mnemonics</em>, <em>quick tricks</em>, <em>useful references</em>, and
+                        powerful <em>memory aids</em> that make learning effortless and unforgettable.
+                    </p>
+
+
+                    <div
+                        style="background:#eff6ff; padding:30px; border-radius:20px; margin:30px 0; border:1px solid #dbeafe;">
+                        <h3 style="margin:0 0 20px 0; color:#1e40af; font-size: 1.2rem;">⚡ The ₹99 Power Plan</h3>
+                        <ul style="color:#334155; line-height:1.9; margin:0; padding-left:20px; font-size: 1.05rem;">
+                            <li><b>One Subscription:</b> Unlocks EVERYTHING (Full Papers + Topic Wise + Future Tests).
+                            </li>
+                            <li><b>5 Attempts per Test:</b> Practice until perfection.</li>
+                            <li><b>Lifetime Validity:</b> Valid until the exam date.</li>
+                            <li><b>No Hidden Costs:</b> Just ₹99 one time.</li>
+                        </ul>
+                    </div>
+
+                    <h3 style="color:#0f172a;">Why do we need your ID?</h3>
+                    <p style="color:#64748b; font-size:1rem; line-height: 1.6;">
+                        We require you to login with your Name and ID to <b>track your 5 attempts</b> and save your
+                        history.<br>
+                        <b style="color:#ef4444;">Forgot your ID?</b> No worries. Your ID is simply the <b>mobile Number
+                            you gave</b>
+                        while making payment.
+                    </p>
+
+                    <a href="https://rzp.io/rzp/xddl5LdV" target="_blank" 
+   style="
+     display: inline-flex;
+     align-items: center;
+     justify-content: center;
+     gap: 10px;
+     margin: 35px auto;
+     display: flex; 
+     width: fit-content;
+     
+     /* The 'Jaw-Dropping' Gradient */
+     background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 50%, #1e40af 100%);
+     
+     color: white;
+     font-size: 1.1rem;
+     font-weight: 700;
+     text-decoration: none;
+     
+     /* Perfect Pill Shape */
+     border-radius: 99px;
+     padding: 16px 36px;
+     
+     /* Sophisticated Border & Shadow */
+     border: 1px solid rgba(255, 255, 255, 0.15);
+     box-shadow: 
+        0 4px 6px -1px rgba(0, 0, 0, 0.1), 
+        0 10px 15px -3px rgba(37, 99, 235, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3); /* The 'Glass' Top Edge */
+        
+     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+     letter-spacing: 0.5px;
+     position: relative;
+     overflow: hidden;
+   "
+   onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 20px 25px -5px rgba(37, 99, 235, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.4)';"
+   onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 10px 15px -3px rgba(37, 99, 235, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.3)';"
+>
+    <span style="font-size: 1.3rem;">💎</span> 
+    
+    <span style="text-shadow: 0 1px 2px rgba(0,0,0,0.2);">Unlock Premium (₹99)</span>
+    
+    <span style="font-size: 1.1rem; margin-left: 2px;">➜</span>
+</a>
+                </div>
+            </div>
+
+            <div id="view-guide" class="view">
+
+                <style>
+                    /* Grid Layout for Cards */
+                    .guide-grid {
+                        display: grid;
+                        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                        gap: 25px;
+                        margin-top: 30px;
+                    }
+
+                    /* Individual Card Style */
+                    .guide-card {
+                        background: white;
+                        padding: 30px;
+                        border-radius: 20px;
+                        border: 1px solid #e2e8f0;
+                        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+                        transition: transform 0.3s ease, box-shadow 0.3s ease;
+                        display: flex;
+                        flex-direction: column;
+                        gap: 20px;
+                        position: relative;
+                        overflow: hidden;
+                    }
+
+                    /* Hover Effect */
+                    .guide-card:hover {
+                        transform: translateY(-8px);
+                        box-shadow: 0 20px 40px -5px rgba(0, 0, 0, 0.1);
+                        border-color: #cbd5e1;
+                    }
+
+                    /* Top Decorative Line */
+                    .guide-card::before {
+                        content: "";
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 5px;
+                        background: linear-gradient(90deg, #2563eb, #3b82f6);
+                        opacity: 0;
+                        transition: opacity 0.3s;
+                    }
+
+                    .guide-card:hover::before {
+                        opacity: 1;
+                    }
+
+                    /* Icons */
+                    .guide-icon-box {
+                        width: 55px;
+                        height: 55px;
+                        background: #eff6ff;
+                        color: #2563eb;
+                        border-radius: 14px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 1.6rem;
+                        box-shadow: 0 4px 10px rgba(37, 99, 235, 0.15);
+                    }
+
+                    /* Text Styles */
+                    .guide-step-tag {
+                        font-size: 0.75rem;
+                        text-transform: uppercase;
+                        letter-spacing: 1.5px;
+                        color: #94a3b8;
+                        font-weight: 800;
+                    }
+
+                    .guide-heading {
+                        font-size: 1.25rem;
+                        font-weight: 700;
+                        color: #0f172a;
+                        margin: 0;
+                        line-height: 1.3;
+                    }
+
+                    .guide-description {
+                        color: #475569;
+                        font-size: 0.95rem;
+                        line-height: 1.7;
+                        margin: 0;
+                    }
+
+                    /* Highlights */
+                    .hl-red {
+                        color: #dc2626;
+                        font-weight: 700;
+                        background: #fef2f2;
+                        padding: 2px 8px;
+                        border-radius: 6px;
+                        border: 1px solid #fee2e2;
+                    }
+
+                    .hl-blue {
+                        color: #2563eb;
+                        font-weight: 700;
+                        background: #eff6ff;
+                        padding: 2px 8px;
+                        border-radius: 6px;
+                        border: 1px solid #dbeafe;
+                    }
+                </style>
+
+                <div style="padding: 40px 20px; max-width: 1200px; margin: 0 auto;">
+
+                    <div style="text-align: center; margin-bottom: 50px;">
+                        <span
+                            style="background: #e0e7ff; color: #3730a3; padding: 6px 16px; border-radius: 30px; font-size: 0.85rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;">User
+                            Manual</span>
+                        <h1 style="color: #0f172a; font-size: 2.5rem; margin: 15px 0 10px 0; font-weight: 800;">Master
+                            the
+                            Platform</h1>
+                        <p
+                            style="color: #64748b; font-size: 1.1rem; max-width: 600px; margin: 0 auto; line-height: 1.6;">
+                            A complete guide to our NTA-Style simulation, advanced security features, and performance
+                            analysis.
+                        </p>
+                    </div>
+
+                    <div class="guide-grid">
+
+                        <div class="guide-card">
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <div class="guide-icon-box">🔐</div>
+                                <div class="guide-step-tag">Step 01</div>
+                            </div>
+                            <div>
+                                <h3 class="guide-heading">Smart Login & Access</h3>
+                                <p class="guide-description" style="margin-top: 10px;">
+                                    <strong>Paid Users:</strong> Enter Name + Mobile Number- all once.<br>
+                                    <strong>Free Users:</strong> Enter Name + Use Code <span
+                                        class="hl-blue">SocioLogic</span>.<br>
+                                    <span
+                                        style="font-size:0.85rem; color:#64748b; display:block; margin-top:10px; font-style:italic;">*Your
+                                        progress is automatically synced to the cloud.</span>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="guide-card">
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <div class="guide-icon-box">📱</div>
+                                <div class="guide-step-tag">Step 02</div>
+                            </div>
+                            <div>
+                                <h3 class="guide-heading">Responsive Interface</h3>
+                                <p class="guide-description" style="margin-top: 10px;">
+                                    We adapt to your device instantly:<br>
+                                    <strong>Laptop:</strong> Full sidebar navigation & keyboard support.<br>
+                                    <strong>Mobile:</strong> A sticky footer with a dedicated <span class="hl-red">Red
+                                        Submit Button</span> so you never have to scroll to finish.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="guide-card">
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <div class="guide-icon-box">🛡️</div>
+                                <div class="guide-step-tag">Step 03</div>
+                            </div>
+                            <div>
+                                <h3 class="guide-heading">Anti-Cheat Shield</h3>
+                                <p class="guide-description" style="margin-top: 10px;">
+                                    To maintain exam integrity, we block:<br>
+                                    • <strong>Tab Switching:</strong> Instantly blurs the screen.<br>
+                                    • <strong>Copying:</strong> Right-click and selection disabled.<br>
+                                    • <strong>Screenshots:</strong> Triggers a security blackout.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="guide-card">
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <div class="guide-icon-box">⚖️</div>
+                                <div class="guide-step-tag">Step 04</div>
+                            </div>
+                            <div>
+                                <h3 class="guide-heading">NTA Marking Scheme</h3>
+                                <p class="guide-description" style="margin-top: 10px;">
+                                    <strong>Correct Answer:</strong> +4 Marks<br>
+                                    <strong>Incorrect Answer:</strong> -1 Mark<br>
+                                    Use the <strong>"Review"</strong> button (Purple Flag) to mark doubtful questions
+                                    and
+                                    revisit them before submitting.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="guide-card">
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <div class="guide-icon-box">📊</div>
+                                <div class="guide-step-tag">Step 05</div>
+                            </div>
+                            <div>
+                                <h3 class="guide-heading">Deep Performance Analysis</h3>
+                                <p class="guide-description" style="margin-top: 10px;">
+                                    Get an instant report card upon submission:<br>
+                                    1. <strong>Score Breakdown:</strong> Accuracy & Attempts.<br>
+                                    2. <strong>Weakness Detector:</strong> AI highlights your weakest topic.<br>
+                                    3. <strong>Solutions:</strong> Detailed explanations for every Q.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="guide-card">
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <div class="guide-icon-box">☁️</div>
+                                <div class="guide-step-tag">Step 06</div>
+                            </div>
+                            <div>
+                                <h3 class="guide-heading">Exit & Cloud Save</h3>
+                                <p class="guide-description" style="margin-top: 10px;">
+                                    Done analyzing? Click <span class="hl-blue">Exit & Save Report</span>.<br>
+                                    This securely uploads your result to our database. You can view it anytime later by
+                                    clicking <strong>"View Past Attempts"</strong> on the home screen.
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+            <div id="view-history" class="view">
+                <h2>Performance History</h2>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Test Name</th>
+                                <th>Date</th>
+                                <th>Score</th>
+                            </tr>
+                        </thead>
+                        <tbody id="hist-body"></tbody>
+                    </table>
+                </div>
+                <div id="hist-msg" style="padding:40px; text-align:center; color:var(--text-muted);">Loading...</div>
+            </div>
+
+            <div id="view-free" class="view">
+                <h2>🎁 Free PYQs</h2>
+                <div class="grid">
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-free">Free</span>
+                            <div class="c-head">25 Thinkers PYQs</div>
+                            <p class="c-sub">Selected questions on Thinkers.</p>
+                        </div><a href="FREE 25 PYQs on Thinkers From 2025.html" class="btn-card btn-free">Attempt Now
+                            ➜</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-free">Free</span>
+                            <div class="c-head">Status & Role</div>
+                            <p class="c-sub">30 PYQs from Status and Role.</p>
+                        </div><a href="Free Status and Role.html" class="btn-card btn-free">Attempt Now ➜</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-free">Free</span>
+                            <div class="c-head">Basic Concepts</div>
+                            <p class="c-sub">30 PYQs covering fundamentals.</p>
+                        </div><a href="Free Basic Concepts.html" class="btn-card btn-free">Attempt Now ➜</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-free">Free</span>
+                            <div class="c-head">Culture</div>
+                            <p class="c-sub">25 PYQs on Cultural Sociology.</p>
+                        </div><a href="Free Culture.html" class="btn-card btn-free">Attempt Now ➜</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-free">Free</span>
+                            <div class="c-head">Social Control</div>
+                            <p class="c-sub">15 PYQs on Control mechanisms.</p>
+                        </div><a href="Free Social Control.html" class="btn-card btn-free">Attempt Now ➜</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-free">Free</span>
+                            <div class="c-head">Problems & Issues</div>
+                            <p class="c-sub">25 PYQs on Social Issues.</p>
+                        </div><a href="Free Problems and Issue.html" class="btn-card btn-free">Attempt Now ➜</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-free">Free</span>
+                            <div class="c-head">Social Disorganization</div>
+                            <p class="c-sub">20 PYQs on Crime & Deviance.</p>
+                        </div><a href="Free Social Disorganization.html" class="btn-card btn-free">Attempt Now ➜</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-free">Free</span>
+                            <div class="c-head">Social Change</div>
+                            <p class="c-sub">20 PYQs on Modernization.</p>
+                        </div><a href="Free Processes of Social Change.html" class="btn-card btn-free">Attempt Now ➜</a>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-full" class="view">
+                <h2>📅 Full Length Papers</h2>
+                <div class="grid">
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-prem">Premium</span>
+                            <div class="c-head">CUET PG 2025</div>
+                            <p class="c-sub">Full 75 Questions.</p>
+                        </div>
+                        <div class="btn-card btn-lock">🔒 Locked</div><a href="javascript:void(0)"
+                            onclick="startTest('CUET PG 2025 Full Paper', 'Paper_2025_Full.html')"
+                            class="btn-card btn-unlock">🔓 Start Test</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-prem">Premium</span>
+                            <div class="c-head">CUET PG 2024</div>
+                            <p class="c-sub">Full 75 Questions.</p>
+                        </div>
+                        <div class="btn-card btn-lock">🔒 Locked</div><a href="javascript:void(0)"
+                            onclick="startTest('CUET PG 2024 Full Paper', 'Paper_2024_Full.html')"
+                            class="btn-card btn-unlock">🔓 Start Test</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-prem">Premium</span>
+                            <div class="c-head">CUET PG 2023</div>
+                            <p class="c-sub">Full 75 Questions.</p>
+                        </div>
+                        <div class="btn-card btn-lock">🔒 Locked</div><a href="javascript:void(0)"
+                            onclick="startTest('CUET PG 2023 Full Paper', 'Paper_2023_Full.html')"
+                            class="btn-card btn-unlock">🔓 Start Test</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-prem">Premium</span>
+                            <div class="c-head">CUET PG 2022</div>
+                            <p class="c-sub">Full 50 Questions.</p>
+                        </div>
+                        <div class="btn-card btn-lock">🔒 Locked</div><a href="javascript:void(0)"
+                            onclick="startTest('CUET PG 2022 Full Paper', 'Paper_2022_Full.html')"
+                            class="btn-card btn-unlock">🔓 Start Test</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-prem">Premium</span>
+                            <div class="c-head">CUET PG 2021</div>
+                            <p class="c-sub">Full 75 Questions.</p>
+                        </div>
+                        <div class="btn-card btn-lock">🔒 Locked</div><a href="javascript:void(0)"
+                            onclick="startTest('CUET PG 2021 Full Paper', 'Paper_2021_Full.html')"
+                            class="btn-card btn-unlock">🔓 Start Test</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-prem">Premium</span>
+                            <div class="c-head">JNUEE 2020</div>
+                            <p class="c-sub">Full 100 Questions.</p>
+                        </div>
+                        <div class="btn-card btn-lock">🔒 Locked</div><a href="javascript:void(0)"
+                            onclick="startTest('JNUEE PG 2020 Full Paper', 'JNUEE 2020 Full.html')"
+                            class="btn-card btn-unlock">🔓 Start Test</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-prem">Premium</span>
+                            <div class="c-head">JNUEE 2019</div>
+                            <p class="c-sub">Full 100 Questions.</p>
+                        </div>
+                        <div class="btn-card btn-lock">🔒 Locked</div><a href="javascript:void(0)"
+                            onclick="startTest('JNUEE PG Sociology 2019 Paper', 'JNUEE 2019 Full.html')"
+                            class="btn-card btn-unlock">🔓 Start Test</a>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-topic" class="view">
+                <h2>🧠 Topic Wise</h2>
+                <div class="grid">
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-prem">Premium</span>
+                            <div class="c-head">Socialisation</div>
+                            <p class="c-sub">35 Questions.</p>
+                        </div>
+                        <div class="btn-card btn-lock">🔒 Locked</div><a href="javascript:void(0)"
+                            onclick="startTest('Socialisation', 'Socialisation.html')" class="btn-card btn-unlock">🔓
+                            Start
+                            Test</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-prem">Premium</span>
+                            <div class="c-head">Social Stratification</div>
+                            <p class="c-sub">35 Questions.</p>
+                        </div>
+                        <div class="btn-card btn-lock">🔒 Locked</div><a href="javascript:void(0)"
+                            onclick="startTest('Social Stratification', 'Social Stratification.html')"
+                            class="btn-card btn-unlock">🔓 Start Test</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-prem">Premium</span>
+                            <div class="c-head">Core Concepts</div>
+                            <p class="c-sub">35 Questions.</p>
+                        </div>
+                        <div class="btn-card btn-lock">🔒 Locked</div><a href="javascript:void(0)"
+                            onclick="startTest('Core Concepts', 'Core Concepts.html')" class="btn-card btn-unlock">🔓
+                            Start
+                            Test</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-prem">Premium</span>
+                            <div class="c-head">Kinship & Marriage</div>
+                            <p class="c-sub">35 Questions.</p>
+                        </div>
+                        <div class="btn-card btn-lock">🔒 Locked</div><a href="javascript:void(0)"
+                            onclick="startTest('Kinship & Marriage', 'Kinship & Marriage.html')"
+                            class="btn-card btn-unlock">🔓 Start Test</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-prem">Premium</span>
+                            <div class="c-head">Groups & Interaction</div>
+                            <p class="c-sub">35 Questions.</p>
+                        </div>
+                        <div class="btn-card btn-lock">🔒 Locked</div><a href="javascript:void(0)"
+                            onclick="startTest('Groups & Interaction', 'Groups & Interaction.html')"
+                            class="btn-card btn-unlock">🔓 Start Test</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-prem">Premium</span>
+                            <div class="c-head">Crime & Control</div>
+                            <p class="c-sub">35 Questions.</p>
+                        </div>
+                        <div class="btn-card btn-lock">🔒 Locked</div><a href="javascript:void(0)"
+                            onclick="startTest('Crime & Control', 'Crime & Control.html')"
+                            class="btn-card btn-unlock">🔓
+                            Start Test</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-prem">Premium</span>
+                            <div class="c-head">Research Methods</div>
+                            <p class="c-sub">35 Questions.</p>
+                        </div>
+                        <div class="btn-card btn-lock">🔒 Locked</div><a href="javascript:void(0)"
+                            onclick="startTest('Research Methods', 'Research Methods.html')"
+                            class="btn-card btn-unlock">🔓
+                            Start Test</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-prem">Premium</span>
+                            <div class="c-head">Data & Statistics</div>
+                            <p class="c-sub">35 Questions.</p>
+                        </div>
+                        <div class="btn-card btn-lock">🔒 Locked</div><a href="javascript:void(0)"
+                            onclick="startTest('Data & Statistics', 'Data & Statistics.html')"
+                            class="btn-card btn-unlock">🔓 Start Test</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-prem">Premium</span>
+                            <div class="c-head">Caste Dynamics</div>
+                            <p class="c-sub">35 Questions.</p>
+                        </div>
+                        <div class="btn-card btn-lock">🔒 Locked</div><a href="javascript:void(0)"
+                            onclick="startTest('Caste Dynamics', 'Caste Dynamics.html')" class="btn-card btn-unlock">🔓
+                            Start Test</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-prem">Premium</span>
+                            <div class="c-head">Indian Modernity</div>
+                            <p class="c-sub">35 Questions.</p>
+                        </div>
+                        <div class="btn-card btn-lock">🔒 Locked</div><a href="javascript:void(0)"
+                            onclick="startTest('Indian Modernity', 'Indian Modernity.html')"
+                            class="btn-card btn-unlock">🔓
+                            Start Test</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-prem">Premium</span>
+                            <div class="c-head">Gender & Justice</div>
+                            <p class="c-sub">35 Questions.</p>
+                        </div>
+                        <div class="btn-card btn-lock">🔒 Locked</div><a href="javascript:void(0)"
+                            onclick="startTest('Gender & Justice', 'Gender & Justice.html')"
+                            class="btn-card btn-unlock">🔓
+                            Start Test</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-prem">Premium</span>
+                            <div class="c-head">Societal Issues</div>
+                            <p class="c-sub">35 Questions.</p>
+                        </div>
+                        <div class="btn-card btn-lock">🔒 Locked</div><a href="javascript:void(0)"
+                            onclick="startTest('Societal Issues', 'Societal Issues.html')"
+                            class="btn-card btn-unlock">🔓
+                            Start Test</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-prem">Premium</span>
+                            <div class="c-head">Indian Pluralism</div>
+                            <p class="c-sub">35 Questions.</p>
+                        </div>
+                        <div class="btn-card btn-lock">🔒 Locked</div><a href="javascript:void(0)"
+                            onclick="startTest('Indian Pluralism', 'Indian Pluralism.html')"
+                            class="btn-card btn-unlock">🔓
+                            Start Test</a>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-thinker" class="view">
+                <h2>🧠 Thinker Specific</h2>
+                <div class="grid">
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-prem">Premium</span>
+                            <div class="c-head">Karl Marx</div>
+                            <p class="c-sub">35 Questions.</p>
+                        </div>
+                        <div class="btn-card btn-lock">🔒 Locked</div><a href="javascript:void(0)"
+                            onclick="startTest('Karl Marx', 'Karl Marx.html')" class="btn-card btn-unlock">🔓 Start
+                            Test</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-prem">Premium</span>
+                            <div class="c-head">Emile Durkheim</div>
+                            <p class="c-sub">35 Questions.</p>
+                        </div>
+                        <div class="btn-card btn-lock">🔒 Locked</div><a href="javascript:void(0)"
+                            onclick="startTest('Emile Durkheim', 'Durkheim.html')" class="btn-card btn-unlock">🔓 Start
+                            Test</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-prem">Premium</span>
+                            <div class="c-head">Max Weber</div>
+                            <p class="c-sub">35 Questions.</p>
+                        </div>
+                        <div class="btn-card btn-lock">🔒 Locked</div><a href="javascript:void(0)"
+                            onclick="startTest('Max Weber', 'Weber.html')" class="btn-card btn-unlock">🔓 Start Test</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-prem">Premium</span>
+                            <div class="c-head">Talcott Parsons</div>
+                            <p class="c-sub">30 Questions.</p>
+                        </div>
+                        <div class="btn-card btn-lock">🔒 Locked</div><a href="javascript:void(0)"
+                            onclick="startTest('Talcott Parsons', 'Talcott Parsons.html')"
+                            class="btn-card btn-unlock">🔓
+                            Start Test</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-prem">Premium</span>
+                            <div class="c-head">Robert K. Merton</div>
+                            <p class="c-sub">30 Questions.</p>
+                        </div>
+                        <div class="btn-card btn-lock">🔒 Locked</div><a href="javascript:void(0)"
+                            onclick="startTest('Robert K. Merton', 'Robert K. Merton.html')"
+                            class="btn-card btn-unlock">🔓
+                            Start Test</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-prem">Premium</span>
+                            <div class="c-head">Malinowski</div>
+                            <p class="c-sub">30 Questions.</p>
+                        </div>
+                        <div class="btn-card btn-lock">🔒 Locked</div><a href="javascript:void(0)"
+                            onclick="startTest('Bronislaw Malinowski', 'Bronislaw Malinowski.html')"
+                            class="btn-card btn-unlock">🔓 Start Test</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-prem">Premium</span>
+                            <div class="c-head">Radcliffe-Brown</div>
+                            <p class="c-sub">30 Questions.</p>
+                        </div>
+                        <div class="btn-card btn-lock">🔒 Locked</div><a href="javascript:void(0)"
+                            onclick="startTest('AR Radcliffe-Brown', 'A.R. Radcliffe-Brown.html')"
+                            class="btn-card btn-unlock">🔓 Start Test</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-prem">Premium</span>
+                            <div class="c-head">Auguste Comte</div>
+                            <p class="c-sub">15 Questions.</p>
+                        </div>
+                        <div class="btn-card btn-lock">🔒 Locked</div><a href="javascript:void(0)"
+                            onclick="startTest('Auguste Comte', 'Auguste Comte.html')" class="btn-card btn-unlock">🔓
+                            Start
+                            Test</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-prem">Premium</span>
+                            <div class="c-head">G.H. Mead</div>
+                            <p class="c-sub">15 Questions.</p>
+                        </div>
+                        <div class="btn-card btn-lock">🔒 Locked</div><a href="javascript:void(0)"
+                            onclick="startTest('GH Mead', 'G.H. Mead.html')" class="btn-card btn-unlock">🔓 Start
+                            Test</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-prem">Premium</span>
+                            <div class="c-head">C.H. Cooley</div>
+                            <p class="c-sub">12 Questions.</p>
+                        </div>
+                        <div class="btn-card btn-lock">🔒 Locked</div><a href="javascript:void(0)"
+                            onclick="startTest('CH Cooley', 'C.H. Cooley.html')" class="btn-card btn-unlock">🔓 Start
+                            Test</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-prem">Premium</span>
+                            <div class="c-head">M.N. Srinivas</div>
+                            <p class="c-sub">20 Questions.</p>
+                        </div>
+                        <div class="btn-card btn-lock">🔒 Locked</div><a href="javascript:void(0)"
+                            onclick="startTest('MN Srinivas', 'M.N. Srinivas.html')" class="btn-card btn-unlock">🔓
+                            Start
+                            Test</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-prem">Premium</span>
+                            <div class="c-head">G.S. Ghurye</div>
+                            <p class="c-sub">20 Questions.</p>
+                        </div>
+                        <div class="btn-card btn-lock">🔒 Locked</div><a href="javascript:void(0)"
+                            onclick="startTest('GS Ghurye', 'G.S. Ghurye.html')" class="btn-card btn-unlock">🔓 Start
+                            Test</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-prem">Premium</span>
+                            <div class="c-head">B.R. Ambedkar</div>
+                            <p class="c-sub">20 Questions.</p>
+                        </div>
+                        <div class="btn-card btn-lock">🔒 Locked</div><a href="javascript:void(0)"
+                            onclick="startTest('BR Ambedkar', 'B.R. Ambedkar.html')" class="btn-card btn-unlock">🔓
+                            Start
+                            Test</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-prem">Premium</span>
+                            <div class="c-head">A.R. Desai</div>
+                            <p class="c-sub">15 Questions.</p>
+                        </div>
+                        <div class="btn-card btn-lock">🔒 Locked</div><a href="javascript:void(0)"
+                            onclick="startTest('AR Desai', 'A.R. Desai.html')" class="btn-card btn-unlock">🔓 Start
+                            Test</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-prem">Premium</span>
+                            <div class="c-head">Andre Beteille</div>
+                            <p class="c-sub">25 Questions.</p>
+                        </div>
+                        <div class="btn-card btn-lock">🔒 Locked</div><a href="javascript:void(0)"
+                            onclick="startTest('Andre Beteille', 'Andre Beteille.html')" class="btn-card btn-unlock">🔓
+                            Start Test</a>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-unit" class="view">
+                <h2>📚 Unit Wise</h2>
+                <div class="grid">
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-prem">Premium</span>
+                            <div class="c-head">Basic Concepts P1</div>
+                            <p class="c-sub">25 Questions.</p>
+                        </div>
+                        <div class="btn-card btn-lock">🔒 Locked</div><a href="javascript:void(0)"
+                            onclick="startTest('Basic Concepts Part 1', 'Basic Concepts in Sociology Part 1.html')"
+                            class="btn-card btn-unlock">🔓 Start Test</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-prem">Premium</span>
+                            <div class="c-head">Basic Concepts P2</div>
+                            <p class="c-sub">25 Questions.</p>
+                        </div>
+                        <div class="btn-card btn-lock">🔒 Locked</div><a href="javascript:void(0)"
+                            onclick="startTest('Basic Concepts Part 2', 'Basic Concepts in Sociology Part 2.html')"
+                            class="btn-card btn-unlock">🔓 Start Test</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-prem">Premium</span>
+                            <div class="c-head">Social Processes P1</div>
+                            <p class="c-sub">25 Questions.</p>
+                        </div>
+                        <div class="btn-card btn-lock">🔒 Locked</div><a href="javascript:void(0)"
+                            onclick="startTest('Social Processes Part 1', 'Social Processes and Problems Part 1.html')"
+                            class="btn-card btn-unlock">🔓 Start Test</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-prem">Premium</span>
+                            <div class="c-head">Social Processes P2</div>
+                            <p class="c-sub">25 Questions.</p>
+                        </div>
+                        <div class="btn-card btn-lock">🔒 Locked</div><a href="javascript:void(0)"
+                            onclick="startTest('Social Processes Part 2', 'Social Processes and Problems Part 2.html')"
+                            class="btn-card btn-unlock">🔓 Start Test</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-prem">Premium</span>
+                            <div class="c-head">Society & Culture P1</div>
+                            <p class="c-sub">25 Questions.</p>
+                        </div>
+                        <div class="btn-card btn-lock">🔒 Locked</div><a href="javascript:void(0)"
+                            onclick="startTest('Society Culture Part 1', 'Society, Culture and Social Change Part 1.html')"
+                            class="btn-card btn-unlock">🔓 Start Test</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-prem">Premium</span>
+                            <div class="c-head">Society & Culture P2</div>
+                            <p class="c-sub">25 Questions.</p>
+                        </div>
+                        <div class="btn-card btn-lock">🔒 Locked</div><a href="javascript:void(0)"
+                            onclick="startTest('Society Culture Part 2', 'Society, Culture and Social Change Part 2.html')"
+                            class="btn-card btn-unlock">🔓 Start Test</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-prem">Premium</span>
+                            <div class="c-head">Indian Society P1</div>
+                            <p class="c-sub">25 Questions.</p>
+                        </div>
+                        <div class="btn-card btn-lock">🔒 Locked</div><a href="javascript:void(0)"
+                            onclick="startTest('Indian Society Part 1', 'Indian Society Part 1.html')"
+                            class="btn-card btn-unlock">🔓 Start Test</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-prem">Premium</span>
+                            <div class="c-head">Indian Society P2</div>
+                            <p class="c-sub">25 Questions.</p>
+                        </div>
+                        <div class="btn-card btn-lock">🔒 Locked</div><a href="javascript:void(0)"
+                            onclick="startTest('Indian Society Part 2', 'Indian Society Part 2.html')"
+                            class="btn-card btn-unlock">🔓 Start Test</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-prem">Premium</span>
+                            <div class="c-head">Research P1</div>
+                            <p class="c-sub">25 Questions.</p>
+                        </div>
+                        <div class="btn-card btn-lock">🔒 Locked</div><a href="javascript:void(0)"
+                            onclick="startTest('Social Research Part 1', 'Social Research Part 1.html')"
+                            class="btn-card btn-unlock">🔓 Start Test</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-prem">Premium</span>
+                            <div class="c-head">Research P2</div>
+                            <p class="c-sub">25 Questions.</p>
+                        </div>
+                        <div class="btn-card btn-lock">🔒 Locked</div><a href="javascript:void(0)"
+                            onclick="startTest('Social Research Part 2', 'Social Research Part 2.html')"
+                            class="btn-card btn-unlock">🔓 Start Test</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-prem">Premium</span>
+                            <div class="c-head">Social Problems P1</div>
+                            <p class="c-sub">25 Questions.</p>
+                        </div>
+                        <div class="btn-card btn-lock">🔒 Locked</div><a href="javascript:void(0)"
+                            onclick="startTest('Social Problems Part 1', 'Social Problems in India Part 1.html')"
+                            class="btn-card btn-unlock">🔓 Start Test</a>
+                    </div>
+                    <div class="card">
+                        <div class="card-body"><span class="tag tag-prem">Premium</span>
+                            <div class="c-head">Social Problems P2</div>
+                            <p class="c-sub">25 Questions.</p>
+                        </div>
+                        <div class="btn-card btn-lock">🔒 Locked</div><a href="javascript:void(0)"
+                            onclick="startTest('Social Problems Part 2', 'Social Problems in India Part 2.html')"
+                            class="btn-card btn-unlock">🔓 Start Test</a>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <script>
+            const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxLOznQI6LSDWDsM5IvSJxKDpYUQNmM1dzB1VSQns2tkSs4k4d9FxhbF3Za1K-vkEMdIg/exec";
+
+            // --- INIT ---
+            window.addEventListener('load', () => {
+                if (localStorage.getItem('socio_is_premium') === 'true') {
+                    enablePremiumUI();
+                }
+            });
+
+            // --- NAVIGATION ---
+            function showView(viewId, el) {
+                // Close Sidebar/Menu if open
+                document.getElementById('sidebar').classList.remove('active');
+                document.getElementById('sb-overlay').classList.remove('active');
+                document.getElementById('u-dropdown').style.display = 'none';
+
+                // Switch View
+                document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+                document.getElementById('view-' + viewId).classList.add('active');
+
+                // Active State in Sidebar
+                document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+                if (el) el.classList.add('active');
+
+                window.scrollTo(0, 0);
+            }
+
+            function toggleSidebar() {
+                const width = window.innerWidth;
+
+                // MATCHED TO CSS: 900px
+                if (width >= 900) {
+                    // DESKTOP LOGIC: Toggle the class 'sb-closed' on BODY
+                    document.body.classList.toggle('sb-closed');
+                } else {
+                    // MOBILE LOGIC: Toggle the class 'active' on SIDEBAR
+                    document.getElementById('sidebar').classList.toggle('active');
+                    document.getElementById('sb-overlay').classList.toggle('active');
+                }
+            }
+            function toggleProfile() {
+                const dd = document.getElementById('u-dropdown');
+                dd.style.display = (dd.style.display === 'block') ? 'none' : 'block';
+            }
+
+            // --- LOGIN LOGIC ---
+            function openLogin() { document.getElementById('login-modal').style.display = 'flex'; }
+
+            function verifyLogin() {
+                const mobile = document.getElementById('login-mobile').value.trim();
+                const pass = document.getElementById('login-pass').value.trim();
+                const btn = document.getElementById('btn-login-action');
+
+                if (!mobile || !pass) { alert("Please enter Mobile & PIN."); return; }
+
+                btn.innerText = "Verifying..."; btn.disabled = true;
+
+                fetch(SCRIPT_URL + "?type=login&id=" + encodeURIComponent(mobile) + "&pass=" + encodeURIComponent(pass))
+                    .then(r => r.json())
+                    .then(d => {
+                        if (d.status === "ALLOW") {
+                            localStorage.setItem('socio_is_premium', 'true');
+                            localStorage.setItem('socio_user_id', mobile);
+                            localStorage.setItem('socio_user_name', d.name);
+                            enablePremiumUI();
+                            document.getElementById('login-modal').style.display = 'none';
+                            alert("✅ Welcome " + d.name);
+                        } else { alert("❌ Invalid Credentials."); }
+                        btn.innerText = "Login Securely"; btn.disabled = false;
+                    })
+                    .catch(() => { alert("❌ Network Error."); btn.innerText = "Login Securely"; btn.disabled = false; });
+            }
+
+            function enablePremiumUI() {
+                const name = localStorage.getItem('socio_user_name') || "Student";
+                const mobile = localStorage.getItem('socio_user_id') || "";
+
+                document.getElementById('panel-free').style.display = 'none';
+                document.getElementById('panel-prem').style.display = 'block';
+
+                document.getElementById('u-name').innerText = name.split(' ')[0];
+                document.getElementById('u-avatar').innerText = name.charAt(0).toUpperCase();
+                document.getElementById('dd-name').innerText = name;
+                document.getElementById('dd-id').innerText = "ID: " + mobile;
+
+                // Unlock Buttons
+                document.querySelectorAll('.btn-lock').forEach(b => b.style.display = 'none');
+                document.querySelectorAll('.btn-unlock').forEach(b => b.style.display = 'block');
+            }
+
+            function logout() {
+                if (confirm("Log Out?")) { localStorage.clear(); location.reload(); }
+            }
+
+            // --- CHANGE & FORGOT PASSWORD ---
+            function openCP() { document.getElementById('u-dropdown').style.display = 'none'; document.getElementById('cp-modal').style.display = 'flex'; }
+            function submitChangePass() {
+                const oldP = document.getElementById('cp-old').value.trim();
+                const newP = document.getElementById('cp-new').value.trim();
+                const btn = document.getElementById('btn-cp-action');
+                const id = localStorage.getItem('socio_user_id');
+
+                if (newP.length !== 6) { alert("New PIN must be 6 digits."); return; }
+                btn.innerText = "Wait..."; btn.disabled = true;
+
+                fetch(SCRIPT_URL + "?type=change_pass&id=" + id + "&old_pass=" + encodeURIComponent(oldP) + "&new_pass=" + encodeURIComponent(newP))
+                    .then(r => r.text())
+                    .then(t => {
+                        if (t === "SUCCESS") { alert("✅ Updated. Login again."); logout(); }
+                        else alert("❌ Incorrect Old PIN.");
+                        btn.innerText = "Update PIN"; btn.disabled = false;
+                    });
+            }
+
+            function forgotPassTrigger() { document.getElementById('login-modal').style.display = 'none'; document.getElementById('fp-modal').style.display = 'flex'; }
+            function submitForgotPass() {
+                const m = document.getElementById('fp-mobile').value.trim();
+                const btn = document.getElementById('btn-fp-action');
+                if (!m) { alert("Enter Mobile."); return; }
+                btn.innerText = "Sending..."; btn.disabled = true;
+
+                fetch(SCRIPT_URL + "?type=forgot_pass&id=" + encodeURIComponent(m))
+                    .then(r => r.text())
+                    .then(t => {
+                        if (t === "SENT") { alert("✅ PIN sent to Email."); document.getElementById('fp-modal').style.display = 'none'; openLogin(); }
+                        else alert("❌ Not Found.");
+                        btn.innerText = "Send Email"; btn.disabled = false;
+                    });
+            }
+
+            // --- HISTORY ---
+            function loadHistory() {
+                showView('history');
+                const body = document.getElementById('hist-body');
+                const msg = document.getElementById('hist-msg');
+                const id = localStorage.getItem('socio_user_id');
+
+                body.innerHTML = ""; msg.style.display = "block";
+
+                fetch(SCRIPT_URL + "?type=history&id=" + id)
+                    .then(r => r.json())
+                    .then(d => {
+                        msg.style.display = "none";
+                        if (d.length === 0) { msg.innerText = "No attempts yet."; msg.style.display = "block"; return; }
+                        d.forEach(i => {
+                            body.innerHTML += `<tr><td><b>${i.test}</b></td><td style="color:#64748b; font-size:0.85rem;">${i.date}</td><td><span class="score-badge">${i.score}</span></td></tr>`;
+                        });
+                    });
+            }
+
+            // --- START TEST ---
+            function startTest(name, url) {
+                event.preventDefault();
+                const btn = event.currentTarget;
+                const id = localStorage.getItem('socio_user_id');
+                const user = localStorage.getItem('socio_user_name');
+
+                if (!id) { alert("Please Login first."); openLogin(); return; }
+
+                const originalText = btn.innerText;
+                btn.innerText = "Checking...";
+                btn.style.opacity = "0.7";
+
+                // Add timestamp to prevent caching
+                const fullUrl = SCRIPT_URL + "?type=check&test=" + encodeURIComponent(name) +
+                    "&id=" + encodeURIComponent(id) +
+                    "&name=" + encodeURIComponent(user) +
+                    "&ts=" + new Date().getTime();
+
+                fetch(fullUrl)
+                    .then(r => r.text())
+                    .then(s => {
+                        // CLEANUP: Remove any accidental quotes from the response
+                        s = s.trim().replace(/^"|"$/g, '');
+
+                        // LOGIC FIX: Check if 's' is "ALLOW" OR a number less than 5
+                        const attempts = parseInt(s);
+                        const isNumericAuth = !isNaN(attempts) && attempts < 5;
+
+                        if (s === "ALLOW" || isNumericAuth) {
+                            // Success! Go to the test page
+                            window.location.href = url;
+                        }
+                        else if (s === "LIMIT_REACHED" || attempts >= 5) {
+                            alert("⚠️ Limit Reached: You have used all 5 attempts.");
+                            btn.innerText = "Limit Reached";
+                        }
+                        else if (s === "BLOCK_NOT_PAID") {
+                            alert("⛔ Access Denied. Please buy the plan.");
+                            logout();
+                        }
+                        else {
+                            // This catches actual errors
+                            alert("Server Response: " + s);
+                            btn.innerText = originalText;
+                        }
+                        btn.style.opacity = "1";
+                    })
+                    .catch(error => {
+                        console.error(error);
+                        alert("Connection Error. Please check your internet.");
+                        btn.innerText = originalText;
+                        btn.style.opacity = "1";
+                    });
+            }
+
+            // --- SECURITY ---
+            document.addEventListener('contextmenu', e => e.preventDefault());
+            document.addEventListener('keydown', e => {
+                if (e.key === 'F12' || (e.ctrlKey && (e.key === 'p' || e.key === 's' || e.key === 'u'))) e.preventDefault();
+            });
+        </script>
+    </body>
+
+</html>
