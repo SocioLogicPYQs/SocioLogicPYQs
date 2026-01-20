@@ -2865,8 +2865,8 @@
                                         // 3. CUSTOM LABEL: Show "Score + Verdict"
                                         label: (context) => {
                                             const val = context.parsed.y;
-                                            let verdict = "⚠️ Review";
-                                            if (val >= 80) verdict = "🔥 Mastery";
+                                            let verdict = "⚠️ Poor";
+                                            if (val >= 80) verdict = "🔥 Excellent";
                                             else if (val >= 50) verdict = "👍 Good";
                                             return `Score: ${val}%  (${verdict})`;
                                         }
