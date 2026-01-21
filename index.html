@@ -1427,6 +1427,42 @@
             position: relative;
             width: 100%;
         }
+
+        /* --- PASSWORD TOGGLE (Eye Icon) --- */
+        .password-wrap {
+            position: relative;
+            /* Anchor point for the icon */
+            width: 100%;
+        }
+
+        /* Ensure text doesn't slide under the icon */
+        .password-wrap input {
+            padding-right: 45px !important;
+            width: 100%;
+            /* Force full width */
+        }
+
+        .toggle-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            /* Perfect vertical centering */
+            cursor: pointer;
+            font-size: 1.1rem;
+            color: #94a3b8;
+            z-index: 10;
+            user-select: none;
+            background: transparent;
+            border: none;
+            transition: color 0.2s ease;
+        }
+
+        .toggle-icon:hover {
+            color: #2563eb;
+            transform: translateY(-50%) scale(1.1);
+            /* Keep centered while scaling */
+        }
     </style>
 </head>
 
@@ -1449,7 +1485,11 @@
 
                 <div class="form-group">
                     <label class="form-label">PIN (Password)</label>
-                    <input type="password" id="login-pass" class="form-input" placeholder="Enter 6-digit PIN">
+                    <div class="password-wrap">
+                        <input type="password" inputmode="numeric" id="login-pass" class="form-input"
+                            placeholder="Enter 6-digit PIN">
+                        <span class="toggle-icon" onclick="togglePass('login-pass', this)">👁️</span>
+                    </div>
                 </div>
 
                 <button class="btn-submit" id="btn-login-action" onclick="verifyLogin()">Login Securely</button>
@@ -1467,11 +1507,18 @@
                 <h2 style="margin-bottom:20px;">Change PIN</h2>
                 <div class="form-group">
                     <label class="form-label">Old PIN</label>
-                    <input type="password" id="cp-old" class="form-input">
+                    <div class="password-wrap">
+                        <input type="password" inputmode="numeric" id="cp-old" class="form-input">
+                        <span class="toggle-icon" onclick="togglePass('cp-old', this)">👁️</span>
+                    </div>
                 </div>
+
                 <div class="form-group">
                     <label class="form-label">New PIN (6 Digits)</label>
-                    <input type="number" id="cp-new" class="form-input">
+                    <div class="password-wrap">
+                        <input type="password" inputmode="numeric" id="cp-new" class="form-input">
+                        <span class="toggle-icon" onclick="togglePass('cp-new', this)">👁️</span>
+                    </div>
                 </div>
                 <button class="btn-submit" id="btn-cp-action" onclick="submitChangePass()">Update PIN</button>
                 <button class="btn-cancel"
@@ -3001,6 +3048,23 @@
             document.addEventListener('keydown', e => {
                 if (e.key === 'F12' || (e.ctrlKey && (e.key === 'p' || e.key === 's' || e.key === 'u'))) e.preventDefault();
             });
+            // --- PASSWORD TOGGLE LOGIC ---
+            function togglePass(inputId, icon) {
+                const input = document.getElementById(inputId);
+
+                // Safety check: Ensure input exists before trying to change it
+                if (!input) return;
+
+                if (input.type === "password") {
+                    input.type = "text";
+                    icon.innerText = "🔒"; // Visual cue: 'Click to re-lock'
+                    icon.style.color = "#ef4444"; // Red color warns user: "Text is visible"
+                } else {
+                    input.type = "password";
+                    icon.innerText = "👁️";
+                    icon.style.color = "#94a3b8"; // Back to neutral
+                }
+            }
         </script>
     </body>
 
