@@ -1540,6 +1540,27 @@
             </div>
         </div>
 
+        <div class="modal-wrap" id="guest-modal" style="z-index: 3000;">
+            <div class="modal-box">
+                <h2 style="margin-bottom:10px;">Guest Access</h2>
+                <p style="margin-bottom:20px; color:#64748b;">Enter details to track your results.</p>
+
+                <div class="form-group">
+                    <label class="form-label">Your Name</label>
+                    <input type="text" id="guest-name" class="form-input" placeholder="e.g. Rahul Kumar">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Access Code</label>
+                    <input type="text" id="guest-code" class="form-input" placeholder="Enter: SocioLogic">
+                </div>
+
+                <button class="btn-submit" onclick="submitGuest()">Start Free Test</button>
+                <button class="btn-cancel"
+                    onclick="document.getElementById('guest-modal').style.display='none'">Cancel</button>
+            </div>
+        </div>
+
         <div class="overlay" id="sb-overlay" onclick="toggleSidebar()"></div>
 
         <header class="header">
@@ -2104,50 +2125,73 @@
                         <div class="card-body"><span class="tag tag-free">Free</span>
                             <div class="c-head">25 Thinkers PYQs</div>
                             <p class="c-sub">Selected questions on Thinkers.</p>
-                        </div><a href="FREE 25 PYQs on Thinkers From 2025.html" class="btn-card btn-free">Attempt Now
-                            ➜</a>
+                        </div>
+                        <a href="javascript:void(0)"
+                            onclick="initiateFreeTest('Free: 25 Thinkers', 'FREE 25 PYQs on Thinkers From 2025.html', this)"
+                            class="btn-card btn-free">Attempt Now ➜</a>
                     </div>
                     <div class="card">
                         <div class="card-body"><span class="tag tag-free">Free</span>
                             <div class="c-head">Status & Role</div>
                             <p class="c-sub">30 PYQs from Status and Role.</p>
-                        </div><a href="Free Status and Role.html" class="btn-card btn-free">Attempt Now ➜</a>
+                        </div>
+                        <a href="javascript:void(0)"
+                            onclick="initiateFreeTest('Free: Status and Role', 'Free Status and Role.html', this)"
+                            class="btn-card btn-free">Attempt Now ➜</a>
                     </div>
                     <div class="card">
                         <div class="card-body"><span class="tag tag-free">Free</span>
                             <div class="c-head">Basic Concepts</div>
                             <p class="c-sub">30 PYQs covering fundamentals.</p>
-                        </div><a href="Free Basic Concepts.html" class="btn-card btn-free">Attempt Now ➜</a>
+                        </div>
+                        <a href="javascript:void(0)"
+                            onclick="initiateFreeTest('Free: Basic Concepts', 'Free Basic Concepts.html', this)"
+                            class="btn-card btn-free">Attempt Now ➜</a>
                     </div>
                     <div class="card">
                         <div class="card-body"><span class="tag tag-free">Free</span>
                             <div class="c-head">Culture</div>
                             <p class="c-sub">25 PYQs on Cultural Sociology.</p>
-                        </div><a href="Free Culture.html" class="btn-card btn-free">Attempt Now ➜</a>
+                        </div>
+                        <a href="javascript:void(0)"
+                            onclick="initiateFreeTest('Free: Culture', 'Free Culture.html', this)"
+                            class="btn-card btn-free">Attempt Now ➜</a>
                     </div>
                     <div class="card">
                         <div class="card-body"><span class="tag tag-free">Free</span>
                             <div class="c-head">Social Control</div>
                             <p class="c-sub">15 PYQs on Control mechanisms.</p>
-                        </div><a href="Free Social Control.html" class="btn-card btn-free">Attempt Now ➜</a>
+                        </div>
+                        <a href="javascript:void(0)"
+                            onclick="initiateFreeTest('Free: Social Control', 'Free Social Control.html', this)"
+                            class="btn-card btn-free">Attempt Now ➜</a>
                     </div>
                     <div class="card">
                         <div class="card-body"><span class="tag tag-free">Free</span>
                             <div class="c-head">Problems & Issues</div>
                             <p class="c-sub">25 PYQs on Social Issues.</p>
-                        </div><a href="Free Problems and Issue.html" class="btn-card btn-free">Attempt Now ➜</a>
+                        </div>
+                        <a href="javascript:void(0)"
+                            onclick="initiateFreeTest('Free: Problems', 'Free Problems and Issue.html', this)"
+                            class="btn-card btn-free">Attempt Now ➜</a>
                     </div>
                     <div class="card">
                         <div class="card-body"><span class="tag tag-free">Free</span>
                             <div class="c-head">Social Disorganization</div>
                             <p class="c-sub">20 PYQs on Crime & Deviance.</p>
-                        </div><a href="Free Social Disorganization.html" class="btn-card btn-free">Attempt Now ➜</a>
+                        </div>
+                        <a href="javascript:void(0)"
+                            onclick="initiateFreeTest('Free: Social Disorg', 'Free Social Disorganization.html', this)"
+                            class="btn-card btn-free">Attempt Now ➜</a>
                     </div>
                     <div class="card">
                         <div class="card-body"><span class="tag tag-free">Free</span>
                             <div class="c-head">Social Change</div>
                             <p class="c-sub">20 PYQs on Modernization.</p>
-                        </div><a href="Free Processes of Social Change.html" class="btn-card btn-free">Attempt Now ➜</a>
+                        </div>
+                        <a href="javascript:void(0)"
+                            onclick="initiateFreeTest('Free: Social Change', 'Free Processes of Social Change.html', this)"
+                            class="btn-card btn-free">Attempt Now ➜</a>
                     </div>
                 </div>
             </div>
@@ -2987,21 +3031,88 @@
             </tr>`;
                 });
             }
-            // --- START TEST ---
-            function startTest(name, url) {
-                event.preventDefault();
-                const btn = event.currentTarget;
+            // ==========================================
+            // FINAL LOGIC ENGINE (BUG-FREE)
+            // ==========================================
+
+            let pendingName = "";
+            let pendingUrl = "";
+            let activeBtn = null;
+
+            // 1. FREE TEST TRIGGER
+            function initiateFreeTest(name, url, btnElement) {
+                const existingID = localStorage.getItem('socio_user_id');
+
+                // If User is already logged in (Premium OR Guest), proceed immediately
+                if (existingID) {
+                    startTest(name, url, btnElement);
+                }
+                // If no ID, trigger Guest Modal
+                else {
+                    pendingName = name;
+                    pendingUrl = url;
+                    activeBtn = btnElement;
+                    document.getElementById('guest-modal').style.display = 'flex';
+                }
+            }
+
+            // 2. GUEST SUBMIT
+            function submitGuest() {
+                const name = document.getElementById('guest-name').value.trim();
+                const code = document.getElementById('guest-code').value.trim();
+
+                if (!name) { alert("Please enter your Name."); return; }
+
+                // Validate Code
+                if (code.toLowerCase() !== "sociologic") {
+                    alert("❌ Invalid Code. Please enter 'SocioLogic'");
+                    return;
+                }
+
+                // CRITICAL FIX: Save to localStorage so the next page can read the ID
+                const guestID = 'Guest_' + name.replace(/\s+/g, '_') + '_' + Math.floor(Math.random() * 1000);
+                localStorage.setItem('socio_user_name', name);
+                localStorage.setItem('socio_user_id', guestID);
+
+                document.getElementById('guest-modal').style.display = 'none';
+
+                // Proceed to Test
+                startTest(pendingName, pendingUrl, activeBtn);
+            }
+
+            // 3. START TEST & TRACKING
+            function startTest(testName, testUrl, btnElement) {
+                // Handling for Old Premium Buttons (Fallback)
+                if (!btnElement && window.event) {
+                    btnElement = window.event.currentTarget || window.event.target;
+                }
+
+                // Get ID
                 const id = localStorage.getItem('socio_user_id');
                 const user = localStorage.getItem('socio_user_name');
 
-                if (!id) { alert("Please Login first."); openLogin(); return; }
+                if (!id) {
+                    // Logic Gap Fix: If Premium button clicked but no login, force login
+                    if (testName.toLowerCase().startsWith('free')) {
+                        document.getElementById('guest-modal').style.display = 'flex';
+                    } else {
+                        alert("Please Login first.");
+                        openLogin();
+                    }
+                    return;
+                }
 
-                const originalText = btn.innerText;
-                btn.innerText = "Checking...";
-                btn.style.opacity = "0.7";
+                // UI Feedback
+                let originalText = "Attempt Now ➜";
+                if (btnElement && btnElement.innerText) {
+                    originalText = btnElement.innerText;
+                    btnElement.innerText = "Checking...";
+                    btnElement.style.opacity = "0.7";
+                    btnElement.style.pointerEvents = "none";
+                }
 
-                // Add timestamp to prevent caching
-                const fullUrl = SCRIPT_URL + "?type=check&test=" + encodeURIComponent(name) +
+                // Send to Google Script
+                const fullUrl = SCRIPT_URL + "?type=check&test=" + encodeURIComponent(testName) +
                     "&id=" + encodeURIComponent(id) +
                     "&name=" + encodeURIComponent(user) +
                     "&ts=" + new Date().getTime();
@@ -3009,38 +3120,67 @@
                 fetch(fullUrl)
                     .then(r => r.text())
                     .then(s => {
-                        // CLEANUP: Remove any accidental quotes from the response
                         s = s.trim().replace(/^"|"$/g, '');
 
-                        // LOGIC FIX: Check if 's' is "ALLOW" OR a number less than 5
                         const attempts = parseInt(s);
-                        const isNumericAuth = !isNaN(attempts) && attempts < 5;
+                        const isNumericAuth = !isNaN(attempts);
+                        const isGuest = id.indexOf("Guest_") === 0;
+                        const isFreeTest = testName.toLowerCase().startsWith('free');
 
-                        if (s === "ALLOW" || isNumericAuth) {
-                            // Success! Go to the test page
-                            window.location.href = url;
-                        }
-                        else if (s === "LIMIT_REACHED" || attempts >= 5) {
-                            alert("⚠️ Limit Reached: You have used all 5 attempts.");
-                            btn.innerText = "Limit Reached";
-                        }
-                        else if (s === "BLOCK_NOT_PAID") {
+                        // --- SERVER RESPONSE GATES ---
+
+                        // Gate 1: Not Paid (and not a free test)
+                        if (s === "BLOCK_NOT_PAID") {
                             alert("⛔ Access Denied. Please buy the plan.");
-                            logout();
+                            if (!isGuest) logout();
+                            resetBtn(btnElement, originalText);
+                            return;
                         }
-                        else {
-                            // This catches actual errors
+
+                        // Gate 2: Limit Reached
+                        if (s === "LIMIT_REACHED") {
+                            // We ALLOW limit breach for Guest/Free tests (Just tracking)
+                            if (isFreeTest || isGuest) {
+                                window.location.href = testUrl;
+                            } else {
+                                alert("⚠️ Limit Reached (5/5 Attempts Used).");
+                                resetBtn(btnElement, originalText);
+                            }
+                            return;
+                        }
+
+                        // Gate 3: Success
+                        if (s === "ALLOW" || isNumericAuth) {
+                            window.location.href = testUrl;
+                            return;
+                        }
+
+                        // Gate 4: Fail-Open for Free Tests (If server errors)
+                        if (isFreeTest) {
+                            window.location.href = testUrl;
+                        } else {
                             alert("Server Response: " + s);
-                            btn.innerText = originalText;
+                            resetBtn(btnElement, originalText);
                         }
-                        btn.style.opacity = "1";
                     })
                     .catch(error => {
                         console.error(error);
-                        alert("Connection Error. Please check your internet.");
-                        btn.innerText = originalText;
-                        btn.style.opacity = "1";
+                        // Fail-Open for Free Tests on Network Error
+                        if (testName.toLowerCase().startsWith('free')) {
+                            window.location.href = testUrl;
+                        } else {
+                            alert("Connection Error.");
+                            resetBtn(btnElement, originalText);
+                        }
                     });
+            }
+
+            function resetBtn(btn, txt) {
+                if (btn) {
+                    btn.innerText = txt;
+                    btn.style.opacity = "1";
+                    btn.style.pointerEvents = "auto";
+                }
             }
 
             // --- SECURITY ---
